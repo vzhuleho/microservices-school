@@ -15,7 +15,7 @@ As a pupil I populate a diary with the subjects according to the schedule
 As a pupil I populate a diary with **home work** to be done
 # Teacher
 As a teacher I hold the **lessons** according to the schedule  
-As a teacher I assess pupils' knowledge and put **marks** into the **journal** and pupil's **markbook*
+As a teacher I assess pupils' knowledge and put **marks** into the **journal** and pupil's **markbook**
 # Parent
 As a parent I check pupil's marks in the markbook  
 As a parent I check pupil's homework to be done in the markbook
