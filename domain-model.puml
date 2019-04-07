@@ -1,0 +1,98 @@
+@startuml
+
+class Teacher {
+    + name
+    + passportNumber
+    + phoneNumber
+    + email
+    + salary
+    + bonus
+}
+
+class Subject {
+    + name
+}
+
+class Pupil {
+    + name
+    + age
+    + academicYear
+    + phoneNumber
+    + email
+}
+
+class Address {
+    + city
+    + street
+    + house
+    + apartment
+    + zipCode
+}
+
+class Parent {
+    + name
+    + phoneNumber
+    + email
+}
+
+class SchoolClass {
+    + letter
+    + grade
+    + year
+}
+
+class Schedule {
+    + year
+}
+
+class Lesson {
+    + date
+}
+
+
+class Curriculum {
+    + grade
+}
+
+class Course {
+    + lessonCount
+}
+
+class SchoolRegister {
+
+}
+
+class Mark {
+    + value
+}
+
+class MarkBook {
+
+}
+
+class HomeWork {
+    + description
+}
+
+
+Pupil "1" o-- "1" Address : lives by >
+Parent "1" o-- "1" Address : lives by >
+Pupil "many" -- "many" Parent: has >
+Teacher "1" o-- "1" Address : lives by >
+Teacher "1" -- "many" Subject : teaches >
+SchoolClass "1" -- "1" Teacher: managed by >
+SchoolClass "1" o-- "many" Pupil: contains >
+Schedule "1" *-- "many" Lesson: contains >
+Teacher "1" -- "many" Lesson: conducts >
+SchoolClass "1" -- "many" Lesson: attends >
+Curriculum "1" *-- "many" Course: contains >
+Course "many" -- "1" Subject: for >
+SchoolRegister "1" *-- "many" Mark: contains >
+Mark "many" -- "1" Lesson: given during >
+Pupil "1" -- "many" Mark: gets >
+Pupil "1" -- "1" MarkBook: has >
+MarkBook "many" *-- "many" Lesson: contains >
+Lesson "many" -- "1" Subject: for >
+HomeWork "1" -- "1" Lesson: assigned to >
+
+@enduml
