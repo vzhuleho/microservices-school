@@ -12,13 +12,9 @@
 1. Enroll pupils at the school
 2. Kick pupils out of the school
 ## SchoolRegisterService
-1. Create annual schedules for classes and teachers
-2. Populate schedules with lessons
+1. Create annual school registers for classes and teachers
+2. Populate school register with lessons
+3. Record home work to be done for the lesson
 ## CurriculumService
 1. Define curriculums for each school grade
 2. Add courses (subject and hours) to a curriculum
-## MarkBookService  
-1. Create a mark book for a pupil
-2. Populate a mark book with lessons
-3. Record home work to be done for the lesson
-![Image](domain.jpg "domain")

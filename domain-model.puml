@@ -66,10 +66,6 @@ class Mark {
     + value
 }
 
-class MarkBook {
-
-}
-
 class HomeWork {
     + description
 }
@@ -90,8 +86,6 @@ Course "many" -- "1" Subject: for >
 SchoolRegister "1" *-- "many" Mark: contains >
 Mark "many" -- "1" Lesson: given during >
 Pupil "1" -- "many" Mark: gets >
-Pupil "1" -- "1" MarkBook: has >
-MarkBook "many" *-- "many" Lesson: contains >
 Lesson "many" -- "1" Subject: for >
 HomeWork "1" -- "1" Lesson: assigned to >
 

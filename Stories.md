@@ -9,12 +9,13 @@ As a principal I assign pupils to classes
 As a principal I create annual **schedules** for classes and teachers  
 As a principal I populate schedules' hours with **subjects** and teachers
 # Pupil
-As a pupil I create annual **mark book**  
-As a pupil I populate a mark book with the subjects according to the schedule  
-As a pupil I populate a mark with **home work** to be done
+As a pupil I view **home work** to be done for a particular **lesson**  
+As a pupil I view lessons for a particular day  
+As a pupil I view my **marks** for lessons  
 # Teacher
-As a teacher I hold the **lessons** according to the schedule  
-As a teacher I assess pupils' knowledge and put **marks** into the **journal** and pupil's mark book
+As a teacher I conduct the lessons according to the schedule  
+As a teacher I populate mark books with home work to be done
+As a teacher I assess pupils' knowledge and put marks into the **school register** and pupil's mark book
 # Parent
-As a parent I check pupil's marks in the diary  
-As a parent I check pupil's **homework** to be done in the diary
+As a parent I view pupil's marks  
+As a parent I view pupil's home work to be done
