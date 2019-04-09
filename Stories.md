@@ -17,6 +17,7 @@
 * As a teacher I conduct the **lessons** according to my **schedule** 
 * As a teacher I want to assign **homework** to the **class** to be done for the next **lesson**. Individual **homework** isn't supported.
 * As a teacher I assess **pupils'** work in the **lesson** with **marks** and put them into the **school register**
+* As a teacher I want to track **pupils'** **absence** in the **lessons** and put them into the **school register**
 * As a teacher I want to know pupils' **parents** and how contact them (**address**, phone number) 
 # Parent
 * As a parent I view **pupil's** **marks** (where **pupils** are my children)

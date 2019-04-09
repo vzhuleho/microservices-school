@@ -1,0 +1,40 @@
+@startuml
+Class SchoolClass {
+    + grade
+    + letter
+    + year
+}
+
+Class Pupil {
+    + name
+}
+
+Class SchoolRegister {
+}
+
+Class Mark {
+    + value
+    + absence
+}
+
+Class Lesson {
+    + date
+    + subject
+    + topic
+    + homework
+}
+
+Class Teacher {
+    + name
+}
+
+
+
+SchoolRegister "1" *-- "many" Lesson: contains >
+SchoolRegister "1" -- "1" SchoolClass: belongs to
+SchoolClass "1" o-- "many" Pupil: contains >
+Lesson "1" *-right-> "1" Teacher: is conducted by
+Pupil "1" -- "many" Mark: gets >
+Mark "many" -- "1" Lesson: given during >
+
+@enduml
