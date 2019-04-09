@@ -29,6 +29,6 @@ As a teacher I:
 4. Want to know pupils' **parents** and how to contact them (**address**, phone number) 
 ## Parent
 As a parent I:
-1. View pupil's marks in the school register
-2. View pupil's home work to be done in the school registrer
-3. Want to know pupil's teachers and how to contact them (phone number)
+1. View marks of my children in the school register
+2. View the home work to be done by my children in the school registrer
+3. Want to know my children's teachers and how to contact them (phone number)
