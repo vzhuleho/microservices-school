@@ -5,6 +5,7 @@ class Teacher {
     + passportNumber
     + phoneNumber
     + email
+    + status
     + salary
     + bonus
 }
@@ -16,7 +17,7 @@ class Subject {
 class Pupil {
     + name
     + age
-    + academicYear
+    + grade
     + phoneNumber
     + email
 }

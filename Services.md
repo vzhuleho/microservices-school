@@ -11,6 +11,7 @@
 ## PupilService
 1. Enroll pupils at the school
 2. Kick pupils out of the school
+3. Get information about pupils' parents
 ## SchoolRegisterService
 1. Create annual school registers for classes and teachers
 2. Populate school register with lessons
