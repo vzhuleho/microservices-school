@@ -5,7 +5,8 @@ As a principal I define **bonuses** for teachers
 As a principal I enroll a **pupil** at the **school**  
 As a principal I kick a pupil out of the school  
 As a principal I define **classes**  
-As a principal I assign pupils to classes  
+As a principal I manage **pupils** in **classes**  
+As a principal I manage **head teachers** of **classes**  
 As a principal I create annual **schedules** for classes and teachers  
 As a principal I populate schedules' hours with **subjects** and teachers
 # Pupil
