@@ -26,7 +26,7 @@ As a teacher I:
 1. Conduct the lessons according to my schedule  
 2. Assign homework to the class to be done for the next lesson. Individual homework isn't supported
 3. Assess pupils' work during the lesson with marks and put them into the school register
-4. Want to track pupils' absence at the lessons and put them into the school register
+4. Want to track pupils' **absence** at the lessons and put them into the school register
 5. Want to know pupils' **parents** and how to contact them (**address**, phone number) 
 ## Parent
 As a parent I:
