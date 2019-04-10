@@ -3,30 +3,22 @@ class Principal {
 
 }
 
-class Teacher {
-    + firstname
-    + lastname
-}
-
-class Pupil {
-    + firstname
-    + lastname
-}
-
-
-class School {
+class HeadTeacher {
     + name
 }
 
-class Class {
+class Pupil {
+    + name
+}
+
+class SchoolClass {
     + letter
     + grade
     + year
 }
 
-Principal .-down-> Class : Creates >
-Principal .-down-> Class : Adds pupils to the class
-School "1" -- "many" Class : has >
-Class "1" -- "1" Teacher: managed by >
-Class "1" o-- "many" Pupil: contains >
+Principal .-down-> SchoolClass : Creates >
+Principal .-down-> SchoolClass : Adds pupils to the class
+SchoolClass "1" -- "1" HeadTeacher: has >
+SchoolClass "1" o-- "many" Pupil: contains >
 @enduml
