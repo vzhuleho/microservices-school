@@ -1,0 +1,32 @@
+@startuml
+
+class Principal
+
+class Pupil {
+    + name
+    + age
+    + grade
+    + phoneNumber
+    + email
+}
+
+class Address {
+    + city
+    + street
+    + house
+    + apartment
+    + zipCode
+}
+
+class Parent {
+    + name
+    + phoneNumber
+    + email
+}
+
+Principal .-down-> Pupil : enroll >
+Pupil "1" o-- "1" Address : lives by >
+Parent "1" o-- "1" Address : lives by >
+Pupil "many" -- "many" Parent: has >
+
+@enduml

@@ -5,6 +5,7 @@ class Teacher {
     + passportNumber
     + phoneNumber
     + email
+    + status
     + salary
     + bonus
 }
@@ -16,7 +17,7 @@ class Subject {
 class Pupil {
     + name
     + age
-    + academicYear
+    + grade
     + phoneNumber
     + email
 }
@@ -58,10 +59,6 @@ class Course {
     + lessonCount
 }
 
-class SchoolRegister {
-
-}
-
 class Mark {
     + value
 }
@@ -77,15 +74,14 @@ Pupil "many" -- "many" Parent: has >
 Teacher "1" o-- "1" Address : lives by >
 Teacher "1" -- "many" Subject : teaches >
 SchoolClass "1" -- "1" Teacher: managed by >
-SchoolClass "1" o-- "many" Pupil: contains >
-Schedule "1" *-- "many" Lesson: contains >
-Teacher "1" -- "many" Lesson: conducts >
+SchoolClass "1" o-up- "many" Pupil: contains >
+Schedule "1" *-left- "many" Lesson: contains >
+Teacher "1" -right- "many" Lesson: conducts >
 SchoolClass "1" -- "many" Lesson: attends >
-Curriculum "1" *-- "many" Course: contains >
-Course "many" -- "1" Subject: for >
-SchoolRegister "1" *-- "many" Mark: contains >
+Curriculum "1" *-left- "many" Course: contains >
+Course "many" -left- "1" Subject: for >
 Mark "many" -- "1" Lesson: given during >
-Pupil "1" -- "many" Mark: gets >
+Pupil "1" -right- "many" Mark: gets >
 Lesson "many" -- "1" Subject: for >
 HomeWork "1" -- "1" Lesson: assigned to >
 

@@ -11,10 +11,12 @@
 ## PupilService
 1. Enroll pupils at the school
 2. Kick pupils out of the school
+3. Get information about pupils' parents
 ## SchoolRegisterService
 1. Create annual school registers for classes and teachers
 2. Populate school register with lessons
 3. Record home work to be done for the lesson
+4. Record assessments and absences of pupils for the lessons
 ## CurriculumService
 1. Define curriculums for each school grade
 2. Add courses (subject and hours) to a curriculum
