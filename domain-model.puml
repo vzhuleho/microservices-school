@@ -73,6 +73,8 @@ Parent "1" o-- "1" Address : lives by >
 Pupil "many" -- "many" Parent: has >
 Teacher "1" o-- "1" Address : lives by >
 Teacher "1" -- "many" Subject : teaches >
+Teacher .-left-> Mark : gives >
+Teacher .-left-> HomeWork : gives >
 SchoolClass "1" -- "1" Teacher: managed by >
 SchoolClass "1" o-up- "many" Pupil: contains >
 Schedule "1" *-left- "many" Lesson: contains >
@@ -82,6 +84,9 @@ Curriculum "1" *-left- "many" Course: contains >
 Course "many" -left- "1" Subject: for >
 Mark "many" -- "1" Lesson: given during >
 Pupil "1" -right- "many" Mark: gets >
+Pupil "1" .-right- "many" HomeWork: views >
+Parent "1" .-right- "many" HomeWork: views >
+Parent "1" .-right- "many" Mark: views >
 Lesson "many" -- "1" Subject: for >
 HomeWork "1" -- "1" Lesson: assigned to >
 
