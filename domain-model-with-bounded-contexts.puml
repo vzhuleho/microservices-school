@@ -1,44 +1,57 @@
 @startuml
 
 
-class Address {
+
+
+namespace UserService {
+  class User {
+    + login
+    + password
+  }
+
+  class Principal {
+  }
+
+  class Teacher {
+    + name
+    + passportNumber
+    + phoneNumber
+    + email
+    + status
+    + salary
+    + bonus
+  }
+
+  class Parent {
+    + name
+    + phoneNumber
+    + email
+  }
+
+  class Pupil {
+    + name
+    + age
+    + grade
+    + phoneNumber
+    + email
+  }
+
+  class Address {
     + city
     + street
     + house
     + apartment
     + zipCode
-}
-
-namespace teacherservice {
-  class Teacher {
-      + name
-      + passportNumber
-      + phoneNumber
-      + email
-      + status
-      + salary
-      + bonus
   }
 
-  class .Address {
-  }
-}
-
-namespace pupilservice {
-  class Pupil {
-      + name
-      + age
-      + grade
-      + phoneNumber
-      + email
-  }
-
-  class Parent {
-      + name
-      + phoneNumber
-      + email
-  }
-
+  User <|-- Principal
+  User <|-- Teacher
+  User <|-- Parent
+  User <|-- Pupil
+  Pupil "1" o-- "1" Address : lives by >
+  Parent "1" o-- "1" Address : lives by >
+  Teacher "1" o-- "1" Address : lives by >
+  Pupil "many" -- "many" Parent: has >
 }
 
 
@@ -93,11 +106,7 @@ namespace scheduleservice  {
 }
 
 
-pupilservice.Pupil "1" o-- "1" Address : lives by >
-pupilservice.Parent "1" o-- "1" Address : lives by >
-pupilservice.Pupil "many" -- "many" pupilservice.Parent: has >
-teacherservice.Teacher "1" o-- "1" Address : lives by >
-teacherservice.Teacher "1" -- "many" curriculumservice.Subject : teaches >
+UserService.Teacher "1" -- "many" curriculumservice.Subject : teaches >
 schoolclassservice.SchoolClass "1" -- "1" teacherservice.Teacher: managed by >
 schoolclassservice.SchoolClass "1" o-up- "many" pupilservice.Pupil: contains >
 scheduleservice.Schedule "1" *-left- "many" Lesson: contains >
@@ -106,7 +115,7 @@ schoolclassservice.SchoolClass "1" -- "many" Lesson: attends >
 curriculumservice.Curriculum "1" *-left- "many" curriculumservice.Course: contains >
 curriculumservice.Course "many" -left- "1" curriculumservice.Subject: for >
 schoolregisterservice.Mark "many" -- "1" Lesson: given during >
-pupilservice.Pupil "1" -right- "many" schoolregisterservice.Mark: gets >
+UserService.Pupil "1" -right- "many" schoolregisterservice.Mark: gets >
 Lesson "many" -- "1" curriculumservice.Subject: for >
 schoolregisterservice.HomeWork "1" -- "1" Lesson: assigned to >
 
