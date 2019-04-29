@@ -6,6 +6,8 @@ class Lesson {
   +schedule
   +date
   +hour
+  +marks
+  +absentPupils
 }
 
 class SchoolClass {

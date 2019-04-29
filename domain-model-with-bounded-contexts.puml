@@ -53,7 +53,7 @@ namespace userservice {
   Pupil "1" o- "1" Address : lives by >
   Parent "1" o- "1" Address : lives by >
   Teacher "1" o-- "1" Address : lives by >
-  Pupil "many" -l- "many" Parent: \n\thas\n >
+  Pupil "*" -l- "*" Parent: \n\thas\n >
 }
 
 
@@ -70,9 +70,16 @@ together {
 
     class Lesson {
         + date
+        + marks
+        + absentPupils
     }
 
-    Schedule "1" *-l> "many" Lesson : \ncontains\n
+    class HomeWork {
+        + description
+    }
+
+    Schedule "1" *-l> "*" Lesson : \ncontains\n
+    Lesson "1" *-l> "1" HomeWork : \ncontains\n
   }
 
   namespace curriculumservice {
@@ -88,23 +95,11 @@ together {
         + name
     }
 
-    Curriculum "one" *-u> "many" Course : \ncontains\n
-    Course "one" *-u> "one" Subject : \ncontains\n
+    Curriculum "1" *-u> "*" Course : \ncontains\n
+    Course "1" *-u> "1" Subject : \ncontains\n
   }
 }
 
-
-
-together {
-namespace schoolregisterservice {
-  class HomeWork {
-      + description
-  }
-
-  class Mark {
-      + value
-  }
-}
 
 
 namespace schoolclassservice {
@@ -114,16 +109,12 @@ namespace schoolclassservice {
       + year
   }
 }
-}
 
 
 
 
 schoolclassservice .-> userservice  : gets info about teachers
 schoolclassservice .-> userservice  : gets info about pupils
-schoolregisterservice .-> userservice  : gets info about pupils
-scheduleservice .-> userservice : gets info about teachers
-schoolregisterservice .-l> scheduleservice  : gets info about lessons
 scheduleservice .-> curriculumservice : gets info about courses
 scheduleservice .-r> schoolclassservice : gets info about classes
 
