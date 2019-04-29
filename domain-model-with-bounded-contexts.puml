@@ -1,9 +1,10 @@
 @startuml
+'skinparam linetype polyline
+'skinparam linetype ortho
+left to right direction
 
 
-
-
-namespace UserService {
+namespace userservice {
   class User {
     + login
     + password
@@ -44,42 +45,57 @@ namespace UserService {
     + zipCode
   }
 
-  User <|-- Principal
+  User <|- Principal
   User <|-- Teacher
   User <|-- Parent
   User <|-- Pupil
-  Pupil "1" o-- "1" Address : lives by >
-  Parent "1" o-- "1" Address : lives by >
+  Principal "1" o- "1" Address : lives by >
+  Pupil "1" o- "1" Address : lives by >
+  Parent "1" o- "1" Address : lives by >
   Teacher "1" o-- "1" Address : lives by >
-  Pupil "many" -- "many" Parent: has >
+  Pupil "many" -l- "many" Parent: \n\thas\n >
+}
+
+
+together {
+
+  namespace scheduleservice  {
+    class userservice.Teacher {
+        + name
+    }
+
+    class Schedule {
+        + year
+    }
+
+    class Lesson {
+        + date
+    }
+
+    Schedule "1" *-l> "many" Lesson : \ncontains\n
+  }
+
+  namespace curriculumservice {
+    class Curriculum {
+        + grade
+    }
+
+    class Course {
+        + lessonCount
+    }
+
+    class Subject {
+        + name
+    }
+
+    Curriculum "one" *-u> "many" Course : \ncontains\n
+    Course "one" *-u> "one" Subject : \ncontains\n
+  }
 }
 
 
 
-namespace schoolclassservice {
-  class SchoolClass {
-      + letter
-      + grade
-      + year
-  }
-}
-
-namespace curriculumservice {
-  class Curriculum {
-      + grade
-  }
-
-  class Course {
-      + lessonCount
-  }
-
-  class Subject {
-      + name
-  }
-}
-
-
-
+together {
 namespace schoolregisterservice {
   class HomeWork {
       + description
@@ -91,32 +107,24 @@ namespace schoolregisterservice {
 }
 
 
-namespace scheduleservice  {
-  class teacherservice.Teacher {
-      + name
-  }
-
-  class Schedule {
+namespace schoolclassservice {
+  class SchoolClass {
+      + letter
+      + grade
       + year
   }
-
-  class .Lesson {
-      + date
-  }
+}
 }
 
 
-UserService.Teacher "1" -- "many" curriculumservice.Subject : teaches >
-schoolclassservice.SchoolClass "1" -- "1" teacherservice.Teacher: managed by >
-schoolclassservice.SchoolClass "1" o-up- "many" pupilservice.Pupil: contains >
-scheduleservice.Schedule "1" *-left- "many" Lesson: contains >
-teacherservice.Teacher "1" -right- "many" Lesson: conducts >
-schoolclassservice.SchoolClass "1" -- "many" Lesson: attends >
-curriculumservice.Curriculum "1" *-left- "many" curriculumservice.Course: contains >
-curriculumservice.Course "many" -left- "1" curriculumservice.Subject: for >
-schoolregisterservice.Mark "many" -- "1" Lesson: given during >
-UserService.Pupil "1" -right- "many" schoolregisterservice.Mark: gets >
-Lesson "many" -- "1" curriculumservice.Subject: for >
-schoolregisterservice.HomeWork "1" -- "1" Lesson: assigned to >
+
+
+schoolclassservice .-> userservice  : gets info about teachers
+schoolclassservice .-> userservice  : gets info about pupils
+schoolregisterservice .-> userservice  : gets info about pupils
+scheduleservice .-> userservice : gets info about teachers
+schoolregisterservice .-l> scheduleservice  : gets info about lessons
+scheduleservice .-> curriculumservice : gets info about courses
+scheduleservice .-r> schoolclassservice : gets info about classes
 
 @enduml

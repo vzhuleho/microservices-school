@@ -7,5 +7,8 @@ Please see [user stories](Stories.md) for the details
 ## Domain model
 Please see [domain model](domain-model.puml) for the details
 
+## Bounded contexts
+Please see [bounded contexts](domain-model-with-bounded-contexts.puml) for the details
+
 ## Services
 Please see [services](Services.md) for the details
