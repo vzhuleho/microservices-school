@@ -1,0 +1,35 @@
+@startuml
+class Principal {
+}
+
+class Lesson {
+  +date
+}
+
+class SchoolClass {
+  +grade
+  +letter
+}
+
+class Subject {
+  +name
+}
+
+class Teacher {
+  +name
+}
+
+class Schedule {
+  +year
+}
+
+
+Principal .-> Schedule : Creates
+Principal .-> Lesson : Adds to the schedule
+Lesson "1" *-down-> "1" SchoolClass : is conducted for
+Lesson "1" *-left-> "1" Subject : contains
+Lesson "1" *-right-> "1" Teacher : is conducted by
+Schedule "1" *-down-> "many" Lesson : contains
+
+
+@enduml

@@ -1,0 +1,213 @@
+= Schedule-service Guide
+Vitali Zhuleho;
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+[introduction]
+= Introduction
+
+Schedule-service is a RESTful microservice for managing school schedules
+
+[[overview]]
+= Overview
+
+[[overview-http-verbs]]
+== HTTP verbs
+Schedule-service tries to adhere as closely as possible to standard HTTP and REST conventions in its
+use of HTTP verbs.
+|===
+| Verb | Usage
+
+| `GET`
+| Used to retrieve a resource
+
+| `POST`
+| Used to create a new resource
+
+| `PATCH`
+| Used to update an existing resource, including partial updates
+
+| `PUT`
+| Used to update an existing resource, full updates only
+
+| `DELETE`
+| Used to delete an existing resource
+|===
+
+[[overview-http-status-codes]]
+== HTTP status codes
+Schedule-service tries to adhere as closely as possible to standard HTTP and REST conventions in its
+use of HTTP status codes.
+
+|===
+| Status code | Usage
+
+| `200 OK`
+| Standard response for successful HTTP requests.
+| The actual response will depend on the request method used.
+| In a GET request, the response will contain an entity corresponding to the requested resource.
+| In a POST request, the response will contain an entity describing or containing the result of the action.
+
+| `201 Created`
+| The request has been fulfilled and resulted in a new resource being created.
+
+| `204 No Content`
+| The server successfully processed the request, but is not returning any content.
+
+| `400 Bad Request`
+| The server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing).
+
+| `404 Not Found`
+| The requested resource could not be found but may be available again in the future. Subsequent requests by the client are permissible.
+|===
+
+[[resources]]
+= Resources
+
+
+[[resources-schedule]]
+== Schedule
+The Schedule resource is used to create, modify and list schedules.
+
+
+[[resource-schedule-list]]
+=== Listing Schedules
+A `GET` request lists all the schedules.
+
+==== Example request
+
+include::{snippets}/schedules-list/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/schedules-list/http-response.adoc[]
+
+
+[[resource-schedules-get]]
+=== Getting a Schedule
+A `GET` request fetches a specific schedule.
+
+==== Example request
+
+include::{snippets}/schedules-get/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/schedules-get/http-response.adoc[]
+
+
+[[resource-schedules-create]]
+=== Creating a Schedule
+A `POST` request creates a new schedule.
+
+==== Example request
+
+include::{snippets}/schedules-create/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/schedules-create/http-response.adoc[]
+
+[[resource-schedules-get-or-create]]
+=== Getting or Creating a Schedule
+A `GET` request gets a schedule or creates a new one if it doesn't exist.
+
+==== Example request
+
+include::{snippets}/schedules-get-or-create/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/schedules-get-or-create/http-response.adoc[]
+
+
+[[resource-schedules-update]]
+=== Updating a Schedule
+A `PATCH` request updates an existing Schedule.
+
+==== Example request
+
+include::{snippets}/schedules-update/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/schedules-update/http-response.adoc[]
+
+
+[[resource-schedules-delete]]
+=== Deleting a Schedule
+A `DELETE` request deletes an existing schedule.
+
+==== Example request
+
+include::{snippets}/schedules-delete/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/schedules-delete/http-response.adoc[]
+
+
+
+[[resources-schedule-days]]
+== Schedule Days
+The Schedule Days resource is used to list days of the schedule
+
+[[resource-schedule-days-list]]
+=== Listing Schedules' Days
+A `GET` request lists all the schedules.
+
+==== Example request
+
+include::{snippets}/schedules-days-list/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/schedules-days-list/http-response.adoc[]
+
+[[resource-schedule-days-get]]
+=== Getting a Day by Date and the Schedule ID
+A `GET` request fetches a specific day.
+
+==== Example request
+
+include::{snippets}/schedule-days-get/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/schedules-days-get/http-response.adoc[]
+
+
+
+
+
+[[resources-schedule-day-lessons]]
+== Schedule Day Lessons
+The Schedule Day Lessons resource is used to set and list the lessons of a particular day
+
+[[resource-schedule-day-lessons-list]]
+=== Listing Schedules' Days
+A `GET` request lists all the schedules.
+
+==== Example request
+
+include::{snippets}/schedule-day-lessons-list/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/schedule-day-lessons-list/http-response.adoc[]
+
+[[resource-schedule-day-lessons-get]]
+=== Getting a Lesson of the Day by its number
+A `GET` request fetches a specific lesson.
+
+==== Example request
+
+include::{snippets}/schedule-day-lessons-get/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/schedules-day-lessons-get/http-response.adoc[]

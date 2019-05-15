@@ -1,0 +1,72 @@
+plugins {
+	id 'org.springframework.boot' version '2.1.4.RELEASE'
+	id 'org.asciidoctor.convert' version '1.5.3'
+	id 'java'
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+
+ext {
+	snippetsDir = file('build/generated-snippets')
+}
+
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+bootJar {
+	launchScript()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+	implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+//	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.data:spring-data-rest-hal-browser'
+
+	compile('org.hsqldb:hsqldb')
+	compile group: 'org.json', name: 'json', version: '20090211'
+	compile 'io.springfox:springfox-data-rest:2.9.2'
+	compile 'io.springfox:springfox-swagger2:2.9.2'
+	compile 'io.springfox:springfox-swagger-ui:2.9.2'
+
+
+	compileOnly 'org.projectlombok:lombok'
+
+	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'com.h2database:h2'
+
+	annotationProcessor 'org.projectlombok:lombok'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	testCompile 'org.springframework.restdocs:spring-restdocs-restassured'
+	testCompile group: 'io.rest-assured', name: 'rest-assured', version: '3.1.1'
+}
+
+test {
+	outputs.dir snippetsDir
+}
+
+
+asciidoctor {
+	attributes 'snippets': snippetsDir
+	inputs.dir snippetsDir
+	outputDir "build/asciidoc"
+	dependsOn test
+	sourceDir 'src/doc/asciidoc'
+}
