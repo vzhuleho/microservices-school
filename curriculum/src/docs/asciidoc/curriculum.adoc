@@ -1,0 +1,91 @@
+:snippets: ../../../build/generated-snippets
+
+:doctype: book
+:toc:
+:sectanchors:
+:sectlinks:
+:toclevels: 4
+:source-highlighter: highlightjs
+
+[[overview]]
+= Curriculum API overview
+
+== API
+
+=== Get curriculum by grade
+
+==== Example curl request
+
+include::{snippets}/curriculum-by-grade-found/curl-request.adoc[]
+
+==== Example HTTP request
+
+include::{snippets}/curriculum-by-grade-found/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/curriculum-by-grade-found/http-response.adoc[]
+
+==== Example HTTPie request
+
+include::{snippets}/curriculum-by-grade-found/httpie-request.adoc[]
+
+==== Example request body
+
+include::{snippets}/curriculum-by-grade-found/request-body.adoc[]
+
+==== Example response body
+
+include::{snippets}/curriculum-by-grade-found/response-body.adoc[]
+
+=== Get curriculum by id
+
+==== Example curl request
+
+include::{snippets}/curriculum-by-id-found/curl-request.adoc[]
+
+==== Example HTTP request
+
+include::{snippets}/curriculum-by-id-found/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/curriculum-by-id-found/http-response.adoc[]
+
+==== Example response body
+
+include::{snippets}/curriculum-by-id-found/httpie-request.adoc[]
+
+==== Example request body
+
+include::{snippets}/curriculum-by-id-found/request-body.adoc[]
+
+==== Example HTTPie request
+
+include::{snippets}/curriculum-by-id-found/response-body.adoc[]
+
+=== Find all curricula
+
+==== Example curl request
+
+include::{snippets}/find-all-curricula/curl-request.adoc[]
+
+==== Example HTTP request
+
+include::{snippets}/find-all-curricula/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/find-all-curricula/http-response.adoc[]
+
+==== Example HTTPie request
+
+include::{snippets}/find-all-curricula/httpie-request.adoc[]
+
+==== Example request body
+
+include::{snippets}/find-all-curricula/request-body.adoc[]
+
+==== Example response body
+
+include::{snippets}/find-all-curricula/response-body.adoc[]
