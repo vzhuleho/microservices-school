@@ -3,18 +3,16 @@
  * The content of this file is copyrighted by Kyriba Corporation and can not be
  * reproduced, distributed, altered or used in any form, in whole or in part.
  */
-package com.kyriba.curriculum.api.dto;
-
-import lombok.Value;
+package com.kyriba.curriculum.service.exception;
 
 
 /**
  * @author M-DBE
  */
-@Value
-public class Course
+public class SubjectNotFoundException extends CurriculumServiceException
 {
-  private long id;
-  private Subject subject;
-  private int lessonCount;
+  public SubjectNotFoundException(long subjectId)
+  {
+    super(String.format("Subject with id %d not found.", subjectId));
+  }
 }

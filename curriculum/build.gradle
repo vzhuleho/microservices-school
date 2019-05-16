@@ -27,6 +27,7 @@ ext {
 
 test {
     outputs.dir snippets
+    useJUnitPlatform()
 }
 
 asciidoctor {
@@ -46,7 +47,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'io.rest-assured:rest-assured:3.1.0'
+    //implementation 'io.rest-assured:rest-assured:3.1.0'
     implementation 'io.springfox:springfox-swagger2:2.9.2'
     implementation 'io.springfox:springfox-swagger-ui:2.9.2'
     
@@ -54,7 +55,21 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
     annotationProcessor 'org.projectlombok:lombok'
     
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.restdocs:spring-restdocs-restassured'
-    testImplementation 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation ('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'junit'
+    }
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.4.2"
+    testImplementation "org.junit.vintage:junit-vintage-engine:5.4.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:5.4.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.4.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-migrationsupport:5.4.2"
+    testImplementation "org.junit.platform:junit-platform-commons:1.4.0"
+    testImplementation "org.junit.platform:junit-platform-launcher:1.4.0"
+    
+    testImplementation ('org.springframework.restdocs:spring-restdocs-restassured') {
+        exclude group: 'junit'
+    }
+    testImplementation ('org.springframework.restdocs:spring-restdocs-asciidoctor') {
+        exclude group: 'junit'
+    }
 }

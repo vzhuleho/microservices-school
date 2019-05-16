@@ -5,8 +5,11 @@
  */
 package com.kyriba.curriculum.service;
 
-import com.kyriba.curriculum.api.dto.BriefCurriculum;
-import com.kyriba.curriculum.api.dto.Curriculum;
+import com.kyriba.curriculum.domain.dto.BriefCurriculum;
+import com.kyriba.curriculum.domain.dto.Course;
+import com.kyriba.curriculum.domain.dto.CourseToAdd;
+import com.kyriba.curriculum.domain.dto.Curriculum;
+import com.kyriba.curriculum.domain.dto.Subject;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +23,7 @@ import java.util.Optional;
  */
 @Service
 @Profile({"default", "prod"})
-public class CurriculumServiceImpl implements CurriculumService
+class CurriculumServiceImpl implements CurriculumService
 {
   @Override
   public Optional<Curriculum> findCurriculumById(long id)
@@ -40,5 +43,54 @@ public class CurriculumServiceImpl implements CurriculumService
   public List<BriefCurriculum> getAllCurricula()
   {
     return Collections.emptyList();
+  }
+
+
+  @Override
+  public List<Subject> getAllSubjects()
+  {
+    return Collections.emptyList();
+  }
+
+
+  @Override
+  public BriefCurriculum createCurriculum(int grade)
+  {
+    return null;
+  }
+
+
+  @Override
+  public Course addCourse(long curriculumId, CourseToAdd course)
+  {
+    return null;
+  }
+
+
+  @Override
+  public BriefCurriculum removeCurriculum(long curriculumId)
+  {
+    return null;
+  }
+
+
+  @Override
+  public Course updateCourse(long curriculumId, long courseId, int lessonCount)
+  {
+    return null;
+  }
+
+
+  @Override
+  public Course removeCourse(long curriculumId, long courseId)
+  {
+    return null;
+  }
+
+
+  @Override
+  public Subject createSubject(String name)
+  {
+    return null;
   }
 }
