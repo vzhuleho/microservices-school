@@ -17,8 +17,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.kyriba.school.scheduleservice.infrastructure.Endpoints.SCHEDULES;
+
 @Api(value="School Schedules Management System")
-@RestController // only needed for Swagger
+@RequestMapping(SCHEDULES)
 @RepositoryRestController
 public class ScheduleController {
 
@@ -40,7 +42,7 @@ public class ScheduleController {
 
     @ApiOperation(value = "View a list of available schedules")
     @ResponseBody
-    @GetMapping("/schedules")
+    @GetMapping
     public ResponseEntity<?> getAllSchedules(Pageable pageable) {
         Page<Schedule> schedules = scheduleService.findAll(pageable);
         Page<ScheduleProjection> projected = schedules.map(schedule -> factory.createProjection(ScheduleProjection.class, schedule));
@@ -51,7 +53,7 @@ public class ScheduleController {
 
     @ApiOperation(value = "Get a schedule by id", response = ScheduleProjection.class)
     @ResponseBody
-    @GetMapping(value = "/schedules/{id}", produces = "application/hal+json")
+    @GetMapping(value = "/{id}", produces = "application/hal+json")
     public Resource<ScheduleProjection> getById(@PathVariable Long id) {
 
         Schedule schedule = scheduleService.findById(id);
@@ -61,7 +63,7 @@ public class ScheduleController {
     @ApiOperation(value = "Create a new schedule", response = ScheduleProjection.class)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    @PostMapping(value = "/schedules", produces = "application/hal+json")
+    @PostMapping(produces = "application/hal+json")
     public Resource<ScheduleProjection> create(@RequestBody Schedule scheduleToCreate) {
         SchoolClass schoolClass = schoolClassService.findBySchedule(scheduleToCreate);
         Schedule schedule = scheduleService.findOrCreate(scheduleToCreate.getYear(), schoolClass);
@@ -71,7 +73,7 @@ public class ScheduleController {
     @ApiOperation(value = "Get a schedule or create a new one if the schedule for the requested year and school class doesn't exist",
             response = ScheduleProjection.class)
     @ResponseBody
-    @GetMapping(value = "/schedules/{year}/{grade}/{letter}", produces = "application/hal+json")
+    @GetMapping(value = "/{year}/{grade}/{letter}", produces = "application/hal+json")
     public Resource<ScheduleProjection> getOrCreate(@PathVariable int year,
                                 @PathVariable int grade,
                                 @PathVariable String letter) {
@@ -83,7 +85,7 @@ public class ScheduleController {
 
     @ApiOperation(value = "Update an existing schedule", response = ScheduleProjection.class)
     @ResponseBody
-    @PatchMapping(value = "/schedules", produces = "application/hal+json")
+    @PatchMapping(produces = "application/hal+json")
     public Resource<ScheduleProjection> updateSchedule(@RequestBody Schedule scheduleToUpdate) {
         scheduleToUpdate.setSchoolClass(schoolClassService.findBySchedule(scheduleToUpdate));
         Schedule updatedSchedule = scheduleService.save(scheduleToUpdate);
@@ -93,7 +95,7 @@ public class ScheduleController {
 
     @ApiOperation(value = "Delete a schedule by id")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping(value = "/schedules/{id}", produces = "application/hal+json")
+    @DeleteMapping(value = "/{id}", produces = "application/hal+json")
     public void deleteById(@PathVariable Long id) {
         scheduleService.deleteById(id);
     }

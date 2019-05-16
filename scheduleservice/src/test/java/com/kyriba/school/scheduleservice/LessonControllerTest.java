@@ -23,7 +23,7 @@ import java.time.LocalDate;
 
 import static com.kyriba.school.scheduleservice.infrastructure.Endpoints.SCHEDULES;
 import static io.restassured.RestAssured.given;
-import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static javax.servlet.http.HttpServletResponse.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
@@ -107,6 +107,69 @@ public class LessonControllerTest {
 
 		lesson = getLessonByPath(path);
 		assertEquals(expectedNote, lesson.getNote());
+	}
+
+	@Test
+	public void addAbsenceToLesson() throws JSONException {
+		String expectedPupilName = "Ivan Ivanov";
+		String path = SCHEDULES + "/" + scheduleId + "/days/2018-09-15/lessons/2/absences";
+		JSONObject absenceAsJson = new JSONObject();
+		absenceAsJson.put("pupilName", expectedPupilName);
+
+		given(documentationSpec)
+				.contentType(APPLICATION_JSON_UTF8_VALUE)
+				.filter(document("schedule-day-lesson-absences-add"))
+				.when()
+				.body(absenceAsJson.toString())
+				.post(path)
+				.then()
+				.statusCode(SC_CREATED)
+				.body("pupilName", is(expectedPupilName));
+	}
+
+	@Test
+	public void deleteAbsenceById() {
+		String path = SCHEDULES + "/1/days/2018-09-15/lessons/2/absences/1";
+		given(documentationSpec)
+				.contentType(APPLICATION_JSON_UTF8_VALUE)
+				.filter(document("schedule-day-lesson-absences-delete"))
+				.when()
+				.delete(path)
+				.then()
+				.statusCode(SC_NO_CONTENT);
+	}
+
+	@Test
+	public void addMarkToLesson() throws JSONException {
+		String expectedPupilName = "Sergei Sergeev";
+		int expectedMark = 4;
+		String path = SCHEDULES + "/" + scheduleId + "/days/2018-09-15/lessons/3/marks";
+		JSONObject markAsJson = new JSONObject();
+		markAsJson.put("pupilName", expectedPupilName);
+		markAsJson.put("mark", expectedMark);
+
+		given(documentationSpec)
+				.contentType(APPLICATION_JSON_UTF8_VALUE)
+				.filter(document("schedule-day-lesson-marks-add"))
+				.when()
+				.body(markAsJson.toString())
+				.post(path)
+				.then()
+				.statusCode(SC_CREATED)
+				.body("pupilName", is(expectedPupilName))
+				.body("mark", is(expectedMark));
+	}
+
+	@Test
+	public void deleteMarkById() {
+		String path = SCHEDULES + "/1/days/2018-09-15/lessons/2/marks/1";
+		given(documentationSpec)
+				.contentType(APPLICATION_JSON_UTF8_VALUE)
+				.filter(document("schedule-day-lesson-marks-delete"))
+				.when()
+				.delete(path)
+				.then()
+				.statusCode(SC_NO_CONTENT);
 	}
 
 	private Lesson getLessonByPath(String path) {

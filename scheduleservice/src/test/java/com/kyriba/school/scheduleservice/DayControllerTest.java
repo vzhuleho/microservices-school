@@ -2,6 +2,7 @@ package com.kyriba.school.scheduleservice;
 
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.path.json.JsonPath;
 import io.restassured.specification.RequestSpecification;
 import org.junit.Before;
 import org.junit.Rule;
@@ -79,7 +80,7 @@ public class DayControllerTest {
 				.then()
 				.statusCode(SC_OK)
 				.body("date", is("2018-09-01"))
-				.body("schedule.id", is(scheduleId))
+				.body("schedule.entityId", is(scheduleId))
 				.body("lessons", iterableWithSize(8));
 	}
 

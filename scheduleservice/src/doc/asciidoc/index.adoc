@@ -162,11 +162,11 @@ A `GET` request lists all the schedules.
 
 ==== Example request
 
-include::{snippets}/schedules-days-list/http-request.adoc[]
+include::{snippets}/schedule-days-list/http-request.adoc[]
 
 ==== Example response
 
-include::{snippets}/schedules-days-list/http-response.adoc[]
+include::{snippets}/schedule-days-list/http-response.adoc[]
 
 [[resource-schedule-days-get]]
 === Getting a Day by Date and the Schedule ID
@@ -178,7 +178,7 @@ include::{snippets}/schedule-days-get/http-request.adoc[]
 
 ==== Example response
 
-include::{snippets}/schedules-days-get/http-response.adoc[]
+include::{snippets}/schedule-days-get/http-response.adoc[]
 
 
 
@@ -210,4 +210,52 @@ include::{snippets}/schedule-day-lessons-get/http-request.adoc[]
 
 ==== Example response
 
-include::{snippets}/schedules-day-lessons-get/http-response.adoc[]
+include::{snippets}/schedule-day-lessons-get/http-response.adoc[]
+
+
+[[resource-schedule-day-lesson-absences-add]]
+=== Adding an information about pupil's absence to the lesson
+A `POST` request creates a new absence information.
+
+==== Example request
+include::{snippets}/schedule-day-lesson-absences-add/http-request.adoc[]
+
+==== Example response
+include::{snippets}/schedule-day-lesson-absences-add/http-response.adoc[]
+
+
+[[resource-schedule-day-lesson-absences-delete]]
+=== Deleting an information about pupil's absence from the lesson
+A `DELETE` request deletes an existing absence info.
+
+==== Example request
+
+include::{snippets}/schedule-day-lesson-absences-delete/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/schedule-day-lesson-absences-delete/http-response.adoc[]
+
+
+[[resource-schedule-day-lesson-marks-add]]
+=== Adding an information about pupil's mark to the lesson
+A `POST` request creates a new mark.
+
+==== Example request
+include::{snippets}/schedule-day-lesson-marks-add/http-request.adoc[]
+
+==== Example response
+include::{snippets}/schedule-day-lesson-marks-add/http-response.adoc[]
+
+
+[[resource-schedule-day-lesson-marks-delete]]
+=== Deleting an information about pupil's mark from the lesson
+A `DELETE` request deletes an existing mark.
+
+==== Example request
+
+include::{snippets}/schedule-day-lesson-marks-delete/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/schedule-day-lesson-absences-delete/http-response.adoc[]
