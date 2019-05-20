@@ -9,6 +9,7 @@ import com.kyriba.curriculum.domain.dto.BriefCurriculum;
 import com.kyriba.curriculum.domain.dto.Course;
 import com.kyriba.curriculum.domain.dto.CourseToAdd;
 import com.kyriba.curriculum.domain.dto.Curriculum;
+import com.kyriba.curriculum.domain.dto.CurriculumToCreate;
 import com.kyriba.curriculum.domain.dto.Subject;
 import com.kyriba.curriculum.service.NonProdData;
 import io.restassured.builder.RequestSpecBuilder;
@@ -21,6 +22,8 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,6 +37,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document;
@@ -51,7 +56,6 @@ class CurriculumControllerTest
 {
   private RequestSpecification spec;
   private List<Curriculum> prevCurricula;
-  private List<Subject> prevSubjects;
 
 
   @BeforeEach
@@ -59,11 +63,10 @@ class CurriculumControllerTest
   {
     this.spec = new RequestSpecBuilder()
         .addFilter(documentationConfiguration(restDocumentation))
+        .setBasePath("/api/v1")
         .build();
     prevCurricula = NonProdData.CURRICULA;
     NonProdData.CURRICULA = NonProdData.DEFAULT_CURRICULA.get();
-    prevSubjects = NonProdData.SUBJECTS;
-    NonProdData.SUBJECTS = NonProdData.DEFAULT_SUBJECTS.get();
   }
 
 
@@ -71,7 +74,6 @@ class CurriculumControllerTest
   void after()
   {
     NonProdData.CURRICULA = prevCurricula;
-    NonProdData.SUBJECTS = prevSubjects;
   }
 
 
@@ -116,9 +118,9 @@ class CurriculumControllerTest
     {
       Curriculum curriculum = given(spec)
           .filter(document("get-curriculum-by-grade-success"))
-          .pathParam("grade", 10)
+          .queryParam("grade", 10)
           .when()
-          .get("/curricula/grades/{grade}")
+          .get("/curricula/search")
           .then()
           .statusCode(HttpStatus.OK.value())
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -135,11 +137,44 @@ class CurriculumControllerTest
     {
       given(spec)
           .filter(document("get-curriculum-by-grade-fail-not-found"))
-          .pathParam("grade", 1)
+          .queryParam("grade", 1)
           .when()
-          .get("/curricula/grades/{grade}")
+          .get("/curricula/search")
           .then()
           .statusCode(HttpStatus.NOT_IMPLEMENTED.value());
+    }
+
+
+    @ParameterizedTest
+    @ValueSource(ints = { -100, 0 })
+    void should_return_BAD_REQUEST_status_when_grade_is_less_than_1(int grade)
+    {
+      String message = given(spec)
+          .filter(document("get-curriculum-by-grade-fail-grade-is-less-than-1"))
+          .queryParam("grade", grade)
+          .when()
+          .get("/curricula/search")
+          .then()
+          .statusCode(HttpStatus.BAD_REQUEST.value())
+          .extract().response().asString();
+
+      assertThat(message, containsString("must be greater than or equal to 1"));
+    }
+
+
+    @Test
+    void should_return_BAD_REQUEST_status_when_grade_is_greater_than_11()
+    {
+      String message = given(spec)
+          .filter(document("get-curriculum-by-grade-fail-grade-is-greater-than-11"))
+          .queryParam("grade", 100)
+          .when()
+          .get("/curricula/search")
+          .then()
+          .statusCode(HttpStatus.BAD_REQUEST.value())
+          .extract().response().asString();
+
+      assertThat(message, containsString("must be less than or equal to 11"));
     }
   }
 
@@ -177,11 +212,12 @@ class CurriculumControllerTest
     {
       BriefCurriculum curriculum = given(spec)
           .filter(document("create-curriculum-success"))
-          .pathParam("grade", 5)
+          .body(new CurriculumToCreate(5))
+          .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
-          .post("/curricula/grades/{grade}")
+          .post("/curricula")
           .then()
-          .statusCode(HttpStatus.OK.value())
+          .statusCode(HttpStatus.CREATED.value())
           .extract().jsonPath().getObject(".", BriefCurriculum.class);
 
       assertNotNull(curriculum);
@@ -194,11 +230,47 @@ class CurriculumControllerTest
     {
       given(spec)
           .filter(document("create-curriculum-fail-already-exists"))
-          .pathParam("grade", 11)
+          .body(new CurriculumToCreate(11))
+          .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
-          .post("/curricula/grades/{grade}")
+          .post("/curricula")
           .then()
           .statusCode(HttpStatus.CONFLICT.value());
+    }
+
+
+    @ParameterizedTest
+    @ValueSource(ints = { -100, 0 })
+    void should_return_BAD_REQUEST_status_when_grade_is_less_than_1(int grade)
+    {
+      String message = given(spec)
+          .filter(document("create-curriculum-fail-grade-is-less-than-1"))
+          .body(new CurriculumToCreate(grade))
+          .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+          .when()
+          .post("/curricula")
+          .then()
+          .statusCode(HttpStatus.BAD_REQUEST.value())
+          .extract().response().asString();
+
+      assertThat(message, containsString("must be greater than or equal to 1"));
+    }
+
+
+    @Test
+    void should_return_BAD_REQUEST_status_when_grade_is_greater_than_11()
+    {
+      String message = given(spec)
+          .filter(document("create-curriculum-fail-grade-is-greater-than-11"))
+          .body(new CurriculumToCreate(100))
+          .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+          .when()
+          .post("/curricula")
+          .then()
+          .statusCode(HttpStatus.BAD_REQUEST.value())
+          .extract().response().asString();
+
+      assertThat(message, containsString("must be less than or equal to 11"));
     }
   }
 
@@ -239,69 +311,6 @@ class CurriculumControllerTest
 
 
   @Nested
-  @DisplayName("Create subject")
-  class SubjectCreate
-  {
-    @Test
-    void should_return_subject_when_subject_for_name_created_successfully()
-    {
-      String subjectName = "chemistry";
-      Subject subject = given(spec)
-          .filter(document("create-subject-success"))
-          .pathParam("name", subjectName)
-          .when()
-          .post("/curricula/subjects/{name}")
-          .then()
-          .statusCode(HttpStatus.OK.value())
-          .extract().jsonPath().getObject(".", Subject.class);
-
-      assertNotNull(subject);
-      assertEquals(subjectName, subject.getName());
-    }
-
-
-    @Test
-    void should_return_CONFLICT_status_when_subject_for_name_already_exists()
-    {
-      given(spec)
-          .filter(document("create-subject-fail-already-exists"))
-          .pathParam("name", "algebra")
-          .when()
-          .post("/curricula/subjects/{name}")
-          .then()
-          .statusCode(HttpStatus.CONFLICT.value());
-    }
-  }
-
-
-  @Nested
-  @DisplayName("Get all subjects")
-  class SubjectGetAll
-  {
-    @Test
-    void should_return_all_subjects_when_get_all_subjects()
-    {
-      List<Subject> subjects = given(spec)
-          .filter(document("get-all-subjects"))
-          .when()
-          .get("/curricula/subjects")
-          .then()
-          .statusCode(HttpStatus.OK.value())
-          .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-          .extract().jsonPath().getList(".", Subject.class);
-
-      assertNotNull(subjects);
-      assertEquals(4, subjects.size());
-      assertEquals(new HashSet<>(Arrays.asList("algebra", "geometry", "english", "physics")),
-          new HashSet<>(subjects.stream()
-              .map(Subject::getName)
-              .collect(Collectors.toSet())));
-
-    }
-  }
-
-
-  @Nested
   @DisplayName("Course add")
   class CourseAdd
   {
@@ -311,7 +320,7 @@ class CurriculumControllerTest
       String message = given(spec)
           .filter(document("add-course-fail-curriculum-not-found"))
           .pathParam("id", 11)
-          .body(new CourseToAdd(new Subject(1003, "physics"), 200))
+          .body(new CourseToAdd(1003, 200))
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
           .post("/curricula/{id}/courses")
@@ -329,7 +338,7 @@ class CurriculumControllerTest
       String message = given(spec)
           .filter(document("add-course-fail-subject-not-found"))
           .pathParam("id", 1)
-          .body(new CourseToAdd(new Subject(1100, "chemistry"), 200))
+          .body(new CourseToAdd(1100, 200))
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
           .post("/curricula/{id}/courses")
@@ -347,7 +356,7 @@ class CurriculumControllerTest
       String message = given(spec)
           .filter(document("add-course-fail-already-exists"))
           .pathParam("id", 1)
-          .body(new CourseToAdd(new Subject(1000, "algebra"), 200))
+          .body(new CourseToAdd(1000, 200))
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
           .post("/curricula/{id}/courses")
@@ -362,21 +371,39 @@ class CurriculumControllerTest
     @Test
     void should_return_course_when_course_added_successfully()
     {
-      Subject subject = new Subject(1003, "physics");
       Course course = given(spec)
           .filter(document("add-course-success"))
           .pathParam("id", 1)
-          .body(new CourseToAdd(subject, 200))
+          .body(new CourseToAdd(1003, 200))
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
           .post("/curricula/{id}/courses")
           .then()
-          .statusCode(HttpStatus.OK.value())
+          .statusCode(HttpStatus.CREATED.value())
           .extract().jsonPath().getObject(".", Course.class);
 
       assertNotNull(course);
-      assertEquals(subject, course.getSubject());
+      assertEquals(1003, course.getSubject().getId());
       assertEquals(200, course.getLessonCount());
+    }
+
+
+    @ParameterizedTest
+    @ValueSource(ints = { -100, 0 })
+    void should_return_BAD_REQUEST_when_lessonCount_is_invalid(int lessonCount)
+    {
+      String message = given(spec)
+          .filter(document("add-course-fail-lesson-count-is-invalid"))
+          .pathParam("id", 11)
+          .body(new CourseToAdd(1003, lessonCount))
+          .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+          .when()
+          .post("/curricula/{id}/courses")
+          .then()
+          .statusCode(HttpStatus.BAD_REQUEST.value())
+          .extract().response().asString();
+
+      assertThat(message, containsString("must be greater than 0"));
     }
   }
 
@@ -392,10 +419,10 @@ class CurriculumControllerTest
           .filter(document("update-course-success"))
           .pathParam("curriculumId", 1)
           .pathParam("courseId", 100)
-          .param("lessonCount", 300)
+          .body(300)
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
-          .put("/curricula/{curriculumId}/courses/{courseId}")
+          .patch("/curricula/{curriculumId}/courses/{courseId}")
           .then()
           .statusCode(HttpStatus.OK.value())
           .extract().jsonPath().getObject(".", Course.class);
@@ -410,13 +437,13 @@ class CurriculumControllerTest
     void should_return_NOT_FOUND_status_with_message_when_curriculum_for_id_not_found()
     {
       String message = given(spec)
-          .filter(document("update-course-curriculum-not-found"))
+          .filter(document("update-course-fail-curriculum-not-found"))
           .pathParam("curriculumId", 10)
           .pathParam("courseId", 100)
-          .param("lessonCount", 300)
+          .body(300)
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
-          .put("/curricula/{curriculumId}/courses/{courseId}")
+          .patch("/curricula/{curriculumId}/courses/{courseId}")
           .then()
           .statusCode(HttpStatus.NOT_FOUND.value())
           .extract().response().asString();
@@ -429,18 +456,38 @@ class CurriculumControllerTest
     void should_return_NOT_FOUND_status_with_message_when_course_for_id_not_found()
     {
       String message = given(spec)
-          .filter(document("update-course-curriculum-not-found"))
+          .filter(document("update-course-fail-course-not-found"))
           .pathParam("curriculumId", 1)
           .pathParam("courseId", 125)
-          .param("lessonCount", 300)
+          .body(300)
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
-          .put("/curricula/{curriculumId}/courses/{courseId}")
+          .patch("/curricula/{curriculumId}/courses/{courseId}")
           .then()
           .statusCode(HttpStatus.NOT_FOUND.value())
           .extract().response().asString();
 
       assertEquals("Course with id 125 for curriculum with id 1 not found.", message);
+    }
+
+
+    @ParameterizedTest
+    @ValueSource(ints = { -100, 0 })
+    void should_return_BAD_REQUEST_status_when_lessonCount_is_invalid(int lessonCount)
+    {
+      String message = given(spec)
+          .filter(document("update-course-fail-lesson-count-is-invalid"))
+          .pathParam("curriculumId", 1)
+          .pathParam("courseId", 125)
+          .body(lessonCount)
+          .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+          .when()
+          .patch("/curricula/{curriculumId}/courses/{courseId}")
+          .then()
+          .statusCode(HttpStatus.BAD_REQUEST.value())
+          .extract().response().asString();
+
+      assertThat(message, containsString("must be greater than 0"));
     }
   }
 

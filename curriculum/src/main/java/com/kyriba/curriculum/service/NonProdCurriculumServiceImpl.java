@@ -9,13 +9,14 @@ import com.kyriba.curriculum.domain.dto.BriefCurriculum;
 import com.kyriba.curriculum.domain.dto.Course;
 import com.kyriba.curriculum.domain.dto.CourseToAdd;
 import com.kyriba.curriculum.domain.dto.Curriculum;
+import com.kyriba.curriculum.domain.dto.CurriculumToCreate;
 import com.kyriba.curriculum.domain.dto.Subject;
 import com.kyriba.curriculum.service.exception.CourseAlreadyExistsException;
 import com.kyriba.curriculum.service.exception.CourseNotFoundException;
 import com.kyriba.curriculum.service.exception.CurriculumAlreadyExistsException;
 import com.kyriba.curriculum.service.exception.CurriculumNotFoundException;
-import com.kyriba.curriculum.service.exception.SubjectAlreadyExistsException;
 import com.kyriba.curriculum.service.exception.SubjectNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -26,15 +27,18 @@ import java.util.stream.Collectors;
 
 import static com.kyriba.curriculum.service.NonProdData.COUNTER;
 import static com.kyriba.curriculum.service.NonProdData.CURRICULA;
-import static com.kyriba.curriculum.service.NonProdData.SUBJECTS;
 
 /**
  * @author M-DBE
  */
 @Service
 @Profile("!default & !prod")
+@RequiredArgsConstructor
 class NonProdCurriculumServiceImpl implements CurriculumService
 {
+  private final SubjectService subjectService;
+
+
   @Override
   public List<BriefCurriculum> getAllCurricula()
   {
@@ -62,20 +66,14 @@ class NonProdCurriculumServiceImpl implements CurriculumService
 
 
   @Override
-  public List<Subject> getAllSubjects()
+  public BriefCurriculum createCurriculum(CurriculumToCreate curriculumToCreate)
   {
-    return SUBJECTS;
-  }
-
-
-  @Override
-  public BriefCurriculum createCurriculum(int grade)
-  {
-    if (findCurriculumByGrade(grade).isPresent()) {
-      throw new CurriculumAlreadyExistsException();
+    if (findCurriculumByGrade(curriculumToCreate.getGrade()).isPresent()) {
+      throw new CurriculumAlreadyExistsException(curriculumToCreate.getGrade());
     }
 
-    Curriculum curriculum = new Curriculum(COUNTER.incrementAndGet(), grade, Collections.emptyList());
+    Curriculum curriculum = new Curriculum(COUNTER.incrementAndGet(), curriculumToCreate.getGrade(),
+        Collections.emptyList());
     CURRICULA.add(curriculum);
 
     return curriculum.toBrief();
@@ -102,14 +100,12 @@ class NonProdCurriculumServiceImpl implements CurriculumService
     Curriculum curriculum = findCurriculumById(curriculumId)
         .orElseThrow(() -> new CurriculumNotFoundException(curriculumId));
 
-    Subject subject = SUBJECTS.stream()
-        .filter(it -> it.getId() == courseToAdd.getSubject().getId())
-        .findFirst()
-        .orElseThrow(() -> new SubjectNotFoundException(courseToAdd.getSubject().getId()));
+    Subject subject = subjectService.getSubjectById(courseToAdd.getSubjectId())
+        .orElseThrow(() -> new SubjectNotFoundException(courseToAdd.getSubjectId()));
 
     if (curriculum.getCourses().stream()
         .anyMatch(it -> it.getSubject().equals(subject))) {
-      throw new CourseAlreadyExistsException(curriculumId, courseToAdd.getSubject().getId());
+      throw new CourseAlreadyExistsException(curriculumId, courseToAdd.getSubjectId());
     }
 
     Course course = new Course(COUNTER.incrementAndGet(), subject, courseToAdd.getLessonCount());
@@ -119,7 +115,7 @@ class NonProdCurriculumServiceImpl implements CurriculumService
 
 
   @Override
-  public Course updateCourse(long curriculumId, long courseId, int lessonCount)
+  public Course updateLessonCount(long curriculumId, long courseId, int lessonCount)
   {
     Curriculum curriculum = findCurriculumById(curriculumId)
         .orElseThrow(() -> new CurriculumNotFoundException(curriculumId));
@@ -147,18 +143,5 @@ class NonProdCurriculumServiceImpl implements CurriculumService
         .orElseThrow(() -> new CourseNotFoundException(curriculumId, courseId));
     curriculum.getCourses().remove(course);
     return course;
-  }
-
-
-  @Override
-  public Subject createSubject(String name)
-  {
-    if (SUBJECTS.stream().anyMatch(it -> it.getName().equals(name))) {
-      throw new SubjectAlreadyExistsException();
-    }
-
-    Subject newSubject = new Subject(COUNTER.incrementAndGet(), name);
-    SUBJECTS.add(newSubject);
-    return newSubject;
   }
 }

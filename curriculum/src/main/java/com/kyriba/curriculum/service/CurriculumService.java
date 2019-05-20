@@ -9,7 +9,7 @@ import com.kyriba.curriculum.domain.dto.BriefCurriculum;
 import com.kyriba.curriculum.domain.dto.Course;
 import com.kyriba.curriculum.domain.dto.CourseToAdd;
 import com.kyriba.curriculum.domain.dto.Curriculum;
-import com.kyriba.curriculum.domain.dto.Subject;
+import com.kyriba.curriculum.domain.dto.CurriculumToCreate;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,10 +29,7 @@ public interface CurriculumService
   List<BriefCurriculum> getAllCurricula();
 
 
-  List<Subject> getAllSubjects();
-
-
-  BriefCurriculum createCurriculum(int grade);
+  BriefCurriculum createCurriculum(CurriculumToCreate curriculumToCreate);
 
 
   BriefCurriculum removeCurriculum(long curriculumId);
@@ -41,11 +38,8 @@ public interface CurriculumService
   Course addCourse(long curriculumId, CourseToAdd course);
 
 
-  Course updateCourse(long curriculumId, long courseId, int lessonCount);
+  Course updateLessonCount(long curriculumId, long courseId, int lessonCount);
 
 
   Course removeCourse(long curriculumId, long courseId);
-
-
-  Subject createSubject(String name);
 }

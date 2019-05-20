@@ -9,7 +9,7 @@ import com.kyriba.curriculum.domain.dto.BriefCurriculum;
 import com.kyriba.curriculum.domain.dto.Course;
 import com.kyriba.curriculum.domain.dto.CourseToAdd;
 import com.kyriba.curriculum.domain.dto.Curriculum;
-import com.kyriba.curriculum.domain.dto.Subject;
+import com.kyriba.curriculum.domain.dto.CurriculumToCreate;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -47,14 +47,7 @@ class CurriculumServiceImpl implements CurriculumService
 
 
   @Override
-  public List<Subject> getAllSubjects()
-  {
-    return Collections.emptyList();
-  }
-
-
-  @Override
-  public BriefCurriculum createCurriculum(int grade)
+  public BriefCurriculum createCurriculum(CurriculumToCreate curriculumToCreate)
   {
     return null;
   }
@@ -75,7 +68,7 @@ class CurriculumServiceImpl implements CurriculumService
 
 
   @Override
-  public Course updateCourse(long curriculumId, long courseId, int lessonCount)
+  public Course updateLessonCount(long curriculumId, long courseId, int lessonCount)
   {
     return null;
   }
@@ -83,13 +76,6 @@ class CurriculumServiceImpl implements CurriculumService
 
   @Override
   public Course removeCourse(long curriculumId, long courseId)
-  {
-    return null;
-  }
-
-
-  @Override
-  public Subject createSubject(String name)
   {
     return null;
   }

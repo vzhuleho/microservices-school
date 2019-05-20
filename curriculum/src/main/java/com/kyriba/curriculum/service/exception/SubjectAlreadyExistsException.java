@@ -8,6 +8,16 @@ package com.kyriba.curriculum.service.exception;
 /**
  * @author M-DBE
  */
-public class SubjectAlreadyExistsException extends RuntimeException
+public class SubjectAlreadyExistsException extends CurriculumServiceException
 {
+  public SubjectAlreadyExistsException(String subjectName)
+  {
+    super(String.format("Subject with name %s already exists.", subjectName));
+  }
+
+
+  public SubjectAlreadyExistsException(long subjectId)
+  {
+    super(String.format("Subject with id %d already exists.", subjectId));
+  }
 }

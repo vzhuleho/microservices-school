@@ -17,14 +17,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 
 /**
  * @author M-DBE
  */
-@ControllerAdvice(assignableTypes = CurriculumController.class)
-public class CurriculumExceptionHandler
+@ControllerAdvice(assignableTypes = { CurriculumController.class, SubjectController.class })
+public class CustomExceptionHandler
 {
   @ExceptionHandler({ SubjectNotFoundException.class, CurriculumNotFoundException.class,
       CourseNotFoundException.class })
@@ -35,18 +34,11 @@ public class CurriculumExceptionHandler
   }
 
 
-  @ExceptionHandler({ CourseAlreadyExistsException.class })
+  @ExceptionHandler({ CourseAlreadyExistsException.class, CurriculumAlreadyExistsException.class,
+      SubjectAlreadyExistsException.class })
   @ResponseBody
   public ResponseEntity<String> handleConflictException(CurriculumServiceException e)
   {
     return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-  }
-
-
-  @ExceptionHandler({ CurriculumAlreadyExistsException.class, SubjectAlreadyExistsException.class })
-  @ResponseStatus(HttpStatus.CONFLICT)
-  public void handleConflictNoMessageException()
-  {
-
   }
 }

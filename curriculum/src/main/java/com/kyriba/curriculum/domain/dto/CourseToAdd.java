@@ -5,17 +5,18 @@
  */
 package com.kyriba.curriculum.domain.dto;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Value;
+
+import javax.validation.constraints.Positive;
 
 
 /**
  * @author M-DBE
  */
-@RequiredArgsConstructor
-@Getter
+@Value
 public class CourseToAdd
 {
-  private final Subject subject;
+  private final long subjectId;
+  @Positive
   private final int lessonCount;
 }

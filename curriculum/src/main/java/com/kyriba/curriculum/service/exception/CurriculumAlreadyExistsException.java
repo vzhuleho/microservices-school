@@ -10,4 +10,8 @@ package com.kyriba.curriculum.service.exception;
  */
 public class CurriculumAlreadyExistsException extends CurriculumServiceException
 {
+  public CurriculumAlreadyExistsException(int grade)
+  {
+    super(String.format("Curriculum for grade %d already exists.", grade));
+  }
 }
