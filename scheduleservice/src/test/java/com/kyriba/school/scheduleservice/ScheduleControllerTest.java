@@ -9,18 +9,15 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.restdocs.JUnitRestDocumentation;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static com.kyriba.school.scheduleservice.infrastructure.Endpoints.SCHEDULES;
 import static io.restassured.RestAssured.given;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
-import static org.apache.http.HttpStatus.*;
+import static org.apache.http.HttpStatus.SC_CREATED;
+import static org.apache.http.HttpStatus.SC_NO_CONTENT;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document;
@@ -28,9 +25,6 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DirtiesContext
-@AutoConfigureMockMvc
-@ActiveProfiles("dev")
 public class ScheduleControllerTest {
 
 	@Rule
@@ -41,6 +35,7 @@ public class ScheduleControllerTest {
 	@LocalServerPort
 	int port;
 
+	private static final String SCHEDULES = "/api/v1/schedules";
 	private static final int YEAR = 2018;
 	private static final String LETTER = "A";
 	private static final int GRADE = 1;
@@ -123,7 +118,7 @@ public class ScheduleControllerTest {
 				.filter(document("schedules-update"))
 				.when()
 				.body(scheduleAsJson.toString())
-				.patch(SCHEDULES)
+				.put(SCHEDULES)
 				.then()
 				.statusCode(SC_OK)
 				.body("year", is(newExpectedYear));
@@ -136,13 +131,6 @@ public class ScheduleControllerTest {
 				.delete(pathToSchedule)
 				.then()
 				.statusCode(SC_NO_CONTENT);
-
-		given(documentationSpec)
-				.contentType(APPLICATION_JSON_UTF8_VALUE)
-				.when()
-				.get(pathToSchedule)
-				.then()
-				.statusCode(SC_NOT_FOUND);
 	}
 
 }
