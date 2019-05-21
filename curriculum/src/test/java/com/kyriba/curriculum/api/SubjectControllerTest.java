@@ -8,7 +8,6 @@ package com.kyriba.curriculum.api;
 import com.kyriba.curriculum.domain.dto.Subject;
 import com.kyriba.curriculum.domain.dto.SubjectToCreate;
 import com.kyriba.curriculum.domain.dto.SubjectToUpdate;
-import com.kyriba.curriculum.service.NonProdData;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.AfterEach;
@@ -58,15 +57,15 @@ class SubjectControllerTest
         .addFilter(documentationConfiguration(restDocumentation))
         .setBasePath("/api/v1")
         .build();
-    prevSubjects = NonProdData.SUBJECTS;
-    NonProdData.SUBJECTS = NonProdData.DEFAULT_SUBJECTS.get();
+    prevSubjects = SubjectController.SUBJECTS;
+    SubjectController.SUBJECTS = SubjectController.DEFAULT_SUBJECTS.get();
   }
 
 
   @AfterEach
   void after()
   {
-    NonProdData.SUBJECTS = prevSubjects;
+    SubjectController.SUBJECTS = prevSubjects;
   }
 
 

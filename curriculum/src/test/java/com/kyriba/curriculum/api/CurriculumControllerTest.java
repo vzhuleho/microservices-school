@@ -12,7 +12,6 @@ import com.kyriba.curriculum.domain.dto.CourseToUpdate;
 import com.kyriba.curriculum.domain.dto.Curriculum;
 import com.kyriba.curriculum.domain.dto.CurriculumToCreate;
 import com.kyriba.curriculum.domain.dto.Subject;
-import com.kyriba.curriculum.service.NonProdData;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.AfterEach;
@@ -66,15 +65,15 @@ class CurriculumControllerTest
         .addFilter(documentationConfiguration(restDocumentation))
         .setBasePath("/api/v1")
         .build();
-    prevCurricula = NonProdData.CURRICULA;
-    NonProdData.CURRICULA = NonProdData.DEFAULT_CURRICULA.get();
+    prevCurricula = CurriculumController.CURRICULA;
+    CurriculumController.CURRICULA = CurriculumController.DEFAULT_CURRICULA.get();
   }
 
 
   @AfterEach
   void after()
   {
-    NonProdData.CURRICULA = prevCurricula;
+    CurriculumController.CURRICULA = prevCurricula;
   }
 
 

@@ -5,6 +5,12 @@
  */
 package com.kyriba.curriculum.api;
 
+import com.google.common.collect.Lists;
+import com.kyriba.curriculum.api.exception.CourseAlreadyExistsException;
+import com.kyriba.curriculum.api.exception.CourseNotFoundException;
+import com.kyriba.curriculum.api.exception.CurriculumAlreadyExistsException;
+import com.kyriba.curriculum.api.exception.CurriculumNotFoundException;
+import com.kyriba.curriculum.api.exception.SubjectNotFoundException;
 import com.kyriba.curriculum.domain.dto.BriefCurriculum;
 import com.kyriba.curriculum.domain.dto.Course;
 import com.kyriba.curriculum.domain.dto.CourseToAdd;
@@ -13,11 +19,6 @@ import com.kyriba.curriculum.domain.dto.Curriculum;
 import com.kyriba.curriculum.domain.dto.CurriculumToCreate;
 import com.kyriba.curriculum.domain.dto.Subject;
 import com.kyriba.curriculum.domain.dto.constraint.GradeConstraint;
-import com.kyriba.curriculum.service.CurriculumService;
-import com.kyriba.curriculum.service.SubjectService;
-import com.kyriba.curriculum.service.exception.CourseAlreadyExistsException;
-import com.kyriba.curriculum.service.exception.CurriculumNotFoundException;
-import com.kyriba.curriculum.service.exception.SubjectNotFoundException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -40,76 +41,131 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import static com.kyriba.curriculum.api.SubjectController.ALGEBRA;
+import static com.kyriba.curriculum.api.SubjectController.ENGLISH;
+import static com.kyriba.curriculum.api.SubjectController.GEOMETRY;
+import static com.kyriba.curriculum.api.SubjectController.SUBJECTS;
 
 
 /**
  * @author M-DBE
  */
 @RestController
-@RequestMapping("/api/v1/curricula")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 @Validated
 @Api
 class CurriculumController
 {
-  private final CurriculumService curriculumService;
-  private final SubjectService subjectService;
+  static final Supplier<List<Curriculum>> DEFAULT_CURRICULA = () -> Lists.newArrayList(
+      new Curriculum(1, 11, Lists.newArrayList(
+          new Course(100, ALGEBRA, 100),
+          new Course(101, GEOMETRY, 100),
+          new Course(102, ENGLISH, 100))
+      ),
+      new Curriculum(2, 10, Lists.newArrayList(
+          new Course(103, ALGEBRA, 110),
+          new Course(104, GEOMETRY, 90),
+          new Course(105, ENGLISH, 80))
+      )
+  );
+  static List<Curriculum> CURRICULA = DEFAULT_CURRICULA.get();
+
+  private static final AtomicLong COUNTER = new AtomicLong(10_000);
 
 
-  @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  @GetMapping(value = "/curricula", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseBody
   @ApiOperation(value = "Get all curricula", notes = "Retrieving the collection of curricula", response = BriefCurriculum.class,
       responseContainer = "List")
   List<BriefCurriculum> getAllCurricula()
   {
-    return curriculumService.getAllCurricula();
+    return CURRICULA.stream()
+        .map(Curriculum::toBrief)
+        .collect(Collectors.toList());
   }
 
 
-  @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  @GetMapping(value = "/curricula/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseBody
   @ApiOperation(value = "Get curriculum by id", notes = "Retrieving existing curriculum by its identifier", response = Curriculum.class)
   Curriculum getCurriculumById(@ApiParam("Identifier of existing curriculum") @PathVariable("id") long id)
   {
-    return curriculumService.findCurriculumById(id)
+    return findCurriculumById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
   }
 
 
-  @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  @GetMapping(value = "/curricula/search", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseBody
   @ApiOperation(value = "Find existing curriculum by grade", notes = "Retrieving existing curriculum by grade", response = Curriculum.class)
   Curriculum searchByParameters(@ApiParam("Grade") @GradeConstraint @RequestParam("grade") int grade)
   {
-    return curriculumService.findCurriculumByGrade(grade)
+    return findCurriculumByGrade(grade)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED));
   }
 
 
-  @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  @PostMapping(value = "/curricula", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseBody
   @ResponseStatus(HttpStatus.CREATED)
   @ApiOperation(value = "Create curriculum", notes = "Create new curriculum", response = BriefCurriculum.class)
   BriefCurriculum createCurriculum(
       @ApiParam("New curriculum") @Valid @RequestBody CurriculumToCreate curriculumToCreate)
   {
-    return curriculumService.createCurriculum(curriculumToCreate);
+    if (findCurriculumByGrade(curriculumToCreate.getGrade()).isPresent()) {
+      throw new CurriculumAlreadyExistsException(curriculumToCreate.getGrade());
+    }
+
+    Curriculum curriculum = new Curriculum(COUNTER.incrementAndGet(), curriculumToCreate.getGrade(),
+        Collections.emptyList());
+    CURRICULA.add(curriculum);
+
+    return curriculum.toBrief();
   }
 
 
-  @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  private Optional<Curriculum> findCurriculumByGrade(int grade)
+  {
+    return CURRICULA.stream()
+        .filter(it -> it.getGrade() == grade)
+        .findFirst();
+  }
+
+
+  @DeleteMapping(value = "/curricula/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseBody
   @ApiOperation(value = "Delete curriculum", notes = "Delete existing curriculum", response = BriefCurriculum.class)
   BriefCurriculum removeCurriculum(
       @ApiParam("Identifier of curriculum to delete") @PathVariable("id") long curriculumId)
   {
-    return curriculumService.removeCurriculum(curriculumId);
+    Curriculum curriculum = findCurriculumById(curriculumId)
+        .orElseThrow(() -> new CurriculumNotFoundException(curriculumId));
+
+    boolean removed = CURRICULA.remove(curriculum);
+    if (!removed)
+      throw new CurriculumNotFoundException(curriculumId);
+
+    return curriculum.toBrief();
+  }
+
+
+  private Optional<Curriculum> findCurriculumById(long id)
+  {
+    return CURRICULA.stream()
+        .filter(it -> it.getId() == id).findFirst();
   }
 
 
   @PostMapping(
-      value = "/{id}/courses",
+      value = "/curricula/{id}/courses",
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE
   )
@@ -117,14 +173,27 @@ class CurriculumController
   @ResponseStatus(HttpStatus.CREATED)
   @ApiOperation(value = "Add new course", notes = "Add new course to existing curriculum", response = Course.class)
   Course addCourse(@ApiParam("Identifier of existing curriculum") @PathVariable("id") long curriculumId,
-                          @ApiParam("New course") @Valid @RequestBody CourseToAdd course)
+                   @ApiParam("New course") @Valid @RequestBody CourseToAdd courseToAdd)
   {
-    return curriculumService.addCourse(curriculumId, course);
+    Curriculum curriculum = findCurriculumById(curriculumId)
+        .orElseThrow(() -> new CurriculumNotFoundException(curriculumId));
+
+    Subject subject = getSubjectById(courseToAdd.getSubjectId())
+        .orElseThrow(() -> new SubjectNotFoundException(courseToAdd.getSubjectId()));
+
+    if (curriculum.getCourses().stream()
+        .anyMatch(it -> it.getSubject().equals(subject))) {
+      throw new CourseAlreadyExistsException(curriculumId, courseToAdd.getSubjectId());
+    }
+
+    Course createdCourse = new Course(COUNTER.incrementAndGet(), subject, courseToAdd.getLessonCount());
+    curriculum.getCourses().add(createdCourse);
+    return createdCourse;
   }
 
 
   @DeleteMapping(
-      value = "/{curriculumId}/courses/{courseId}",
+      value = "/curricula/{curriculumId}/courses/{courseId}",
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE
   )
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -133,12 +202,18 @@ class CurriculumController
       @ApiParam("Identifier of existing curriculum") @PathVariable("curriculumId") long curriculumId,
       @ApiParam("Identifier of existing course") @PathVariable("courseId") long courseId)
   {
-    curriculumService.removeCourse(curriculumId, courseId);
+    Curriculum curriculum = findCurriculumById(curriculumId)
+        .orElseThrow(() -> new CurriculumNotFoundException(curriculumId));
+    Course course = curriculum.getCourses().stream()
+        .filter(it -> it.getId() == courseId)
+        .findFirst()
+        .orElseThrow(() -> new CourseNotFoundException(curriculumId, courseId));
+    curriculum.getCourses().remove(course);
   }
 
 
   @PutMapping(
-      value = "/{curriculumId}/courses/{courseId}",
+      value = "/curricula/{curriculumId}/courses/{courseId}",
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE
   )
@@ -149,10 +224,10 @@ class CurriculumController
       @ApiParam("Identifier of existing course") @PathVariable("courseId") long courseId,
       @ApiParam("Updated course") @Valid @RequestBody CourseToUpdate courseToUpdate)
   {
-    Curriculum curriculum = curriculumService.findCurriculumById(curriculumId)
+    Curriculum curriculum = findCurriculumById(curriculumId)
         .orElseThrow(() -> new CurriculumNotFoundException(curriculumId));
 
-    Subject subject = subjectService.getSubjectById(courseToUpdate.getSubjectId())
+    Subject subject = getSubjectById(courseToUpdate.getSubjectId())
         .orElseThrow(() -> new SubjectNotFoundException(courseToUpdate.getSubjectId()));
 
     if (curriculum.getCourses().stream()
@@ -163,5 +238,12 @@ class CurriculumController
     boolean removed = curriculum.getCourses().removeIf(it -> it.getId() == courseId);
     curriculum.getCourses().add(updatedCourse);
     return new ResponseEntity<>(updatedCourse, removed ? HttpStatus.OK : HttpStatus.CREATED);
+  }
+
+
+  private Optional<Subject> getSubjectById(long subjectId)
+  {
+    return SUBJECTS.stream()
+        .filter(subject -> subject.getId() == subjectId).findFirst();
   }
 }

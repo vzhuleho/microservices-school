@@ -5,13 +5,13 @@
  */
 package com.kyriba.curriculum.api;
 
-import com.kyriba.curriculum.service.exception.CourseAlreadyExistsException;
-import com.kyriba.curriculum.service.exception.CourseNotFoundException;
-import com.kyriba.curriculum.service.exception.CurriculumAlreadyExistsException;
-import com.kyriba.curriculum.service.exception.CurriculumNotFoundException;
-import com.kyriba.curriculum.service.exception.CurriculumServiceException;
-import com.kyriba.curriculum.service.exception.SubjectAlreadyExistsException;
-import com.kyriba.curriculum.service.exception.SubjectNotFoundException;
+import com.kyriba.curriculum.api.exception.CourseAlreadyExistsException;
+import com.kyriba.curriculum.api.exception.CourseNotFoundException;
+import com.kyriba.curriculum.api.exception.CurriculumAlreadyExistsException;
+import com.kyriba.curriculum.api.exception.CurriculumNotFoundException;
+import com.kyriba.curriculum.api.exception.CurriculumServiceException;
+import com.kyriba.curriculum.api.exception.SubjectAlreadyExistsException;
+import com.kyriba.curriculum.api.exception.SubjectNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
