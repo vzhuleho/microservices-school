@@ -8,6 +8,7 @@ package com.kyriba.curriculum.api;
 import com.kyriba.curriculum.domain.dto.BriefCurriculum;
 import com.kyriba.curriculum.domain.dto.Course;
 import com.kyriba.curriculum.domain.dto.CourseToAdd;
+import com.kyriba.curriculum.domain.dto.CourseToUpdate;
 import com.kyriba.curriculum.domain.dto.Curriculum;
 import com.kyriba.curriculum.domain.dto.CurriculumToCreate;
 import com.kyriba.curriculum.domain.dto.Subject;
@@ -416,13 +417,13 @@ class CurriculumControllerTest
     void should_return_updated_course_when_updated_successfully()
     {
       Course course = given(spec)
-          .filter(document("update-course-success"))
+          .filter(document("update-course-replaced-success"))
           .pathParam("curriculumId", 1)
           .pathParam("courseId", 100)
-          .body(300)
+          .body(new CourseToUpdate(1000, 300))
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
-          .patch("/curricula/{curriculumId}/courses/{courseId}")
+          .put("/curricula/{curriculumId}/courses/{courseId}")
           .then()
           .statusCode(HttpStatus.OK.value())
           .extract().jsonPath().getObject(".", Course.class);
@@ -434,40 +435,58 @@ class CurriculumControllerTest
 
 
     @Test
+    void should_return_newly_created_course_when_course_for_id_not_found()
+    {
+      Course course = given(spec)
+          .filter(document("update-course-created-success"))
+          .pathParam("curriculumId", 1)
+          .pathParam("courseId", 110)
+          .body(new CourseToUpdate(1003, 300))
+          .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+          .when()
+          .put("/curricula/{curriculumId}/courses/{courseId}")
+          .then()
+          .statusCode(HttpStatus.CREATED.value())
+          .extract().jsonPath().getObject(".", Course.class);
+
+      assertNotNull(course);
+      assertEquals(new Subject(1003, "physics"), course.getSubject());
+      assertEquals(300, course.getLessonCount());
+    }
+
+
+    @Test
+    void should_return_CONFLICT_status_when_other_course_for_subject_exists()
+    {
+      given(spec)
+          .filter(document("update-course-fail-other-for-subject-exists"))
+          .pathParam("curriculumId", 1)
+          .pathParam("courseId", 100)
+          .body(new CourseToUpdate(1001, 300))
+          .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+          .when()
+          .put("/curricula/{curriculumId}/courses/{courseId}")
+          .then()
+          .statusCode(HttpStatus.CONFLICT.value());
+    }
+
+
+    @Test
     void should_return_NOT_FOUND_status_with_message_when_curriculum_for_id_not_found()
     {
       String message = given(spec)
           .filter(document("update-course-fail-curriculum-not-found"))
           .pathParam("curriculumId", 10)
           .pathParam("courseId", 100)
-          .body(300)
+          .body(new CourseToUpdate(1000, 300))
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
-          .patch("/curricula/{curriculumId}/courses/{courseId}")
+          .put("/curricula/{curriculumId}/courses/{courseId}")
           .then()
           .statusCode(HttpStatus.NOT_FOUND.value())
           .extract().response().asString();
 
       assertEquals("Curriculum with id 10 not found.", message);
-    }
-
-
-    @Test
-    void should_return_NOT_FOUND_status_with_message_when_course_for_id_not_found()
-    {
-      String message = given(spec)
-          .filter(document("update-course-fail-course-not-found"))
-          .pathParam("curriculumId", 1)
-          .pathParam("courseId", 125)
-          .body(300)
-          .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-          .when()
-          .patch("/curricula/{curriculumId}/courses/{courseId}")
-          .then()
-          .statusCode(HttpStatus.NOT_FOUND.value())
-          .extract().response().asString();
-
-      assertEquals("Course with id 125 for curriculum with id 1 not found.", message);
     }
 
 
@@ -479,10 +498,10 @@ class CurriculumControllerTest
           .filter(document("update-course-fail-lesson-count-is-invalid"))
           .pathParam("curriculumId", 1)
           .pathParam("courseId", 125)
-          .body(lessonCount)
+          .body(new CourseToUpdate(1000, lessonCount))
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
-          .patch("/curricula/{curriculumId}/courses/{courseId}")
+          .put("/curricula/{curriculumId}/courses/{courseId}")
           .then()
           .statusCode(HttpStatus.BAD_REQUEST.value())
           .extract().response().asString();
@@ -499,19 +518,14 @@ class CurriculumControllerTest
     @Test
     void should_return_removed_course_when_removed_successfully()
     {
-      Course course = given(spec)
+      given(spec)
           .filter(document("remove-course-success"))
           .pathParam("curriculumId", 1)
           .pathParam("courseId", 100)
           .when()
           .delete("/curricula/{curriculumId}/courses/{courseId}")
           .then()
-          .statusCode(HttpStatus.OK.value())
-          .extract().jsonPath().getObject(".", Course.class);
-
-      assertNotNull(course);
-      assertEquals(new Subject(1000, "algebra"), course.getSubject());
-      assertEquals(100, course.getLessonCount());
+          .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
 

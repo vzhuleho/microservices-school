@@ -39,7 +39,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 @Api
-public class SubjectController
+class SubjectController
 {
   private final SubjectService subjectService;
 
@@ -48,7 +48,7 @@ public class SubjectController
   @ResponseBody
   @ResponseStatus(HttpStatus.CREATED)
   @ApiOperation(value = "Create subject", notes = "Creating new subject", response = Subject.class)
-  public Subject createSubject(@Valid @RequestBody @ApiParam("New subject") SubjectToCreate subjectToCreate)
+  Subject createSubject(@Valid @RequestBody @ApiParam("New subject") SubjectToCreate subjectToCreate)
   {
     return subjectService.createSubject(subjectToCreate);
   }
@@ -57,7 +57,7 @@ public class SubjectController
   @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseBody
   @ApiOperation(value = "Update subject", notes = "Updating an existing subject", response = Subject.class)
-  public ResponseEntity<Subject> updateSubject(
+  ResponseEntity<Subject> updateSubject(
       @ApiParam("Subject id of the subject to be updated") @PathVariable("id") long subjectId,
       @ApiParam("Updated subject") @Valid @RequestBody SubjectToUpdate subjectToUpdate)
   {
@@ -72,7 +72,7 @@ public class SubjectController
   @ResponseBody
   @ApiOperation(value = "Get all subjects", notes = "Retrieving the collection of subjects",
       response = Subject.class, responseContainer = "List")
-  public List<Subject> getAllSubjects()
+  List<Subject> getAllSubjects()
   {
     return subjectService.getAllSubjects();
   }
