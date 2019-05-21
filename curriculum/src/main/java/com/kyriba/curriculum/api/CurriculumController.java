@@ -58,7 +58,7 @@ import static com.kyriba.curriculum.api.SubjectController.SUBJECTS;
  * @author M-DBE
  */
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/curricula")
 @RequiredArgsConstructor
 @Validated
 @Api
@@ -81,7 +81,7 @@ class CurriculumController
   private static final AtomicLong COUNTER = new AtomicLong(10_000);
 
 
-  @GetMapping(value = "/curricula", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseBody
   @ApiOperation(value = "Get all curricula", notes = "Retrieving the collection of curricula", response = BriefCurriculum.class,
       responseContainer = "List")
@@ -93,7 +93,7 @@ class CurriculumController
   }
 
 
-  @GetMapping(value = "/curricula/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseBody
   @ApiOperation(value = "Get curriculum by id", notes = "Retrieving existing curriculum by its identifier", response = Curriculum.class)
   Curriculum getCurriculumById(@ApiParam("Identifier of existing curriculum") @PathVariable("id") long id)
@@ -103,7 +103,7 @@ class CurriculumController
   }
 
 
-  @GetMapping(value = "/curricula/search", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseBody
   @ApiOperation(value = "Find existing curriculum by grade", notes = "Retrieving existing curriculum by grade", response = Curriculum.class)
   Curriculum searchByParameters(@ApiParam("Grade") @GradeConstraint @RequestParam("grade") int grade)
@@ -113,7 +113,7 @@ class CurriculumController
   }
 
 
-  @PostMapping(value = "/curricula", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseBody
   @ResponseStatus(HttpStatus.CREATED)
   @ApiOperation(value = "Create curriculum", notes = "Create new curriculum", response = BriefCurriculum.class)
@@ -140,7 +140,7 @@ class CurriculumController
   }
 
 
-  @DeleteMapping(value = "/curricula/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseBody
   @ApiOperation(value = "Delete curriculum", notes = "Delete existing curriculum", response = BriefCurriculum.class)
   BriefCurriculum removeCurriculum(
@@ -165,7 +165,7 @@ class CurriculumController
 
 
   @PostMapping(
-      value = "/curricula/{id}/courses",
+      value = "/{id}/courses",
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE
   )
@@ -193,7 +193,7 @@ class CurriculumController
 
 
   @DeleteMapping(
-      value = "/curricula/{curriculumId}/courses/{courseId}",
+      value = "/{curriculumId}/courses/{courseId}",
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE
   )
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -213,7 +213,7 @@ class CurriculumController
 
 
   @PutMapping(
-      value = "/curricula/{curriculumId}/courses/{courseId}",
+      value = "/{curriculumId}/courses/{courseId}",
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE
   )
