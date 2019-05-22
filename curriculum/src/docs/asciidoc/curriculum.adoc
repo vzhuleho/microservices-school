@@ -1,0 +1,117 @@
+:snippets: ../../../build/generated-snippets
+
+:doctype: book
+:toc:
+:sectanchors:
+:sectlinks:
+:toclevels: 4
+:source-highlighter: highlightjs
+
+[[overview]]
+= Curriculum API overview
+
+== API
+
+=== Get curriculum by grade
+
+==== Example curl request
+
+include::{snippets}/get-curriculum-by-grade-success/curl-request.adoc[]
+
+==== Example HTTP request
+
+include::{snippets}/get-curriculum-by-grade-success/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/get-curriculum-by-grade-success/http-response.adoc[]
+
+==== Example HTTPie request
+
+include::{snippets}/get-curriculum-by-grade-success/httpie-request.adoc[]
+
+==== Example request body
+
+include::{snippets}/get-curriculum-by-grade-success/request-body.adoc[]
+
+==== Example response body
+
+include::{snippets}/get-curriculum-by-grade-success/response-body.adoc[]
+
+=== Get curriculum by id
+
+==== Example curl request
+
+include::{snippets}/get-curriculum-by-id-success/curl-request.adoc[]
+
+==== Example HTTP request
+
+include::{snippets}/get-curriculum-by-id-success/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/get-curriculum-by-id-success/http-response.adoc[]
+
+==== Example response body
+
+include::{snippets}/get-curriculum-by-id-success/httpie-request.adoc[]
+
+==== Example request body
+
+include::{snippets}/get-curriculum-by-id-success/request-body.adoc[]
+
+==== Example HTTPie request
+
+include::{snippets}/get-curriculum-by-id-success/response-body.adoc[]
+
+=== Get all curricula
+
+==== Example curl request
+
+include::{snippets}/get-all-curricula/curl-request.adoc[]
+
+==== Example HTTP request
+
+include::{snippets}/get-all-curricula/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/get-all-curricula/http-response.adoc[]
+
+==== Example HTTPie request
+
+include::{snippets}/get-all-curricula/httpie-request.adoc[]
+
+==== Example request body
+
+include::{snippets}/get-all-curricula/request-body.adoc[]
+
+==== Example response body
+
+include::{snippets}/get-all-curricula/response-body.adoc[]
+
+=== Get all subjects
+
+==== Example curl request
+
+include::{snippets}/get-all-subjects/curl-request.adoc[]
+
+==== Example HTTP request
+
+include::{snippets}/get-all-subjects/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/get-all-subjects/http-response.adoc[]
+
+==== Example HTTPie request
+
+include::{snippets}/get-all-subjects/httpie-request.adoc[]
+
+==== Example request body
+
+include::{snippets}/get-all-subjects/request-body.adoc[]
+
+==== Example response body
+
+include::{snippets}/get-all-subjects/response-body.adoc[]
