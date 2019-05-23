@@ -146,22 +146,22 @@ class SubjectControllerTest
 
 
     @Test
-    void should_return_newly_created_subject_when_subject_for_id_not_found()
+    void should_return_NOT_FOUND_status_when_subject_for_id_not_found()
     {
       String subjectName = "chemistry";
-      Subject subject = given(spec)
-          .filter(document("update-subject-success"))
+      String message = given(spec)
+          .filter(document("update-subject-fail-subject-id-not-found"))
           .pathParam("id", 999)
           .body(new SubjectToUpdate(subjectName))
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
           .put("/subjects/{id}")
           .then()
-          .statusCode(HttpStatus.CREATED.value())
-          .extract().jsonPath().getObject(".", Subject.class);
+          .statusCode(HttpStatus.NOT_FOUND.value())
+          .extract().response().asString();
 
-      assertNotNull(subject);
-      assertEquals(subjectName, subject.getName());
+      assertNotNull(message);
+      assertEquals("Subject with id 999 not found.", message);
     }
   }
 

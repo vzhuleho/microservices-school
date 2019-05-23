@@ -5,10 +5,11 @@
  */
 package com.kyriba.curriculum.api;
 
+import com.kyriba.curriculum.api.exception.SubjectAlreadyExistsException;
+import com.kyriba.curriculum.api.exception.SubjectNotFoundException;
 import com.kyriba.curriculum.domain.dto.Subject;
 import com.kyriba.curriculum.domain.dto.SubjectToCreate;
 import com.kyriba.curriculum.domain.dto.SubjectToUpdate;
-import com.kyriba.curriculum.api.exception.SubjectAlreadyExistsException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -82,12 +83,11 @@ class SubjectController
       @ApiParam("Updated subject") @Valid @RequestBody SubjectToUpdate subjectToUpdate)
   {
     return SUBJECTS.stream()
-      .filter(it -> it.getId() == subjectId)
-      .findFirst()
-      .map(existingSubject -> new Subject(existingSubject.getId(), subjectToUpdate.getName()))
+        .filter(it -> it.getId() == subjectId)
+        .findFirst()
+        .map(existingSubject -> new Subject(existingSubject.getId(), subjectToUpdate.getName()))
         .map(updatedSubject -> new ResponseEntity<>(updatedSubject, HttpStatus.OK))
-        .orElseGet(() -> new ResponseEntity<>(createSubject(new SubjectToCreate(subjectToUpdate.getName())),
-            HttpStatus.CREATED));
+        .orElseThrow(() -> new SubjectNotFoundException(subjectId));
   }
 
 

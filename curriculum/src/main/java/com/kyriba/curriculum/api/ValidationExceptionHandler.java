@@ -19,7 +19,7 @@ import javax.validation.ValidationException;
  * @author M-DBE
  */
 @ControllerAdvice
-public class ValidationExceptionHandler
+class ValidationExceptionHandler
 {
   @ResponseBody
   @ExceptionHandler({ ValidationException.class, ConstraintViolationException.class })

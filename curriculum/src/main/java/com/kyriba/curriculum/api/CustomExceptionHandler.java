@@ -23,12 +23,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author M-DBE
  */
 @ControllerAdvice(assignableTypes = { CurriculumController.class, SubjectController.class })
-public class CustomExceptionHandler
+class CustomExceptionHandler
 {
   @ExceptionHandler({ SubjectNotFoundException.class, CurriculumNotFoundException.class,
       CourseNotFoundException.class })
   @ResponseBody
-  public ResponseEntity<String> handleNotFoundException(CurriculumServiceException e)
+  ResponseEntity<String> handleNotFoundException(CurriculumServiceException e)
   {
     return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
   }
@@ -37,7 +37,7 @@ public class CustomExceptionHandler
   @ExceptionHandler({ CourseAlreadyExistsException.class, CurriculumAlreadyExistsException.class,
       SubjectAlreadyExistsException.class })
   @ResponseBody
-  public ResponseEntity<String> handleConflictException(CurriculumServiceException e)
+  ResponseEntity<String> handleConflictException(CurriculumServiceException e)
   {
     return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
   }

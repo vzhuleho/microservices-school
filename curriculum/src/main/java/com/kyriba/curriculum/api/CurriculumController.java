@@ -219,7 +219,7 @@ class CurriculumController
   )
   @ResponseBody
   @ApiOperation(value = "Update lesson count for course", notes = "Update lesson count for existing course", response = Course.class)
-  ResponseEntity<Course> updateCourse(
+  Course updateCourse(
       @ApiParam("Identifier of existing curriculum") @PathVariable("curriculumId") long curriculumId,
       @ApiParam("Identifier of existing course") @PathVariable("courseId") long courseId,
       @ApiParam("Updated course") @Valid @RequestBody CourseToUpdate courseToUpdate)
@@ -236,8 +236,13 @@ class CurriculumController
 
     Course updatedCourse = new Course(courseId, subject, courseToUpdate.getLessonCount());
     boolean removed = curriculum.getCourses().removeIf(it -> it.getId() == courseId);
-    curriculum.getCourses().add(updatedCourse);
-    return new ResponseEntity<>(updatedCourse, removed ? HttpStatus.OK : HttpStatus.CREATED);
+    if (removed) {
+      curriculum.getCourses().add(updatedCourse);
+      return updatedCourse;
+    }
+    else {
+      throw new CourseNotFoundException(curriculumId, courseId);
+    }
   }
 
 

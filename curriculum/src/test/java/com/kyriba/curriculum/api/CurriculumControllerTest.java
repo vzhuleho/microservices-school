@@ -434,10 +434,10 @@ class CurriculumControllerTest
 
 
     @Test
-    void should_return_newly_created_course_when_course_for_id_not_found()
+    void should_return_NOT_FOUND_status_when_course_for_id_not_found()
     {
-      Course course = given(spec)
-          .filter(document("update-course-created-success"))
+      String message = given(spec)
+          .filter(document("update-course-updated-fail-course-id-not-found"))
           .pathParam("curriculumId", 1)
           .pathParam("courseId", 110)
           .body(new CourseToUpdate(1003, 300))
@@ -445,12 +445,11 @@ class CurriculumControllerTest
           .when()
           .put("/curricula/{curriculumId}/courses/{courseId}")
           .then()
-          .statusCode(HttpStatus.CREATED.value())
-          .extract().jsonPath().getObject(".", Course.class);
+          .statusCode(HttpStatus.NOT_FOUND.value())
+          .extract().response().asString();
 
-      assertNotNull(course);
-      assertEquals(new Subject(1003, "physics"), course.getSubject());
-      assertEquals(300, course.getLessonCount());
+      assertNotNull(message);
+      assertEquals("Course with id 110 for curriculum with id 1 not found.", message);
     }
 
 
@@ -471,7 +470,7 @@ class CurriculumControllerTest
 
 
     @Test
-    void should_return_NOT_FOUND_status_with_message_when_curriculum_for_id_not_found()
+    void should_return_NOT_FOUND_status_when_curriculum_for_id_not_found()
     {
       String message = given(spec)
           .filter(document("update-course-fail-curriculum-not-found"))
