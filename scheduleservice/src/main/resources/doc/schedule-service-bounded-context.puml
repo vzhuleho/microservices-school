@@ -6,6 +6,15 @@ class Lesson {
   +date
 }
 
+class Mark {
+  +pupil
+  +mark
+}
+
+class Absence {
+  +pupil
+}
+
 class SchoolClass {
   +grade
   +letter
@@ -23,13 +32,20 @@ class Schedule {
   +year
 }
 
+class Day {
+  +date
+}
+
 
 Principal .-> Schedule : Creates
-Principal .-> Lesson : Adds to the schedule
-Lesson "1" *-down-> "1" SchoolClass : is conducted for
-Lesson "1" *-left-> "1" Subject : contains
-Lesson "1" *-right-> "1" Teacher : is conducted by
-Schedule "1" *-down-> "many" Lesson : contains
+Principal .-> Lesson : Defines for each day
+Lesson "1" *--> "1" SchoolClass : is conducted for
+Lesson "1" *--> "1" Subject : contains
+Lesson "1" *--> "1" Teacher : is conducted by
+Lesson "1" *--> "*" Mark : contains
+Lesson "1" *--> "*" Absence : contains
+Schedule "1" *--> "*" Day : contains
+Day "1" *--> "*" Lesson : contains
 
 
 @enduml
