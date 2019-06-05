@@ -9,7 +9,13 @@ package com.kyriba.schoolclassservice.service.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 
 
 /**
@@ -19,18 +25,21 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-@ToString
 @ApiModel(value = "School class data")
 public class SchoolClassDto
 {
   @ApiModelProperty(value = "School class id", example = "123")
   Long id;
   @ApiModelProperty(value = "School class grade", example = "10")
-  String grade;
+  @Size(min = 1, max = 2)
+  @NonNull
+  Integer grade;
   @ApiModelProperty(value = "School class letter", example = "A")
+  @Size(min = 1, max = 2)
+  @NonNull
   String letter;
   @ApiModelProperty(value = "School class year", example = "2018")
+  @Positive
   int year;
   @ApiModelProperty(value = "Class head teacher")
   HeadTeacherDto headTeacher;

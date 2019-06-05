@@ -8,12 +8,15 @@
 package com.kyriba.schoolclassservice.api;
 
 import com.kyriba.schoolclassservice.service.SchoolClassService;
+import com.kyriba.schoolclassservice.service.dto.ClassUpdateRequest;
 import com.kyriba.schoolclassservice.service.dto.PupilDto;
 import com.kyriba.schoolclassservice.service.dto.SchoolClassDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -28,25 +31,17 @@ import java.util.Set;
  */
 @Api(value = "School classes endpoint")
 @RestController
-@RequestMapping(value = "/api/v1/classes", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+@RequestMapping(value = "${api.version.path}/classes", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
     produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@AllArgsConstructor
 public class SchoolClassController
 {
-
   private final SchoolClassService service;
-
-
-  @Autowired
-  public SchoolClassController(SchoolClassService service)
-  {
-    this.service = service;
-  }
 
 
   @ApiOperation(value = "Get all school classes")
   @GetMapping
-  @ResponseBody
-  public List<SchoolClassDto> get()
+  private List<SchoolClassDto> list()
   {
     return service.getAll();
   }
@@ -54,9 +49,8 @@ public class SchoolClassController
 
   @ApiOperation(value = "Get school class by id")
   @GetMapping(value = "/{classId}")
-  @ResponseBody
-  public SchoolClassDto get(@ApiParam(value = "Class unique identifier", example = "1", required = true)
-                            @PathVariable Long classId)
+  private SchoolClassDto get(@ApiParam(value = "Class unique identifier", example = "1", required = true)
+                             @PathVariable Long classId)
   {
     return service.getById(classId);
   }
@@ -64,30 +58,27 @@ public class SchoolClassController
 
   @ApiOperation(value = "Register a new school class")
   @PostMapping
-  @ResponseBody
   @ResponseStatus(HttpStatus.CREATED)
-  public SchoolClassDto add(@RequestBody SchoolClassDto schoolClass)
+  private ClassCreated add(@RequestBody SchoolClassDto schoolClass)
   {
     schoolClass.setId(null);
-    return service.create(schoolClass);
+    return new ClassCreated(service.create(schoolClass).getId());
   }
 
 
   @ApiOperation(value = "Update an exiting school class")
   @PutMapping(value = "/{classId}")
-  public SchoolClassDto update(@ApiParam(value = "Class unique identifier", example = "1", required = true)
-                               @PathVariable Long classId,
-                               @RequestBody SchoolClassDto schoolClass)
+  private SchoolClassDto update(@ApiParam(value = "Class unique identifier", example = "1", required = true)
+                                @PathVariable Long classId,
+                                @RequestBody ClassUpdateRequest updateRequest)
   {
-    schoolClass.setId(classId);
-    return service.updateClass(classId, schoolClass);
+    return service.updateClass(classId, updateRequest);
   }
 
 
   @ApiOperation(value = "View pupils in the class")
   @GetMapping(value = "/{classId}/pupils")
-  @ResponseBody
-  public Set<PupilDto> getPupils(@PathVariable Long classId)
+  private Set<PupilDto> getPupils(@PathVariable Long classId)
   {
     return service.getPupilsForClass(classId);
   }
@@ -95,24 +86,40 @@ public class SchoolClassController
 
   @ApiOperation(value = "Add a pupil to the school class")
   @PutMapping(value = "/{classId}/pupils")
-  @ResponseBody
-  public Set<PupilDto> addPupilToClass(@ApiParam(value = "Class unique identifier", example = "1", required = true)
-                                       @PathVariable Long classId,
-                                       @RequestBody PupilDto pupil)
+  private PupilAdded addPupilToClass(@ApiParam(value = "Class unique identifier", example = "1", required = true)
+                                     @PathVariable Long classId,
+                                     @RequestBody PupilDto pupil)
   {
-    return service.addPupilToClass(classId, pupil);
+    return new PupilAdded(service.addPupilToClass(classId, pupil).getId());
   }
 
 
   @ApiOperation(value = "Remove a pupil from the school class")
   @DeleteMapping("/{classId}/pupils/{pupilId}")
-  public void removePupilFromClass(
+  private void removePupilFromClass(
       @ApiParam(value = "Class unique identifier", example = "1", required = true)
       @PathVariable Long classId,
       @ApiParam(value = "Pupil unique identifier", example = "2", required = true)
       @PathVariable Long pupilId)
   {
     service.removePupilFromClass(classId, pupilId);
+  }
+
+
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class PupilAdded
+  {
+    long id;
+  }
+
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class ClassCreated
+  {
+    long id;
   }
 
 }

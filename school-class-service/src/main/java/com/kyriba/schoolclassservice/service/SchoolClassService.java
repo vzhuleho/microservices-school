@@ -7,11 +7,14 @@
  ********************************************************************************/
 package com.kyriba.schoolclassservice.service;
 
+import com.kyriba.schoolclassservice.service.dto.ClassUpdateRequest;
 import com.kyriba.schoolclassservice.service.dto.PupilDto;
 import com.kyriba.schoolclassservice.service.dto.SchoolClassDto;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -31,6 +34,9 @@ public class SchoolClassService
   {
     final SchoolClassDto schoolClassDto = new SchoolClassDto();
     schoolClassDto.setId(id);
+    schoolClassDto.setLetter("A");
+    schoolClassDto.setGrade(11);
+    schoolClassDto.setYear(2013);
     return schoolClassDto;
   }
 
@@ -38,13 +44,21 @@ public class SchoolClassService
   public SchoolClassDto create(SchoolClassDto schoolClass)
   {
     schoolClass.setId(10L);
+    schoolClass.setLetter("A");
+    schoolClass.setGrade(11);
+    schoolClass.setYear(2013);
     return schoolClass;
   }
 
 
-  public SchoolClassDto updateClass(Long classId, SchoolClassDto schoolClass)
+  public SchoolClassDto updateClass(Long classId, ClassUpdateRequest updateRequest)
   {
-    return schoolClass;
+    final SchoolClassDto schoolClassDto = new SchoolClassDto();
+    schoolClassDto.setId(classId);
+    schoolClassDto.setGrade(updateRequest.getGrade());
+    schoolClassDto.setLetter(updateRequest.getLetter());
+    schoolClassDto.setHeadTeacher(updateRequest.getHeadTeacher());
+    return schoolClassDto;
   }
 
 
@@ -60,9 +74,9 @@ public class SchoolClassService
   }
 
 
-  public Set<PupilDto> addPupilToClass(Long classId, PupilDto pupil)
+  public PupilDto addPupilToClass(Long classId, PupilDto pupil)
   {
-    return new HashSet<>(Collections.singletonList(pupil));
+    return pupil;
   }
 
 
