@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
@@ -31,7 +32,7 @@ public class SchoolClassDto
   @ApiModelProperty(value = "School class id", example = "123")
   Long id;
   @ApiModelProperty(value = "School class grade", example = "10")
-  @Size(min = 1, max = 2)
+  @Range(min = 1, max = 12)
   @NonNull
   Integer grade;
   @ApiModelProperty(value = "School class letter", example = "A")

@@ -9,9 +9,8 @@ package com.kyriba.schoolclassservice.service.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Range;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 
@@ -25,8 +24,7 @@ public class ClassUpdateRequest
   @ApiModelProperty(value = "Class head teacher")
   HeadTeacherDto headTeacher;
   @ApiModelProperty(value = "School class grade", example = "10")
-  @Min(1)
-  @Max(12)
+  @Range(min = 1, max = 12)
   Integer grade;
   @ApiModelProperty(value = "School class letter", example = "A")
   @Size(min = 1, max = 1)
