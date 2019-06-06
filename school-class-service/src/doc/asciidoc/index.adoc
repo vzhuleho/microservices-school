@@ -1,0 +1,198 @@
+:snippets: ../../../target/generated-snippets
+
+= School class service Guide
+Vitaly Belkevich;
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+[introduction]
+= Introduction
+
+== API
+
+=== School class create
+
+==== Example curl request
+
+include::{snippets}/school-class-create/curl-request.adoc[]
+
+==== Example HTTP request
+
+include::{snippets}/school-class-create/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/school-class-create/http-response.adoc[]
+
+==== Example HTTPie request
+
+include::{snippets}/school-class-create/httpie-request.adoc[]
+
+==== Example request body
+
+include::{snippets}/school-class-create/request-body.adoc[]
+
+==== Example response body
+
+include::{snippets}/school-class-create/response-body.adoc[]
+
+
+=== School class getting by ID
+
+==== Example curl request
+
+include::{snippets}/school-class-get/curl-request.adoc[]
+
+==== Example HTTP request
+
+include::{snippets}/school-class-get/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/school-class-get/http-response.adoc[]
+
+==== Example HTTPie request
+
+include::{snippets}/school-class-get/httpie-request.adoc[]
+
+==== Example request body
+
+include::{snippets}/school-class-get/request-body.adoc[]
+
+==== Example response body
+
+include::{snippets}/school-class-get/response-body.adoc[]
+
+=== School class get all
+
+==== Example curl request
+
+include::{snippets}/school-class-get-all/curl-request.adoc[]
+
+==== Example HTTP request
+
+include::{snippets}/school-class-get-all/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/school-class-get-all/http-response.adoc[]
+
+==== Example HTTPie request
+
+include::{snippets}/school-class-get-all/httpie-request.adoc[]
+
+==== Example request body
+
+include::{snippets}/school-class-get-all/request-body.adoc[]
+
+==== Example response body
+
+include::{snippets}/school-class-get-all/response-body.adoc[]
+
+=== School class update
+
+==== Example curl request
+
+include::{snippets}/school-class-update/curl-request.adoc[]
+
+==== Example HTTP request
+
+include::{snippets}/school-class-update/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/school-class-update/http-response.adoc[]
+
+==== Example HTTPie request
+
+include::{snippets}/school-class-update/httpie-request.adoc[]
+
+==== Example request body
+
+include::{snippets}/school-class-update/request-body.adoc[]
+
+==== Example response body
+
+include::{snippets}/school-class-update/response-body.adoc[]
+
+=== Get all pupils of specified class
+
+==== Example curl request
+
+include::{snippets}/school-class-pupils-get/curl-request.adoc[]
+
+==== Example HTTP request
+
+include::{snippets}/school-class-pupils-get/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/school-class-pupils-get/http-response.adoc[]
+
+==== Example HTTPie request
+
+include::{snippets}/school-class-pupils-get/httpie-request.adoc[]
+
+==== Example request body
+
+include::{snippets}/school-class-pupils-get/request-body.adoc[]
+
+==== Example response body
+
+include::{snippets}/school-class-pupils-get/response-body.adoc[]
+
+=== Add pupil to specified class
+
+==== Example curl request
+
+include::{snippets}/school-class-pupils-add/curl-request.adoc[]
+
+==== Example HTTP request
+
+include::{snippets}/school-class-pupils-add/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/school-class-pupils-add/http-response.adoc[]
+
+==== Example HTTPie request
+
+include::{snippets}/school-class-pupils-add/httpie-request.adoc[]
+
+==== Example request body
+
+include::{snippets}/school-class-pupils-add/request-body.adoc[]
+
+==== Example response body
+
+include::{snippets}/school-class-pupils-add/response-body.adoc[]
+
+=== Fire pupil from class
+
+==== Example curl request
+
+include::{snippets}/school-class-pupils-delete/curl-request.adoc[]
+
+==== Example HTTP request
+
+include::{snippets}/school-class-pupils-delete/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/school-class-pupils-delete/http-response.adoc[]
+
+==== Example HTTPie request
+
+include::{snippets}/school-class-pupils-delete/httpie-request.adoc[]
+
+==== Example request body
+
+include::{snippets}/school-class-pupils-delete/request-body.adoc[]
+
+==== Example response body
+
+include::{snippets}/school-class-pupils-delete/response-body.adoc[]
