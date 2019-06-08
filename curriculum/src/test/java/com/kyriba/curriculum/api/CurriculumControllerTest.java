@@ -11,7 +11,6 @@ import com.kyriba.curriculum.domain.dto.CourseToAdd;
 import com.kyriba.curriculum.domain.dto.CourseToUpdate;
 import com.kyriba.curriculum.domain.dto.Curriculum;
 import com.kyriba.curriculum.domain.dto.CurriculumToCreate;
-import com.kyriba.curriculum.domain.dto.Subject;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.AfterEach;
@@ -78,7 +77,7 @@ class CurriculumControllerTest
 
 
   @Nested
-  @DisplayName("Get curriculum")
+  @DisplayName("Get curriculum by id")
   class CurriculumGet
   {
     @Test
@@ -111,24 +110,30 @@ class CurriculumControllerTest
       assertEquals(1, curriculum.getId());
       assertEquals(11, curriculum.getGrade());
     }
+  }
 
 
+  @Nested()
+  @DisplayName("Get curriculum by grade")
+  class CurriculumGetByGrade
+  {
     @Test
-    void should_return_full_curriculum_when_curriculum_exists_for_grade()
+    void should_return_brief_curriculum_when_curriculum_exists_for_grade()
     {
-      Curriculum curriculum = given(spec)
+      List<BriefCurriculum> curricula = given(spec)
           .filter(document("get-curriculum-by-grade-success"))
           .queryParam("grade", 10)
           .when()
-          .get("/curricula/search")
+          .get("/curricula")
           .then()
           .statusCode(HttpStatus.OK.value())
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-          .extract().jsonPath().getObject(".", Curriculum.class);
+          .extract().jsonPath().getList(".", BriefCurriculum.class);
 
-      assertNotNull(curriculum);
-      assertEquals(2, curriculum.getId());
-      assertEquals(10, curriculum.getGrade());
+      assertNotNull(curricula);
+      assertEquals(1, curricula.size());
+      assertEquals(2, curricula.get(0).getId());
+      assertEquals(10, curricula.get(0).getGrade());
     }
 
 
@@ -139,7 +144,7 @@ class CurriculumControllerTest
           .filter(document("get-curriculum-by-grade-fail-not-found"))
           .queryParam("grade", 1)
           .when()
-          .get("/curricula/search")
+          .get("/curricula")
           .then()
           .statusCode(HttpStatus.NOT_IMPLEMENTED.value());
     }
@@ -153,7 +158,7 @@ class CurriculumControllerTest
           .filter(document("get-curriculum-by-grade-fail-grade-is-less-than-1"))
           .queryParam("grade", grade)
           .when()
-          .get("/curricula/search")
+          .get("/curricula")
           .then()
           .statusCode(HttpStatus.BAD_REQUEST.value())
           .extract().response().asString();
@@ -169,7 +174,7 @@ class CurriculumControllerTest
           .filter(document("get-curriculum-by-grade-fail-grade-is-greater-than-11"))
           .queryParam("grade", 100)
           .when()
-          .get("/curricula/search")
+          .get("/curricula")
           .then()
           .statusCode(HttpStatus.BAD_REQUEST.value())
           .extract().response().asString();
@@ -280,19 +285,15 @@ class CurriculumControllerTest
   class CurriculumRemove
   {
     @Test
-    void should_return_brief_curriculum_when_curriculum_for_id_exists()
+    void should_return_nothing_when_curriculum_for_id_exists()
     {
-      BriefCurriculum curriculum = given(spec)
+      given(spec)
           .filter(document("remove-curriculum-success"))
           .pathParam("id", 1)
           .when()
           .delete("/curricula/{id}")
           .then()
-          .statusCode(HttpStatus.OK.value())
-          .extract().jsonPath().getObject(".", BriefCurriculum.class);
-
-      assertNotNull(curriculum);
-      assertEquals(11, curriculum.getGrade());
+          .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
 
@@ -413,9 +414,9 @@ class CurriculumControllerTest
   class CourseUpdate
   {
     @Test
-    void should_return_updated_course_when_updated_successfully()
+    void should_return_nothing_when_updated_successfully()
     {
-      Course course = given(spec)
+      given(spec)
           .filter(document("update-course-replaced-success"))
           .pathParam("curriculumId", 1)
           .pathParam("courseId", 100)
@@ -424,12 +425,7 @@ class CurriculumControllerTest
           .when()
           .put("/curricula/{curriculumId}/courses/{courseId}")
           .then()
-          .statusCode(HttpStatus.OK.value())
-          .extract().jsonPath().getObject(".", Course.class);
-
-      assertNotNull(course);
-      assertEquals(new Subject(1000, "algebra"), course.getSubject());
-      assertEquals(300, course.getLessonCount());
+          .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
 
@@ -514,7 +510,7 @@ class CurriculumControllerTest
   class CourseRemove
   {
     @Test
-    void should_return_removed_course_when_removed_successfully()
+    void should_return_nothing_when_removed_successfully()
     {
       given(spec)
           .filter(document("remove-course-success"))

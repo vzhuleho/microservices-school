@@ -16,7 +16,6 @@ import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -76,17 +75,16 @@ class SubjectController
 
 
   @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  @ResponseBody
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   @ApiOperation(value = "Update subject", notes = "Updating an existing subject", response = Subject.class)
-  ResponseEntity<Subject> updateSubject(
+  void updateSubject(
       @ApiParam("Subject id of the subject to be updated") @PathVariable("id") long subjectId,
       @ApiParam("Updated subject") @Valid @RequestBody SubjectToUpdate subjectToUpdate)
   {
-    return SUBJECTS.stream()
+    SUBJECTS.stream()
         .filter(it -> it.getId() == subjectId)
         .findFirst()
         .map(existingSubject -> new Subject(existingSubject.getId(), subjectToUpdate.getName()))
-        .map(updatedSubject -> new ResponseEntity<>(updatedSubject, HttpStatus.OK))
         .orElseThrow(() -> new SubjectNotFoundException(subjectId));
   }
 

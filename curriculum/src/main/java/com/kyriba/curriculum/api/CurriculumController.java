@@ -25,7 +25,6 @@ import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -83,13 +82,22 @@ class CurriculumController
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseBody
-  @ApiOperation(value = "Get all curricula", notes = "Retrieving the collection of curricula", response = BriefCurriculum.class,
+  @ApiOperation(value = "Get curricula", notes = "Retrieving the collection of curricula", response = BriefCurriculum.class,
       responseContainer = "List")
-  List<BriefCurriculum> getAllCurricula()
+  List<BriefCurriculum> getCurricula(
+      @ApiParam("Grade") @GradeConstraint @RequestParam(value = "grade", required = false) Integer grade)
   {
-    return CURRICULA.stream()
-        .map(Curriculum::toBrief)
-        .collect(Collectors.toList());
+    if (grade == null) {
+      return CURRICULA.stream()
+          .map(Curriculum::toBrief)
+          .collect(Collectors.toList());
+    }
+    else {
+      return findCurriculumByGrade(grade)
+          .map(Curriculum::toBrief)
+          .map(Collections::singletonList)
+          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED));
+    }
   }
 
 
@@ -100,16 +108,6 @@ class CurriculumController
   {
     return findCurriculumById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-  }
-
-
-  @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  @ResponseBody
-  @ApiOperation(value = "Find existing curriculum by grade", notes = "Retrieving existing curriculum by grade", response = Curriculum.class)
-  Curriculum searchByParameters(@ApiParam("Grade") @GradeConstraint @RequestParam("grade") int grade)
-  {
-    return findCurriculumByGrade(grade)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED));
   }
 
 
@@ -141,9 +139,9 @@ class CurriculumController
 
 
   @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  @ResponseBody
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   @ApiOperation(value = "Delete curriculum", notes = "Delete existing curriculum", response = BriefCurriculum.class)
-  BriefCurriculum removeCurriculum(
+  void removeCurriculum(
       @ApiParam("Identifier of curriculum to delete") @PathVariable("id") long curriculumId)
   {
     Curriculum curriculum = findCurriculumById(curriculumId)
@@ -152,8 +150,6 @@ class CurriculumController
     boolean removed = CURRICULA.remove(curriculum);
     if (!removed)
       throw new CurriculumNotFoundException(curriculumId);
-
-    return curriculum.toBrief();
   }
 
 
@@ -217,9 +213,9 @@ class CurriculumController
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE
   )
-  @ResponseBody
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   @ApiOperation(value = "Update lesson count for course", notes = "Update lesson count for existing course", response = Course.class)
-  Course updateCourse(
+  void updateCourse(
       @ApiParam("Identifier of existing curriculum") @PathVariable("curriculumId") long curriculumId,
       @ApiParam("Identifier of existing course") @PathVariable("courseId") long courseId,
       @ApiParam("Updated course") @Valid @RequestBody CourseToUpdate courseToUpdate)
@@ -238,7 +234,6 @@ class CurriculumController
     boolean removed = curriculum.getCourses().removeIf(it -> it.getId() == courseId);
     if (removed) {
       curriculum.getCourses().add(updatedCourse);
-      return updatedCourse;
     }
     else {
       throw new CourseNotFoundException(curriculumId, courseId);

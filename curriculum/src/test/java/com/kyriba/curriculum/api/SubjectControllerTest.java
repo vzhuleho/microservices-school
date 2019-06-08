@@ -126,10 +126,10 @@ class SubjectControllerTest
   class SubjectUpdate
   {
     @Test
-    void should_return_updated_subject_when_update_was_successful()
+    void should_return_nothing_when_update_was_successful()
     {
       String subjectName = "chemistry";
-      Subject subject = given(spec)
+      given(spec)
           .filter(document("update-subject-success"))
           .pathParam("id", 1000)
           .body(new SubjectToUpdate(subjectName))
@@ -137,11 +137,7 @@ class SubjectControllerTest
           .when()
           .put("/subjects/{id}")
           .then()
-          .statusCode(HttpStatus.OK.value())
-          .extract().jsonPath().getObject(".", Subject.class);
-
-      assertNotNull(subject);
-      assertEquals(subjectName, subject.getName());
+          .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
 
