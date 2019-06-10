@@ -7,14 +7,21 @@
  ********************************************************************************/
 package com.kyriba.schoolclassservice.service;
 
+import com.kyriba.schoolclassservice.domain.SchoolClassEntity;
+import com.kyriba.schoolclassservice.repository.SchoolClassRepository;
 import com.kyriba.schoolclassservice.service.dto.ClassUpdateRequest;
 import com.kyriba.schoolclassservice.service.dto.PupilDto;
 import com.kyriba.schoolclassservice.service.dto.SchoolClassDto;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -22,66 +29,53 @@ import java.util.Set;
  * @since 19.2
  */
 @Service
-public class SchoolClassService
-{
-  public List<SchoolClassDto> getAll()
-  {
-    return Collections.emptyList();
+public class SchoolClassService {
+
+  @Autowired
+  private SchoolClassRepository repository;
+
+  public List<SchoolClassDto> getAll() {
+    return repository.findAll().stream().map(SchoolClassDto::of).collect(Collectors.toList());
   }
 
 
-  public SchoolClassDto getById(Long id)
-  {
-    final SchoolClassDto schoolClassDto = new SchoolClassDto();
-    schoolClassDto.setId(id);
-    schoolClassDto.setLetter("A");
-    schoolClassDto.setGrade(11);
-    schoolClassDto.setYear(2013);
-    return schoolClassDto;
+  public SchoolClassDto getById(Long id) {
+    SchoolClassEntity byId = repository.findById(id).orElseThrow(EntityNotFoundException::new);
+    return SchoolClassDto.of(byId);
   }
 
 
-  public SchoolClassDto create(SchoolClassDto schoolClass)
-  {
-    schoolClass.setId(10L);
-    schoolClass.setLetter("A");
-    schoolClass.setGrade(11);
-    schoolClass.setYear(2013);
-    return schoolClass;
+  @Transactional
+  public SchoolClassDto create(SchoolClassDto schoolClass) {
+    return SchoolClassDto.of(repository.save(schoolClass.toEntity()));
   }
 
 
-  public SchoolClassDto updateClass(Long classId, ClassUpdateRequest updateRequest)
-  {
-    final SchoolClassDto schoolClassDto = new SchoolClassDto();
-    schoolClassDto.setId(classId);
-    schoolClassDto.setGrade(updateRequest.getGrade());
-    schoolClassDto.setLetter(updateRequest.getLetter());
-    schoolClassDto.setHeadTeacher(updateRequest.getHeadTeacher());
-    return schoolClassDto;
+  @Transactional
+  public SchoolClassDto updateClass(Long classId, ClassUpdateRequest updateRequest) {
+    SchoolClassEntity byId = repository.findById(classId).orElseThrow(EntityNotFoundException::new);
+    return SchoolClassDto.of(repository.save(updateRequest.toEntity(byId)));
   }
 
 
-  public void deleteClass(Long classId)
-  {
-
+  @Transactional
+  public void deleteClass(Long classId) {
+    repository.deleteById(classId);
   }
 
 
-  public Set<PupilDto> getPupilsForClass(Long classId)
-  {
+  //todo: pupils
+  public Set<PupilDto> getPupilsForClass(Long classId) {
     return Collections.emptySet();
   }
 
 
-  public PupilDto addPupilToClass(Long classId, PupilDto pupil)
-  {
+  public PupilDto addPupilToClass(Long classId, PupilDto pupil) {
     return pupil;
   }
 
 
-  public void removePupilFromClass(Long classId, Long pupilId)
-  {
+  public void removePupilFromClass(Long classId, Long pupilId) {
 
   }
 }

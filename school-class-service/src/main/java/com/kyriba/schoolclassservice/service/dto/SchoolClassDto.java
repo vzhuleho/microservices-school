@@ -7,12 +7,10 @@
  ********************************************************************************/
 package com.kyriba.schoolclassservice.service.dto;
 
+import com.kyriba.schoolclassservice.domain.SchoolClassEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.Positive;
@@ -26,6 +24,7 @@ import javax.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @ApiModel(value = "School class data")
 public class SchoolClassDto
 {
@@ -44,4 +43,24 @@ public class SchoolClassDto
   int year;
   @ApiModelProperty(value = "Class head teacher")
   HeadTeacherDto headTeacher;
+
+    public static SchoolClassDto of(SchoolClassEntity entity) {
+        return SchoolClassDto.builder()
+                .id(entity.getId())
+                .grade(entity.getGrade())
+                .letter(entity.getLetter())
+                .year(entity.getYear())
+                //.headTeacher() \\ todo:!@
+                .build();
+    }
+
+    public SchoolClassEntity toEntity() {
+        return SchoolClassEntity.builder()
+                .id(getId())
+                .grade(getGrade())
+                .letter(getLetter())
+                .year(getYear())
+                //.headTeacher() \\ todo:!@
+                .build();
+    }
 }

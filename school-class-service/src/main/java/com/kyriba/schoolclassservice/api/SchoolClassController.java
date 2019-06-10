@@ -32,8 +32,7 @@ import java.util.Set;
  */
 @Api(value = "School classes endpoint")
 @RestController
-@RequestMapping(value = "${api.version.path}/classes", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
-    produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = "${api.version.path}/classes")
 @AllArgsConstructor
 public class SchoolClassController
 {
