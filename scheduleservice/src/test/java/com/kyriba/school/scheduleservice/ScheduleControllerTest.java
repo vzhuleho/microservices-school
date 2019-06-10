@@ -72,7 +72,7 @@ public class ScheduleControllerTest {
 		scheduleAsJson.put("year", YEAR);
 		scheduleAsJson.put("schoolClass", schoolAsJson);
 
-		int id = given(documentationSpec)
+		long id = given(documentationSpec)
 				.contentType(APPLICATION_JSON_UTF8_VALUE)
 				.filter(document("schedules-create"))
 				.when()
@@ -80,12 +80,7 @@ public class ScheduleControllerTest {
 				.post(SCHEDULES)
 				.then()
 				.statusCode(SC_CREATED)
-				.body("year", is(YEAR))
-				.body("schoolClass.grade", is(GRADE))
-				.body("schoolClass.letter", is(LETTER))
-				.extract()
-				.jsonPath()
-				.getInt("id");
+				.extract().as(long.class);
 
 		String pathToSchedule = SCHEDULES + "/" + id;
 

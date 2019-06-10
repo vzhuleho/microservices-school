@@ -6,7 +6,7 @@ plugins {
 
 apply plugin: 'io.spring.dependency-management'
 
-group = 'com.example'
+group = 'com.kyriba.school'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
@@ -35,6 +35,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
 	implementation 'org.springframework.boot:spring-boot-starter-hateoas'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	// TODO: HAL browser is temporary enabled to facilitate manual testing. Should be removed in final implementation
+	implementation 'org.springframework.data:spring-data-rest-hal-browser'
 
 	compile('org.hsqldb:hsqldb')
 	compile group: 'org.json', name: 'json', version: '20090211'
