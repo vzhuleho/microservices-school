@@ -5,15 +5,15 @@
  */
 package com.kyriba.curriculum.api;
 
-import com.kyriba.curriculum.api.exception.SubjectAlreadyExistsException;
-import com.kyriba.curriculum.api.exception.SubjectNotFoundException;
 import com.kyriba.curriculum.domain.dto.Subject;
 import com.kyriba.curriculum.domain.dto.SubjectToCreate;
 import com.kyriba.curriculum.domain.dto.SubjectToUpdate;
+import com.kyriba.curriculum.service.SubjectService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -28,11 +28,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Supplier;
 
 
 /**
@@ -45,16 +41,14 @@ import java.util.function.Supplier;
 @Api
 class SubjectController
 {
-  static Subject ALGEBRA = new Subject(1000, "algebra");
-  static Subject GEOMETRY = new Subject(1001, "geometry");
-  static Subject ENGLISH = new Subject(1002, "english");
-  static Subject PHYSICS = new Subject(1003, "physics");
+  private SubjectService subjectService;
 
-  static final Supplier<List<Subject>> DEFAULT_SUBJECTS = () -> new ArrayList<>(
-      Arrays.asList(ALGEBRA, GEOMETRY, ENGLISH, PHYSICS));
-  static List<Subject> SUBJECTS = DEFAULT_SUBJECTS.get();
 
-  private static final AtomicLong COUNTER = new AtomicLong(10_000);
+  @Autowired
+  SubjectController(SubjectService subjectService)
+  {
+    this.subjectService = subjectService;
+  }
 
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -63,14 +57,7 @@ class SubjectController
   @ApiOperation(value = "Create subject", notes = "Creating new subject", response = Subject.class)
   Subject createSubject(@Valid @RequestBody @ApiParam("New subject") SubjectToCreate subjectToCreate)
   {
-    String subjectName = subjectToCreate.getName().trim();
-    if (SUBJECTS.stream().anyMatch(it -> it.getName().equals(subjectName))) {
-      throw new SubjectAlreadyExistsException(subjectName);
-    }
-
-    Subject newSubject = new Subject(COUNTER.incrementAndGet(), subjectName);
-    SUBJECTS.add(newSubject);
-    return newSubject;
+    return subjectService.createSubject(subjectToCreate);
   }
 
 
@@ -81,11 +68,7 @@ class SubjectController
       @ApiParam("Subject id of the subject to be updated") @PathVariable("id") long subjectId,
       @ApiParam("Updated subject") @Valid @RequestBody SubjectToUpdate subjectToUpdate)
   {
-    SUBJECTS.stream()
-        .filter(it -> it.getId() == subjectId)
-        .findFirst()
-        .map(existingSubject -> new Subject(existingSubject.getId(), subjectToUpdate.getName()))
-        .orElseThrow(() -> new SubjectNotFoundException(subjectId));
+    subjectService.updateSubject(subjectId, subjectToUpdate);
   }
 
 
@@ -95,6 +78,6 @@ class SubjectController
       response = Subject.class, responseContainer = "List")
   List<Subject> getAllSubjects()
   {
-    return SUBJECTS;
+    return subjectService.getAllSubjects();
   }
 }

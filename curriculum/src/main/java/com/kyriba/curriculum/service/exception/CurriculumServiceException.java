@@ -3,16 +3,21 @@
  * The content of this file is copyrighted by Kyriba Corporation and can not be
  * reproduced, distributed, altered or used in any form, in whole or in part.
  */
-package com.kyriba.curriculum.api.exception;
-
+package com.kyriba.curriculum.service.exception;
 
 /**
  * @author M-DBE
  */
-public class SubjectNotFoundException extends CurriculumServiceException
+public class CurriculumServiceException extends RuntimeException
 {
-  public SubjectNotFoundException(long subjectId)
+  public CurriculumServiceException()
   {
-    super(String.format("Subject with id %d not found.", subjectId));
+
+  }
+
+
+  public CurriculumServiceException(String message)
+  {
+    super(message);
   }
 }

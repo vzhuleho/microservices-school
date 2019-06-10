@@ -35,6 +35,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.kyriba.curriculum.api.TestCurriculumService.CURRICULA;
+import static com.kyriba.curriculum.api.TestCurriculumService.DEFAULT_CURRICULA;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -64,15 +66,15 @@ class CurriculumControllerTest
         .addFilter(documentationConfiguration(restDocumentation))
         .setBasePath("/api/v1")
         .build();
-    prevCurricula = CurriculumController.CURRICULA;
-    CurriculumController.CURRICULA = CurriculumController.DEFAULT_CURRICULA.get();
+    prevCurricula = CURRICULA;
+    CURRICULA = DEFAULT_CURRICULA.get();
   }
 
 
   @AfterEach
   void after()
   {
-    CurriculumController.CURRICULA = prevCurricula;
+    CURRICULA = prevCurricula;
   }
 
 

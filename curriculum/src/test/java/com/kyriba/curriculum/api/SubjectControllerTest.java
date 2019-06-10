@@ -30,6 +30,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.kyriba.curriculum.api.TestSubjectService.DEFAULT_SUBJECTS;
+import static com.kyriba.curriculum.api.TestSubjectService.SUBJECTS;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -57,15 +59,15 @@ class SubjectControllerTest
         .addFilter(documentationConfiguration(restDocumentation))
         .setBasePath("/api/v1")
         .build();
-    prevSubjects = SubjectController.SUBJECTS;
-    SubjectController.SUBJECTS = SubjectController.DEFAULT_SUBJECTS.get();
+    prevSubjects = SUBJECTS;
+    SUBJECTS = DEFAULT_SUBJECTS.get();
   }
 
 
   @AfterEach
   void after()
   {
-    SubjectController.SUBJECTS = prevSubjects;
+    SUBJECTS = prevSubjects;
   }
 
 

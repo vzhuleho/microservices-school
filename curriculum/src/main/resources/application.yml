@@ -1,0 +1,27 @@
+#server:
+#  port: 8083
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: http://localhost:8762/eureka/
+spring:
+  application:
+    name: curriculum
+  datasource:
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 5
+    url: jdbc:postgresql://localhost:5433/postgres
+    username: test
+    password: test
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        #show_sql: true
+        #use_sql_comments: true
+        #format_sql: true
+    #generate-ddl: true
+    show-sql: true

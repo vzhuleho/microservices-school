@@ -5,14 +5,16 @@
  */
 package com.kyriba.curriculum.api;
 
-import com.kyriba.curriculum.api.exception.CourseAlreadyExistsException;
-import com.kyriba.curriculum.api.exception.CourseNotFoundException;
-import com.kyriba.curriculum.api.exception.CurriculumAlreadyExistsException;
-import com.kyriba.curriculum.api.exception.CurriculumNotFoundException;
-import com.kyriba.curriculum.api.exception.CurriculumServiceException;
-import com.kyriba.curriculum.api.exception.SubjectAlreadyExistsException;
-import com.kyriba.curriculum.api.exception.SubjectNotFoundException;
+import com.kyriba.curriculum.service.exception.CourseAlreadyExistsException;
+import com.kyriba.curriculum.service.exception.CourseNotFoundException;
+import com.kyriba.curriculum.service.exception.CurriculumAlreadyExistsException;
+import com.kyriba.curriculum.service.exception.CurriculumNotFoundException;
+import com.kyriba.curriculum.service.exception.CurriculumServiceException;
+import com.kyriba.curriculum.service.exception.SubjectAlreadyExistsException;
+import com.kyriba.curriculum.service.exception.SubjectNotFoundException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,7 +32,7 @@ class CustomExceptionHandler
   @ResponseBody
   ResponseEntity<String> handleNotFoundException(CurriculumServiceException e)
   {
-    return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    return new ResponseEntity<>(e.getMessage(), textPlain(), HttpStatus.NOT_FOUND);
   }
 
 
@@ -39,6 +41,15 @@ class CustomExceptionHandler
   @ResponseBody
   ResponseEntity<String> handleConflictException(CurriculumServiceException e)
   {
-    return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+
+    return new ResponseEntity<>(e.getMessage(), textPlain(), HttpStatus.CONFLICT);
+  }
+
+
+  private static HttpHeaders textPlain()
+  {
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.setContentType(MediaType.TEXT_PLAIN);
+    return httpHeaders;
   }
 }

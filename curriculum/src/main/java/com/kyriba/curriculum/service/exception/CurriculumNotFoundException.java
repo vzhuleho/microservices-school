@@ -3,15 +3,16 @@
  * The content of this file is copyrighted by Kyriba Corporation and can not be
  * reproduced, distributed, altered or used in any form, in whole or in part.
  */
-package com.kyriba.curriculum.api.exception;
+package com.kyriba.curriculum.service.exception;
+
 
 /**
  * @author M-DBE
  */
-public class CurriculumAlreadyExistsException extends CurriculumServiceException
+public class CurriculumNotFoundException extends CurriculumServiceException
 {
-  public CurriculumAlreadyExistsException(int grade)
+  public CurriculumNotFoundException(long curriculumId)
   {
-    super(String.format("Curriculum for grade %d already exists.", grade));
+    super(String.format("Curriculum with id %d not found.", curriculumId));
   }
 }

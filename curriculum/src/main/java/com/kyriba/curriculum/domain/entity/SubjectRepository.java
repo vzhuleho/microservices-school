@@ -3,21 +3,14 @@
  * The content of this file is copyrighted by Kyriba Corporation and can not be
  * reproduced, distributed, altered or used in any form, in whole or in part.
  */
-package com.kyriba.curriculum.api.exception;
+package com.kyriba.curriculum.domain.entity;
+
+import org.springframework.data.repository.CrudRepository;
+
 
 /**
  * @author M-DBE
  */
-public class CurriculumServiceException extends RuntimeException
+public interface SubjectRepository extends CrudRepository<SubjectEntity, Long>
 {
-  public CurriculumServiceException()
-  {
-
-  }
-
-
-  public CurriculumServiceException(String message)
-  {
-    super(message);
-  }
 }
