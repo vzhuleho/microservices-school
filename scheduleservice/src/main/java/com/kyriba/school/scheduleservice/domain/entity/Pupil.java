@@ -5,27 +5,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 @Entity
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Mark {
+@Getter
+@Setter
+public class Pupil {
 
     @Id
     @GeneratedValue
     @Column
     private Long id;
 
-    @ManyToOne
-    @JoinColumn
-    private Pupil pupil;
-
     @Column
-    private int mark;
-
-    @Column
-    private String note;
+    private String name;
 }

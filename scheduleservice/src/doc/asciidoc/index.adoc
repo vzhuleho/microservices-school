@@ -248,6 +248,16 @@ include::{snippets}/schedule-day-lesson-marks-add/http-request.adoc[]
 include::{snippets}/schedule-day-lesson-marks-add/http-response.adoc[]
 
 
+[[resource-schedule-day-lesson-marks-get]]
+=== Getting an information about all marks by the lesson
+A `GET` request fetches all marks for lesson.
+
+==== Example request
+include::{snippets}/schedule-day-lesson-marks-get/http-request.adoc[]
+
+==== Example response
+include::{snippets}/schedule-day-lesson-marks-get/http-response.adoc[]
+
 [[resource-schedule-day-lesson-marks-delete]]
 === Deleting an information about pupil's mark from the lesson
 A `DELETE` request deletes an existing mark.

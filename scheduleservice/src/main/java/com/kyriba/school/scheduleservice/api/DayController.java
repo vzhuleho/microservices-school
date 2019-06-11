@@ -10,6 +10,7 @@ import com.kyriba.school.scheduleservice.service.ScheduleService;
 import com.kyriba.school.scheduleservice.service.SchoolClassService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,9 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 
-@Api(value="School Schedules Management System")
-@RequestMapping("/api/v1/schedules/{year}/{grade}/{letter}/days")
+@Api(value = "School Schedules Management System")
+@RequestMapping(value = "/api/v1/schedules/{year}/{grade}/{letter}/days")
 @RestController
+@AllArgsConstructor
 public class DayController {
 
     private final DayService dayService;
@@ -30,16 +32,8 @@ public class DayController {
     private final SchoolClassService schoolClassService;
     private final ModelMapper mapper;
 
-    public DayController(DayService dayService, ScheduleService scheduleService, SchoolClassService schoolClassService,
-                         ModelMapper mapper) {
-        this.dayService = dayService;
-        this.scheduleService = scheduleService;
-        this.schoolClassService = schoolClassService;
-        this.mapper = mapper;
-    }
-
     @ApiOperation(value = "Get days by the schedule id")
-    @GetMapping(produces = "application/hal+json")
+    @GetMapping
     public Page<DayDTO> getByScheduleId(@PathVariable int year,
                                         @PathVariable int grade,
                                         @PathVariable String letter,
@@ -47,11 +41,11 @@ public class DayController {
         SchoolClass schoolClass = schoolClassService.find(grade, letter, year);
         Schedule schedule = scheduleService.findOrCreate(year, schoolClass);
         return dayService.findByScheduleId(schedule.getId(), pageable)
-            .map(source -> mapper.map(source, DayDTO.class));
+                .map(source -> mapper.map(source, DayDTO.class));
     }
 
-    @ApiOperation(value = "Get a day by the schedule id and date", response = Day.class)
-    @GetMapping(value = "/{date}", produces = "application/hal+json")
+    @ApiOperation(value = "Get a day by the schedule id and date", response = DayDTO.class)
+    @GetMapping("/{date}")
     public DayDTO getDayByScheduleIdAndDate(@PathVariable int year,
                                             @PathVariable int grade,
                                             @PathVariable String letter,

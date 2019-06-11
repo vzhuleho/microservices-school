@@ -4,7 +4,7 @@ import com.kyriba.school.scheduleservice.domain.entity.Mark;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@RepositoryRestResource(exported = false)
+@RepositoryRestResource
 public interface MarkRepository extends PagingAndSortingRepository<Mark, Long> {
 
 }

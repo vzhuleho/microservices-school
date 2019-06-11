@@ -19,7 +19,7 @@ import javax.validation.Valid;
 
 
 @Api(value="School Schedules Management System")
-@RequestMapping("/api/v1/schedules")
+@RequestMapping(value = "/api/v1/schedules")
 @RestController
 public class ScheduleController {
 
@@ -40,15 +40,16 @@ public class ScheduleController {
     }
 
     @ApiOperation(value = "Get a schedule by id", response = ScheduleDTO.class)
-    @GetMapping(value = "/{id}", produces = "application/hal+json")
+    @GetMapping("/{id}")
     public ScheduleDTO getById(@PathVariable Long id) {
+        //IllegalArgumentException: Name for argument type [java.lang.Long] not available, and parameter name information not found in class file either.
         Schedule schedule = scheduleService.findById(id);
         return mapper.map(schedule, ScheduleDTO.class);
     }
 
-    @ApiOperation(value = "Create a new schedule", response = ScheduleDTO.class)
+    @ApiOperation(value = "Create a new schedule", response = Long.class)
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(produces = "application/hal+json")
+    @PostMapping
     public long create(@RequestBody ScheduleDTO scheduleToCreate) {
         SchoolClassDTO schoolClassToFind = scheduleToCreate.getSchoolClass();
         int year = scheduleToCreate.getYear();
@@ -58,7 +59,7 @@ public class ScheduleController {
 
     @ApiOperation(value = "Get a schedule or create a new one if the schedule for the requested year and school class doesn't exist",
             response = ScheduleDTO.class)
-    @GetMapping(value = "/{year}/{grade}/{letter}", produces = "application/hal+json")
+    @GetMapping("/{year}/{grade}/{letter}")
     public ScheduleDTO getOrCreate(@PathVariable int year,
                                    @PathVariable int grade,
                                    @PathVariable String letter) {
@@ -68,7 +69,7 @@ public class ScheduleController {
     }
 
     @ApiOperation(value = "Update an existing schedule", response = ScheduleDTO.class)
-    @PutMapping(produces = "application/hal+json")
+    @PutMapping
     public ScheduleDTO updateSchedule(@Valid @RequestBody ScheduleDTO scheduleToUpdate) {
         SchoolClassDTO schoolClassToFind = scheduleToUpdate.getSchoolClass();
         int year = scheduleToUpdate.getYear();
@@ -80,7 +81,7 @@ public class ScheduleController {
 
     @ApiOperation(value = "Delete a schedule by id")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping(value = "/{id}", produces = "application/hal+json")
+    @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
     }
 }

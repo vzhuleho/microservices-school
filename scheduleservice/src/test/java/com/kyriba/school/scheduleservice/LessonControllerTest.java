@@ -1,9 +1,6 @@
 package com.kyriba.school.scheduleservice;
 
-import com.kyriba.school.scheduleservice.domain.dto.LessonDTO;
-import com.kyriba.school.scheduleservice.domain.dto.SchoolClassDTO;
-import com.kyriba.school.scheduleservice.domain.dto.SubjectDTO;
-import com.kyriba.school.scheduleservice.domain.dto.TeacherDTO;
+import com.kyriba.school.scheduleservice.domain.dto.*;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
@@ -13,6 +10,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.restdocs.JUnitRestDocumentation;
@@ -31,6 +29,7 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
+@AutoConfigureRestDocs
 public class LessonControllerTest {
 
 	@Rule
@@ -41,14 +40,16 @@ public class LessonControllerTest {
 	@LocalServerPort
 	int port;
 
-	private static final String SCHEDULE_LESSONS = "/api/v1/schedules/2019/10/Z/days/2019-09-01/lessons";
 	private static final String LETTER = "Z";
 	private static final int GRADE = 10;
 
 	@Before
 	public void setUp() {
 		RestAssured.port = port;
-		documentationSpec = new RequestSpecBuilder().addFilter(documentationConfiguration(restDocumentation)).build();
+		documentationSpec = new RequestSpecBuilder()
+				.setBasePath("/api/v1/schedules/2019/10/Z/days/2019-09-01/lessons")
+				.addFilter(documentationConfiguration(restDocumentation))
+				.build();
 	}
 
 	@Test
@@ -56,7 +57,7 @@ public class LessonControllerTest {
 		LessonDTO[] lessons = given(documentationSpec)
 				.filter(document("schedule-day-lessons-list"))
 				.when()
-				.get(SCHEDULE_LESSONS)
+				.get()
 				.then()
 				.statusCode(SC_OK)
 				.extract().as(LessonDTO[].class);
@@ -69,7 +70,7 @@ public class LessonControllerTest {
 		LessonDTO lesson = given(documentationSpec)
 				.filter(document("schedule-day-lessons-get"))
 				.when()
-				.get(SCHEDULE_LESSONS + "/2")
+				.get("/2")
 				.then()
 				.statusCode(SC_OK)
 				.extract().as(LessonDTO.class);
@@ -96,7 +97,7 @@ public class LessonControllerTest {
 				.filter(document("schedule-day-lessons-update"))
 				.when()
 				.body(lessonAsJson.toString())
-				.put(SCHEDULE_LESSONS + "/2")
+				.put("/2")
 				.then()
 				.statusCode(SC_OK)
 				.extract().as(LessonDTO.class);
@@ -113,12 +114,12 @@ public class LessonControllerTest {
 				.contentType(APPLICATION_JSON_UTF8_VALUE)
 				.filter(document("schedule-day-lesson-absences-add"))
 				.when()
-				.body(absenceAsJson.toString())
-				.post(SCHEDULE_LESSONS + "/2/absences")
+				.body("{\"pupilName\":\"Ivan Ivanov\"}")
+				.post("/2/absences")
 				.then()
 				.statusCode(SC_CREATED)
-				.extract().as(long.class);
-		assertEquals(1, id);
+				.contentType("application/hal+json")
+				.extract().as(Long.class);
 	}
 
 	@Test
@@ -127,7 +128,7 @@ public class LessonControllerTest {
 				.contentType(APPLICATION_JSON_UTF8_VALUE)
 				.filter(document("schedule-day-lesson-absences-delete"))
 				.when()
-				.delete(SCHEDULE_LESSONS + "/2/absences/1")
+				.delete("/2/absences/1")
 				.then()
 				.statusCode(SC_NO_CONTENT);
 	}
@@ -136,18 +137,32 @@ public class LessonControllerTest {
 	public void addMarkToLesson() throws JSONException {
 		JSONObject markAsJson = new JSONObject();
 		markAsJson.put("pupilName", "Sergei Sergeev");
-		markAsJson.put("mark", 4);
+		markAsJson.put("value", 4);
+		markAsJson.put("note", "");
 
-		long id = given(documentationSpec)
+		MarkDTO mark = given(documentationSpec)
 				.contentType(APPLICATION_JSON_UTF8_VALUE)
 				.filter(document("schedule-day-lesson-marks-add"))
 				.when()
 				.body(markAsJson.toString())
-				.post(SCHEDULE_LESSONS + "/3/marks")
+				.post("/3/marks")
 				.then()
 				.statusCode(SC_CREATED)
-				.extract().as(long.class);
-		assertEquals(1, id);
+				.extract().as(MarkDTO.class);
+		assertEquals(markAsJson.get("pupilName"), mark.pupilName());
+		assertEquals(markAsJson.getInt("value"), mark.value());
+		assertEquals(markAsJson.get("note"), mark.note());
+	}
+
+	@Test
+	public void getMarksForLesson() throws JSONException {
+		given(documentationSpec)
+				.contentType(APPLICATION_JSON_UTF8_VALUE)
+				.filter(document("schedule-day-lesson-marks-get"))
+				.when()
+				.get()
+				.then()
+				.statusCode(SC_OK);
 	}
 
 	@Test
@@ -156,7 +171,7 @@ public class LessonControllerTest {
 				.contentType(APPLICATION_JSON_UTF8_VALUE)
 				.filter(document("schedule-day-lesson-marks-delete"))
 				.when()
-				.delete(SCHEDULE_LESSONS + "/2/marks/1")
+				.delete("/2/marks/1")
 				.then()
 				.statusCode(SC_NO_CONTENT);
 	}

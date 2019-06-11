@@ -38,12 +38,12 @@ dependencies {
 	// TODO: HAL browser is temporary enabled to facilitate manual testing. Should be removed in final implementation
 	implementation 'org.springframework.data:spring-data-rest-hal-browser'
 
-	compile('org.hsqldb:hsqldb')
-	compile group: 'org.json', name: 'json', version: '20090211'
-	compile('io.springfox:springfox-spring-web:2.9.2')
+	compile 'org.hsqldb:hsqldb'
+	compile 'org.json:json:20090211'
+	compile 'io.springfox:springfox-spring-web:2.9.2'
 	compile 'io.springfox:springfox-swagger2:2.9.2'
 	compile 'io.springfox:springfox-swagger-ui:2.9.2'
-	compile group: 'org.modelmapper', name: 'modelmapper', version: '2.3.4'
+	compile 'org.modelmapper:modelmapper:2.3.4'
 
 
 	compileOnly 'org.projectlombok:lombok'
@@ -56,7 +56,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	testCompile 'org.springframework.restdocs:spring-restdocs-restassured'
-	testCompile group: 'io.rest-assured', name: 'rest-assured', version: '3.1.1'
+	testCompile 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+	testCompile 'io.rest-assured:rest-assured:3.1.1'
 }
 
 test {

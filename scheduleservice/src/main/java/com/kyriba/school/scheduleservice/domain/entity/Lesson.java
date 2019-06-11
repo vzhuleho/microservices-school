@@ -1,7 +1,8 @@
 package com.kyriba.school.scheduleservice.domain.entity;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@NoArgsConstructor
+@RequiredArgsConstructor
 @Getter
 @Setter
 public class Lesson {
@@ -21,10 +22,11 @@ public class Lesson {
 	private Long id;
 
 	@Column(nullable = false)
+	@NonNull
 	private LocalDate date;
 
 	@Column(nullable = false)
-	private int index;
+	private final int index;
 
 	@ManyToOne
 	@JoinColumn
@@ -36,6 +38,7 @@ public class Lesson {
 
 	@ManyToOne
 	@JoinColumn
+	@NonNull
 	private SchoolClass schoolClass;
 
 	@Column
@@ -48,10 +51,4 @@ public class Lesson {
 	@OneToMany
 	@JoinColumn
 	private List<Mark> marks = new ArrayList<>();
-
-	public Lesson(LocalDate date, int index, SchoolClass schoolClass) {
-		this.date = date;
-		this.index = index;
-		this.schoolClass = schoolClass;
-	}
 }

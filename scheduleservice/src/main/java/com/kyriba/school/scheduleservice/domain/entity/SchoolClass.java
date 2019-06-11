@@ -5,10 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -30,4 +28,8 @@ public class SchoolClass {
 
 	@Column(nullable = false)
 	private int foundationYear;
+
+	@OneToMany
+	@JoinColumn
+	private List<Pupil> pupils;
 }
