@@ -10,17 +10,19 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static io.restassured.RestAssured.given;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.not;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
 public class DayControllerTest {
 
 	@Rule
@@ -31,8 +33,7 @@ public class DayControllerTest {
 	@LocalServerPort
 	int port;
 
-	private static final String SCHEDULES = "/api/v1/schedules";
-	private static final Long SCHEDULE_ID = 1L;
+	private static final String SCHEDULE_DAYS = "/api/v1/schedules/2019/10/Z/days";
 
 	@Before
 	public void setUp() {
@@ -41,24 +42,24 @@ public class DayControllerTest {
 	}
 
 	@Test
-	public void getByScheduleId() {
+	public void getBySchedule() {
 
 		given(documentationSpec)
 				.filter(document("schedule-days-list"))
 				.when()
-				.get(SCHEDULES + "/" + SCHEDULE_ID + "/days")
+				.get(SCHEDULE_DAYS)
 				.then()
 				.statusCode(SC_OK)
 				.body("_embedded.days", not(empty()));
 	}
 
 	@Test
-	public void getDayByScheduleIdAndDate() {
+	public void getDayByScheduleAndDate() {
 
 		given(documentationSpec)
 				.filter(document("schedule-days-get"))
 				.when()
-					.get(SCHEDULES + "/" + SCHEDULE_ID + "/days/2018-09-01")
+				.get(SCHEDULE_DAYS + "/2019-09-01")
 				.then()
 				.statusCode(SC_OK);
 	}
