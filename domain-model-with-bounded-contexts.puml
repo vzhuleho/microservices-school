@@ -6,35 +6,27 @@ left to right direction
 
 namespace userservice {
   class User {
+    + name
     + login
     + password
+    + status
   }
 
   class Principal {
   }
 
   class Teacher {
-    + name
     + passportNumber
-    + phoneNumber
-    + email
-    + status
     + salary
     + bonus
   }
 
   class Parent {
-    + name
-    + phoneNumber
-    + email
   }
 
   class Pupil {
-    + name
-    + age
+    + birthDate
     + grade
-    + phoneNumber
-    + email
   }
 
   class Address {
@@ -43,16 +35,15 @@ namespace userservice {
     + house
     + apartment
     + zipCode
+    + phoneNumber
+    + email
   }
 
   User <|- Principal
   User <|-- Teacher
   User <|-- Parent
   User <|-- Pupil
-  Principal "1" o- "1" Address : lives by >
-  Pupil "1" o- "1" Address : lives by >
-  Parent "1" o- "1" Address : lives by >
-  Teacher "1" o-- "1" Address : lives by >
+  User "1" o- "1" Address : lives by >
   Pupil "*" -l- "*" Parent: \n\thas\n >
 }
 
