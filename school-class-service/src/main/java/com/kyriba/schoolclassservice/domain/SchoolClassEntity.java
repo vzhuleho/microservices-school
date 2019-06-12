@@ -1,17 +1,16 @@
 package com.kyriba.schoolclassservice.domain;
 
-import com.kyriba.schoolclassservice.service.dto.HeadTeacherDto;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Vitaly Belkevich
  */
-@Entity(name = "SCHOOL_CLASS")
+@Entity
+@Table(name = "SCHOOL_CLASS")
 @Getter @Setter @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -30,6 +29,11 @@ public class SchoolClassEntity {
     @Column(name = "YEAR", nullable = false)
     int year;
 
-    //todo: head teacher
-    //todo: pupils
+
+    @OneToMany(mappedBy = "schoolClass", fetch = FetchType.LAZY)
+    Set<PupilEntity> pupils = new HashSet<>();
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TEACHER_ID", nullable = false)
+    HeadTeacherEntity headTeacherEntity;
 }

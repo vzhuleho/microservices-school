@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotNull;
 
@@ -24,6 +25,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel("Head teacher data")
+@Accessors
 public class HeadTeacherDto
 {
   @ApiModelProperty(value = "Teacher id", example = "123", required = true)
