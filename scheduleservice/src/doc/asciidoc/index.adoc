@@ -125,19 +125,6 @@ include::{snippets}/schedules-get-or-create/http-request.adoc[]
 include::{snippets}/schedules-get-or-create/http-response.adoc[]
 
 
-[[resource-schedules-update]]
-=== Updating a Schedule
-A `PATCH` request updates an existing Schedule.
-
-==== Example request
-
-include::{snippets}/schedules-update/http-request.adoc[]
-
-==== Example response
-
-include::{snippets}/schedules-update/http-response.adoc[]
-
-
 [[resource-schedules-delete]]
 === Deleting a Schedule
 A `DELETE` request deletes an existing schedule.

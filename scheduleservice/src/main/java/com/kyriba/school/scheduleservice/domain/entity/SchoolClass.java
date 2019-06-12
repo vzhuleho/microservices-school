@@ -17,6 +17,8 @@ import javax.persistence.Id;
 @Accessors(chain = true)
 public class SchoolClass {
 
+	private static final int FIRST_GRADE = 1;
+
 	@Id
 	@GeneratedValue
 	@Column
@@ -30,4 +32,9 @@ public class SchoolClass {
 
 	@Column(nullable = false)
 	private int foundationYear;
+
+
+	public static int currentToFoundationYear(int currentYear, int grade) {
+		return grade == FIRST_GRADE ? currentYear : currentYear - grade;
+	}
 }

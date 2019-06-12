@@ -52,7 +52,7 @@ public class ScheduleControllerTest {
 				.contentType(APPLICATION_JSON_UTF8_VALUE)
 				.filter(document("schedules-get-or-create"))
 				.when()
-				.get(SCHEDULES + "/" + YEAR + "/1/A")
+				.get(String.join("/", SCHEDULES, String.valueOf(YEAR), String.valueOf(GRADE), LETTER))
 				.then()
 				.statusCode(SC_OK)
 				.body("year", is(YEAR))
@@ -61,7 +61,7 @@ public class ScheduleControllerTest {
 	}
 
 	@Test
-	public void testScheduleCRUD() throws JSONException {
+	public void testScheduleCreateAndDelete() throws JSONException {
 
 		// When create
 		JSONObject schoolAsJson = new JSONObject();
@@ -102,21 +102,6 @@ public class ScheduleControllerTest {
 				.body("year", is(YEAR))
 				.body("schoolClass.grade", is(GRADE))
 				.body("schoolClass.letter", is(LETTER));
-
-		// Given
-		int newExpectedYear = 2019;
-
-		// When update
-		scheduleAsJson.put("year", newExpectedYear);
-		given(documentationSpec)
-				.contentType(APPLICATION_JSON_UTF8_VALUE)
-				.filter(document("schedules-update"))
-				.when()
-				.body(scheduleAsJson.toString())
-				.put(SCHEDULES)
-				.then()
-				.statusCode(SC_OK)
-				.body("year", is(newExpectedYear));
 
 		// When deleteById
 		given(documentationSpec)

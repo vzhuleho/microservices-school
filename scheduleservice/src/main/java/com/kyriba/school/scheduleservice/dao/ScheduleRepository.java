@@ -9,6 +9,7 @@ import org.springframework.data.rest.core.annotation.RestResource;
 @RepositoryRestResource
 public interface ScheduleRepository extends PagingAndSortingRepository<Schedule, Long> {
 
-    @RestResource(exported = false)
     Schedule findByYearAndSchoolClass(int year, SchoolClass schoolClass);
+
+    Schedule findByYearAndSchoolClassGradeAndSchoolClassLetterIgnoreCase(int year, int grade, String letter);
 }

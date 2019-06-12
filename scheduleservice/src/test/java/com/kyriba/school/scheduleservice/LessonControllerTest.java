@@ -44,6 +44,8 @@ public class LessonControllerTest {
 	private static final String SCHEDULE_LESSONS = "/api/v1/schedules/2019/10/Z/days/2019-09-01/lessons";
 	private static final String LETTER = "Z";
 	private static final int GRADE = 10;
+	private static final int FOUNDATION_YEAR = 2009;
+	private String FIRST_OF_SEPTEMBER = "2019-09-01";
 
 	@Before
 	public void setUp() {
@@ -60,7 +62,7 @@ public class LessonControllerTest {
 				.then()
 				.statusCode(SC_OK)
 				.extract().as(LessonDTO[].class);
-		assertEquals(LocalDate.parse("2019-09-01"), lessons[0].getDate());
+		assertEquals(LocalDate.parse(FIRST_OF_SEPTEMBER), lessons[0].getDate());
 		assertEquals(1, lessons[0].getIndex());
 	}
 
@@ -74,7 +76,7 @@ public class LessonControllerTest {
 				.statusCode(SC_OK)
 				.extract().as(LessonDTO.class);
 		assertEquals(2, lesson.getIndex());
-		assertEquals(LocalDate.parse("2019-09-01"), lesson.getDate());
+		assertEquals(LocalDate.parse(FIRST_OF_SEPTEMBER), lesson.getDate());
 		SchoolClassDTO schoolClass = lesson.getSchoolClass();
 		assertEquals(GRADE, schoolClass.getGrade());
 		assertEquals(LETTER, schoolClass.getLetter());
@@ -84,11 +86,15 @@ public class LessonControllerTest {
 	public void updateLesson() throws JSONException {
 		String expectedNote = "Some note";
 		JSONObject lessonAsJson = new JSONObject(new LessonDTO(), true);
-		lessonAsJson.put("date", "2018-09-15");
+		lessonAsJson.put("date", "2019-09-15");
 		lessonAsJson.put("index", 1);
 		lessonAsJson.put("subject", new JSONObject(new SubjectDTO()));
 		lessonAsJson.put("teacher", new JSONObject(new TeacherDTO()));
-		lessonAsJson.put("schoolClass", new JSONObject(new SchoolClassDTO()));
+		SchoolClassDTO schoolClassDTO = new SchoolClassDTO()
+				.setGrade(GRADE)
+				.setLetter(LETTER)
+				.setFoundationYear(FOUNDATION_YEAR);
+		lessonAsJson.put("schoolClass", new JSONObject(schoolClassDTO));
 		lessonAsJson.put("note", expectedNote);
 
 		LessonDTO lesson = given(documentationSpec)

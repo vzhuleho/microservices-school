@@ -1,5 +1,6 @@
 package com.kyriba.school.scheduleservice.domain.entity;
 
+import com.kyriba.school.scheduleservice.domain.dto.LessonDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -53,5 +54,10 @@ public class Lesson {
 		this.date = date;
 		this.index = index;
 		this.schoolClass = schoolClass;
+	}
+
+	public void updateFields(LessonDTO lessonDTO) {
+		// TODO: implement other fields setting
+		setNote(lessonDTO.getNote());
 	}
 }
