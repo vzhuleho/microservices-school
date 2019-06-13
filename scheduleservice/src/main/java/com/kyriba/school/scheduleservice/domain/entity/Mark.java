@@ -1,20 +1,18 @@
 package com.kyriba.school.scheduleservice.domain.entity;
 
-import lombok.AllArgsConstructor;
+import com.kyriba.school.scheduleservice.domain.dto.MarkDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Accessors(fluent = true)
 public class Mark {
 
     @Id
@@ -22,7 +20,42 @@ public class Mark {
     @Column
     private Long id;
 
-    private String pupilName;
+    @ManyToOne
+    @JoinColumn
+    private Pupil pupil;
 
-    private int mark;
+    @ManyToOne
+    @JoinColumn
+    private Lesson lesson;
+
+    @Column
+    private int value;
+
+    @Column
+    private String note;
+
+    public Mark(int value, String note, Pupil pupil, Lesson lesson) {
+        this(value, note, pupil);
+        lesson(lesson);
+    }
+
+    public Mark(int value, String note, Pupil pupil) {
+        this(value, note);
+        pupil(pupil);
+    }
+
+    public Mark(int value, String note) {
+        value(value);
+        note(note);
+    }
+
+    public Mark(MarkDTO dto) {
+        this(dto.value(), dto.note());
+    }
+
+    public Mark applyData(MarkDTO dto) {
+        value(dto.value());
+        note(dto.note());
+        return this;
+    }
 }

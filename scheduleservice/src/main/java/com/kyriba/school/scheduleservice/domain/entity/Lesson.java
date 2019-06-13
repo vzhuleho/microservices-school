@@ -46,9 +46,19 @@ public class Lesson {
 	@JoinColumn
 	private List<Absence> absences = new ArrayList<>();
 
+	public Lesson addAbsence(Absence absence) {
+		this.absences.add(absence);
+		return this;
+	}
+
 	@OneToMany
 	@JoinColumn
 	private List<Mark> marks = new ArrayList<>();
+
+	public Lesson addMark(Mark mark) {
+		this.marks.add(mark);
+		return this;
+	}
 
 	public Lesson(LocalDate date, int index, SchoolClass schoolClass) {
 		this.date = date;
@@ -58,6 +68,7 @@ public class Lesson {
 
 	public void updateFields(LessonDTO lessonDTO) {
 		// TODO: implement other fields setting
+
 		setNote(lessonDTO.getNote());
 	}
 }
