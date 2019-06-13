@@ -4,6 +4,7 @@ import com.kyriba.school.scheduleservice.domain.dto.LessonDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Accessors(chain = true)
 public class Lesson {
 
 	@Id
@@ -42,13 +44,21 @@ public class Lesson {
 	@Column
 	private String note;
 
-	@OneToMany
-	@JoinColumn
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "lesson")
 	private List<Absence> absences = new ArrayList<>();
 
-	@OneToMany
-	@JoinColumn
+	public Lesson addAbsence(Absence absence) {
+		this.absences.add(absence);
+		return this;
+	}
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "lesson")
 	private List<Mark> marks = new ArrayList<>();
+
+	public Lesson addMark(Mark mark) {
+		this.marks.add(mark);
+		return this;
+	}
 
 	public Lesson(LocalDate date, int index, SchoolClass schoolClass) {
 		this.date = date;
@@ -58,6 +68,7 @@ public class Lesson {
 
 	public void updateFields(LessonDTO lessonDTO) {
 		// TODO: implement other fields setting
+
 		setNote(lessonDTO.getNote());
 	}
 }

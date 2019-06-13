@@ -5,10 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -32,6 +30,12 @@ public class SchoolClass {
 
 	@Column(nullable = false)
 	private int foundationYear;
+
+	@OneToMany(mappedBy = "schoolClass")
+	private Set<Pupil> pupils;
+
+	@OneToOne(mappedBy = "schoolClass")
+	private Schedule schedule;
 
 
 	public static int currentToFoundationYear(int currentYear, int grade) {

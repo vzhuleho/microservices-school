@@ -1,3 +1,5 @@
+:snippets: ../../../build/generated-snippets
+
 = Schedule-service Guide
 Vitali Zhuleho;
 :doctype: book
@@ -246,3 +248,44 @@ include::{snippets}/schedule-day-lesson-marks-delete/http-request.adoc[]
 ==== Example response
 
 include::{snippets}/schedule-day-lesson-absences-delete/http-response.adoc[]
+
+
+
+[[resources-marks]]
+== Marks
+
+[[resource-marks-get]]
+=== Get information about mark
+A `GET` request retrieves an existing mark.
+
+==== Example request
+
+include::{snippets}/mark-get/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/mark-get/http-response.adoc[]
+
+[[resource-marks-update]]
+=== Update mark information
+A `PUT` request updates an existing mark.
+
+==== Example request
+
+include::{snippets}/mark-update/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/mark-update/http-response.adoc[]
+
+[[resource-marks-delete]]
+=== Delete mark
+A `DELETE` request deletes an existing mark.
+
+==== Example request
+
+include::{snippets}/mark-delete/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/mark-delete/http-response.adoc[]
