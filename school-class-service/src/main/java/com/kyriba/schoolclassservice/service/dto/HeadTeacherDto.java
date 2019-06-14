@@ -7,9 +7,11 @@
  ********************************************************************************/
 package com.kyriba.schoolclassservice.service.dto;
 
+import com.kyriba.schoolclassservice.domain.HeadTeacherEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -22,6 +24,7 @@ import javax.validation.constraints.NotNull;
  * @since 19.2
  */
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel("Head teacher data")
@@ -34,4 +37,12 @@ public class HeadTeacherDto
   @ApiModelProperty(value = "Teacher name", example = "Indiana Jones", required = true)
   @NotNull
   String name;
+
+  //todo: Replace with some mapping framework
+  public static HeadTeacherDto of(HeadTeacherEntity entity){
+    HeadTeacherDto.builder()
+        .id(entity.getId())
+        .name(entity.getFullname())
+        .build();
+  }
 }
