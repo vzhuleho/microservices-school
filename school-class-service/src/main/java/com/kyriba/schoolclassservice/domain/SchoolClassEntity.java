@@ -17,7 +17,7 @@ import java.util.Set;
 public class SchoolClassEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.PROTECTED)
     @Column(name = "SCHOOL_CLASS_ID", nullable = false)
     Long id;
@@ -34,6 +34,6 @@ public class SchoolClassEntity {
     Set<PupilEntity> pupils = new HashSet<>();
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TEACHER_ID", nullable = false)
+    @JoinColumn(name = "TEACHER_ID")
     HeadTeacherEntity headTeacherEntity;
 }

@@ -38,11 +38,23 @@ public class HeadTeacherDto
   @NotNull
   String name;
 
+
   //todo: Replace with some mapping framework
-  public static HeadTeacherDto of(HeadTeacherEntity entity){
-    HeadTeacherDto.builder()
+  public static HeadTeacherDto of(HeadTeacherEntity entity)
+  {
+    if (entity == null) return null;
+    return HeadTeacherDto.builder()
         .id(entity.getId())
         .name(entity.getFullname())
+        .build();
+  }
+
+
+  public HeadTeacherEntity toEntity()
+  {
+    return HeadTeacherEntity.builder()
+        .id(getId())
+        .fullname(getName())
         .build();
   }
 }

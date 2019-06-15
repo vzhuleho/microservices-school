@@ -14,15 +14,18 @@ import com.kyriba.schoolclassservice.repository.PupilRepository;
 import com.kyriba.schoolclassservice.repository.SchoolClassRepository;
 import com.kyriba.schoolclassservice.repository.TeacherRepository;
 import com.kyriba.schoolclassservice.service.dto.ClassUpdateRequest;
+import com.kyriba.schoolclassservice.service.dto.HeadTeacherDto;
 import com.kyriba.schoolclassservice.service.dto.PupilDto;
 import com.kyriba.schoolclassservice.service.dto.SchoolClassDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,49 +36,85 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class SchoolClassService {
+public class SchoolClassService
+{
 
   private final SchoolClassRepository classRepository;
   private final TeacherRepository headTeacherRepository;
   private final PupilRepository pupilRepository;
 
-  public List<SchoolClassDto> getAll() {
+  //External services clients
+  private final TeacherServiceClient teacherServiceClient;
+  private final PupilServiceClient pupilServiceClient;
+
+
+  public List<SchoolClassDto> getAll()
+  {
     return classRepository.findAll().stream().map(SchoolClassDto::of).collect(Collectors.toList());
   }
 
 
-  public SchoolClassDto getById(Long id) {
+  public SchoolClassDto getById(Long id)
+  {
     SchoolClassEntity byId = classRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
     return SchoolClassDto.of(byId);
   }
 
 
   @Transactional
-  public SchoolClassDto create(@Valid SchoolClassDto schoolClass) {
-    HeadTeacherEntity teacher;
-    if (schoolClass.getHeadTeacher() != null) {
-      teacher = headTeacherRepository.findById(schoolClass.getHeadTeacher().getId())
-          .orElseThrow(() -> new ResourceNotFoundException("Specified teacher is not exists"));
+  public SchoolClassDto create(@Valid SchoolClassDto schoolClass)
+  {
+    final SchoolClassEntity classEntity = schoolClass.toEntity();
+    HeadTeacherEntity teacher = readOrCreateTeacher(schoolClass.getHeadTeacher());
+    classEntity.setHeadTeacherEntity(teacher);
+    return SchoolClassDto.of(classRepository.save(classEntity));
+  }
+
+
+  @Nullable
+  private HeadTeacherEntity readOrCreateTeacher(@Valid final HeadTeacherDto headTeacherDto)
+  {
+    HeadTeacherEntity teacher = null;
+    if (headTeacherDto != null) {
+      //is it exists in the local storage?
+      final Long teacherId = headTeacherDto.getId();
+      final Optional<HeadTeacherEntity> teacherLocalStorage = headTeacherRepository.findById(
+          teacherId);
+      if (!teacherLocalStorage.isPresent()) {
+        final HeadTeacherEntity headTeacherEntity = teacherServiceClient.findById(headTeacherDto)
+            .orElseThrow(() -> new ResourceNotFoundException("Teacher with " + teacherId + " is not found!"))
+            .toEntity();
+
+        teacher = headTeacherRepository.save(headTeacherEntity);
+      }
+      else {
+        teacher = teacherLocalStorage.get();
+      }
     }
-    return SchoolClassDto.of(classRepository.save(schoolClass.toEntity()));
+    return teacher;
   }
 
 
   @Transactional
-  public SchoolClassDto updateClass(Long classId, @Valid ClassUpdateRequest updateRequest) {
-    headTeacherRepository
+  public SchoolClassDto updateClass(Long classId, @Valid ClassUpdateRequest updateRequest)
+  {
     SchoolClassEntity byId = classRepository.findById(classId).orElseThrow(ResourceNotFoundException::new);
-    return SchoolClassDto.of(classRepository.save(updateRequest.toEntity(byId)));
+    HeadTeacherEntity teacher = readOrCreateTeacher(updateRequest.getHeadTeacher());
+    final SchoolClassEntity schoolClassEntity = updateRequest.toEntity(byId);
+    schoolClassEntity.setHeadTeacherEntity(teacher);
+    return SchoolClassDto.of(classRepository.save(schoolClassEntity));
   }
 
 
   @Transactional
-  public void deleteClass(Long classId) {
+  public void deleteClass(Long classId)
+  {
     classRepository.deleteById(classId);
   }
 
 
-  public Set<PupilDto> getPupilsForClass(Long classId) {
+  public Set<PupilDto> getPupilsForClass(Long classId)
+  {
     Set<PupilEntity> pupilEntities = classRepository.findById(classId)
         .map(SchoolClassEntity::getPupils)
         .orElseThrow(ResourceNotFoundException::new);
@@ -83,22 +122,41 @@ public class SchoolClassService {
     return pupilEntities.stream().map(PupilDto::of).collect(Collectors.toSet());
   }
 
+
   @Transactional
-  public PupilDto addPupilToClass(Long classId, @Valid PupilDto pupil) {
-    //todo: verify pupil exists in user service
-    //todo: verify pupil is not registered to some class
+  public PupilDto addPupilToClass(Long classId, @Valid PupilDto pupil)
+  {
     SchoolClassEntity schoolClassEntity = classRepository.findById(classId)
         .orElseThrow(ResourceNotFoundException::new);
 
-    PupilEntity entity = pupil.toEntity();
-    entity.setSchoolClass(schoolClassEntity);
-    pupilRepository.save(entity);
+    final PupilEntity newPupil = readPupil(pupil);
+    newPupil.setSchoolClass(schoolClassEntity);
+    pupilRepository.save(newPupil);
 
     return pupil;
   }
 
-  @Transactional
-  public void removePupilFromClass(Long classId, Long pupilId) {
 
+  @Transactional
+  public void removePupilFromClass(Long classId, Long pupilId)
+  {
+    final PupilEntity pupilEntity = pupilRepository.findById(pupilId).orElseThrow(ResourceNotFoundException::new);
+    pupilEntity.setSchoolClass(null);
+    pupilRepository.save(pupilEntity);
+  }
+
+
+  @Nullable
+  private PupilEntity readPupil(@Valid final PupilDto pupilDto)
+  {
+    PupilEntity result = null;
+    if (pupilDto != null) {
+      final Long id = pupilDto.getId();
+      final Optional<PupilEntity> pupil = pupilRepository.findById(id);
+      result = pupil.orElseGet(() -> pupilServiceClient.findById(pupilDto)
+          .orElseThrow(() -> new ResourceNotFoundException("Pupil with " + id + " is not found!"))
+          .toEntity());
+    }
+    return result;
   }
 }

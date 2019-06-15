@@ -35,7 +35,6 @@ public class ClassUpdateRequest
   public SchoolClassEntity toEntity(SchoolClassEntity entity) {
     entity.setGrade(grade);
     entity.setLetter(letter);
-    //entity.setTEacher todo:
     return entity;
   }
 }

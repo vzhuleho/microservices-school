@@ -4,25 +4,27 @@ import lombok.*;
 
 import javax.persistence.*;
 
+
 /**
  * @author Vitaly Belkevich
  */
 @Entity
-@Table(name = "SCHOOL_CLASS")
-@Getter @Setter @NoArgsConstructor
+@Table(name = "PUPIL")
+@Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PupilEntity {
+public class PupilEntity
+{
+  @Id
+  @Column(name = "PUPIL_ID")
+  Long id;
 
-    @GeneratedValue
-    @Id
-    @Column(name = "PUPIL_ID")
-    Long id;
+  @Column(name = "FULL_NAME")
+  String fullname;
 
-    @Column(name = "FULL_NAME")
-    String fullname;
-
-    @ManyToOne(targetEntity = SchoolClassEntity.class)
-    @JoinColumn(name="CLASS_ID", nullable=false)
-    SchoolClassEntity schoolClass;
+  @ManyToOne(targetEntity = SchoolClassEntity.class)
+  @JoinColumn(name = "CLASS_ID")
+  SchoolClassEntity schoolClass;
 }

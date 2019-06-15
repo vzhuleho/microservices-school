@@ -50,7 +50,7 @@ public class SchoolClassDto
                 .grade(entity.getGrade())
                 .letter(entity.getLetter())
                 .year(entity.getYear())
-                .headTeacher(HeadTeacherDto) \\ todo:!@
+                .headTeacher(HeadTeacherDto.of(entity.getHeadTeacherEntity()))
                 .build();
     }
 
@@ -60,7 +60,6 @@ public class SchoolClassDto
                 .grade(getGrade())
                 .letter(getLetter())
                 .year(getYear())
-                .headTeacher()
                 .build();
     }
 }
