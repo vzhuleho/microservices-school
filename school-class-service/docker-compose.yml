@@ -6,6 +6,8 @@ services:
     ports:
       - "81:81"
     image: oscarfonts/h2
+    #exposes port internally in docker network for all other containers - no need (at least for now)
+    #to expose it outside of the network
     expose:
       - "1521"
   school-class:
