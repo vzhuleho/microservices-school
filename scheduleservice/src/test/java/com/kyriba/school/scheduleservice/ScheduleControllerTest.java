@@ -1,5 +1,6 @@
 package com.kyriba.school.scheduleservice;
 
+import com.kyriba.school.scheduleservice.domain.dto.ScheduleDTO;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
@@ -47,17 +48,29 @@ public class ScheduleControllerTest {
 	}
 
 	@Test
-	public void getOrCreate() {
-		given(documentationSpec)
+	public void get() {
+		Long id = given(documentationSpec)
 				.contentType(APPLICATION_JSON_UTF8_VALUE)
-				.filter(document("schedules-get-or-create"))
+				.filter(document("schedules-get-by-year-grade-letter"))
 				.when()
-				.get(String.join("/", SCHEDULES, String.valueOf(YEAR), String.valueOf(GRADE), LETTER))
+				.get(String.join("/", SCHEDULES, String.valueOf(2019), String.valueOf(10), "Z"))
 				.then()
 				.statusCode(SC_OK)
-				.body("year", is(YEAR))
-				.body("schoolClass.grade", is(GRADE))
-				.body("schoolClass.letter", is(LETTER));
+				.body("year", is(2019))
+				.body("schoolClass.grade", is(10))
+				.body("schoolClass.letter", is("Z"))
+				.extract().as(ScheduleDTO.class).getId();
+
+		given(documentationSpec)
+				.contentType(APPLICATION_JSON_UTF8_VALUE)
+				.filter(document("schedules-get-by-id"))
+				.when()
+				.get(String.join("/", SCHEDULES, String.valueOf(id)))
+				.then()
+				.statusCode(SC_OK)
+				.body("year", is(2019))
+				.body("schoolClass.grade", is(10))
+				.body("schoolClass.letter", is("Z"));
 	}
 
 	@Test
@@ -103,7 +116,7 @@ public class ScheduleControllerTest {
 				.body("schoolClass.grade", is(GRADE))
 				.body("schoolClass.letter", is(LETTER));
 
-		// When deleteById
+		// When delete
 		given(documentationSpec)
 				.contentType(APPLICATION_JSON_UTF8_VALUE)
 				.filter(document("schedules-delete"))

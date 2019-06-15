@@ -60,6 +60,6 @@ public class Mark {
     }
 
     public MarkDTO output() {
-        return new MarkDTO(pupil.name(), value, note);
+        return new MarkDTO(id, pupil.name(), value, note, lesson.getId());
     }
 }

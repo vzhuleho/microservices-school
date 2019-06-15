@@ -10,8 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
 
 @Api(value="School Schedules Management System")
 @RequestMapping("/api/v1/schedules")
@@ -40,22 +38,22 @@ public class ScheduleController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(produces = "application/hal+json")
     public long create(@RequestBody ScheduleDTO scheduleToCreate) {
-        return scheduleService.findOrCreate(scheduleToCreate).getId();
+        return scheduleService.create(scheduleToCreate).getId();
     }
 
-    @ApiOperation(value = "Get a schedule or create a new one if the schedule for the requested year and school class doesn't exist",
+    @ApiOperation(value = "Get a schedule by its year and grade and letter of its school class",
             response = ScheduleDTO.class)
     @GetMapping(value = "/{year}/{grade}/{letter}", produces = "application/hal+json")
-    public ScheduleDTO getOrCreate(@PathVariable int year,
+    public ScheduleDTO get(@PathVariable int year,
                                    @PathVariable int grade,
                                    @PathVariable String letter) {
-        return scheduleService.findOrCreate(year, grade, letter);
+        return scheduleService.find(year, grade, letter);
     }
 
     @ApiOperation(value = "Delete a schedule by id")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = "application/hal+json")
     public void deleteById(@PathVariable Long id) {
-        scheduleService.deleteById(id);
+        scheduleService.delete(id);
     }
 }

@@ -14,6 +14,8 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class AbsenceDTO {
 
+	private Long id;
+
 	@ApiModelProperty("A name of a pupil which was absent")
 	@NotBlank
 	private String pupilName;
@@ -21,4 +23,5 @@ public class AbsenceDTO {
 	@ApiModelProperty("A reason of a pupil's absence")
 	private String reason;
 
+	private Long lessonId;
 }

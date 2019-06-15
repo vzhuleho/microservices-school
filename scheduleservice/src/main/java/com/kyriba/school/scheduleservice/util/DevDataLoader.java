@@ -21,8 +21,8 @@ public class DevDataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        SchoolClass schoolClass1 = schoolClassRepository.save(new SchoolClass().setGrade(1).setLetter("A").setFoundationYear(2018));
-        SchoolClass schoolClass2 = schoolClassRepository.save(new SchoolClass().setGrade(1).setLetter("A").setFoundationYear(2019));
+        schoolClassRepository.save(new SchoolClass().setGrade(1).setLetter("A").setFoundationYear(2018));
+        schoolClassRepository.save(new SchoolClass().setGrade(1).setLetter("A").setFoundationYear(2019));
         SchoolClass schoolClass3 = schoolClassRepository.save(new SchoolClass().setGrade(10).setLetter("Z").setFoundationYear(2009));
         Schedule schedule = scheduleRepository.save(new Schedule(2019, schoolClass3));
 

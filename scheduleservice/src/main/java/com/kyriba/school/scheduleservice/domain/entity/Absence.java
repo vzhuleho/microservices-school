@@ -55,6 +55,6 @@ public class Absence {
     }
 
     public AbsenceDTO output() {
-        return new AbsenceDTO(pupil.name(), reason);
+        return new AbsenceDTO(id, pupil.name(), reason, lesson.getId());
     }
 }

@@ -7,7 +7,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.Optional;
 
-@RepositoryRestResource
+@RepositoryRestResource(exported = false)
 public interface PupilRepository extends CrudRepository<Pupil, Long> {
     Optional<Pupil> getByName(String pupilName);
 

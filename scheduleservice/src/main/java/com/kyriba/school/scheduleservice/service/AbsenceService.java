@@ -37,10 +37,9 @@ public class AbsenceService {
     }
 
     @Transactional
-    public Long updateAbsenceById(Long id, AbsenceDTO absenceDTO) {
-        return absenceRepository.save(
-                findByIdOrElseThrowNotFound(id).applyData(absenceDTO)
-        ).id();
+    public AbsenceDTO updateAbsence(AbsenceDTO absenceDTO) {
+        Absence absence = findByIdOrElseThrowNotFound(absenceDTO.getId()).applyData(absenceDTO);
+        return absenceRepository.save(absence).output();
     }
 
     public AbsenceDTO getAbsenceById(Long id) {
@@ -49,6 +48,20 @@ public class AbsenceService {
 
     private Absence findByIdOrElseThrowNotFound(Long id) {
         return absenceRepository.findById(id).orElseThrow(() -> new AbsenceNotFound(id));
+    }
+
+    @Transactional
+    public Long addAbsenceToLesson(AbsenceDTO absenceDTO) {
+        Lesson lesson = lessonRepository.findById(absenceDTO.getLessonId())
+            .orElseThrow(ResourceNotFoundException::new);
+        Pupil pupil = pupilRepository.getByNameAndSchoolClass(absenceDTO.getPupilName(), lesson.getSchoolClass())
+            .orElseThrow(ResourceNotFoundException::new);
+        return absenceRepository.save(new Absence(absenceDTO.getReason(), pupil, lesson)).id();
+    }
+
+    @Transactional
+    public void removeAbsenceFromLesson(Long absenceId) {
+        absenceRepository.deleteById(absenceId);
     }
 
     class AbsenceNotFound extends ResourceNotFoundException {

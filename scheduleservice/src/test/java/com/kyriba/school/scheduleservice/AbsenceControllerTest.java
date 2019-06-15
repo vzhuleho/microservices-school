@@ -29,7 +29,7 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureRestDocs
-public class MarkControllerTest {
+public class AbsenceControllerTest {
 
     @Rule
     public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
@@ -43,30 +43,28 @@ public class MarkControllerTest {
     public void setUp() {
         RestAssured.port = port;
         documentationSpec = new RequestSpecBuilder()
-                .setBasePath("/api/v1/marks")
+                .setBasePath("/api/v1/absences")
                 .addFilter(documentationConfiguration(restDocumentation)).build();
     }
 
     @Test
-    public void testMarksCRUD() throws JSONException {
+    public void testAbsencesCRUD() throws JSONException {
         // Given
         String pupilName = "Uasya";
-        int value = 2;
-        String note = "Terrible";
+        String reason = "illness";
         long lessonId = with().contentType(APPLICATION_JSON_UTF8_VALUE)
             .get("/api/v1/lessons/2019/10/Z/2019-09-01")
             .as(LessonDTO[].class)[0].getId();
         // When add
-        JSONObject markAsJson = new JSONObject();
-        markAsJson.put("pupilName", pupilName);
-        markAsJson.put("value", value);
-        markAsJson.put("note", note);
-        markAsJson.put("lessonId", lessonId);
-        long markId = given(documentationSpec)
+        JSONObject absenceAsJson = new JSONObject();
+        absenceAsJson.put("pupilName", pupilName);
+        absenceAsJson.put("reason", reason);
+        absenceAsJson.put("lessonId", lessonId);
+        long absenceId = given(documentationSpec)
             .contentType(APPLICATION_JSON_UTF8_VALUE)
-            .filter(document("marks-add"))
+            .filter(document("absences-add"))
             .when()
-            .body(markAsJson.toString())
+            .body(absenceAsJson.toString())
             .post()
             .then()
             .statusCode(SC_CREATED)
@@ -74,36 +72,32 @@ public class MarkControllerTest {
         // When get
         given(documentationSpec)
             .contentType(APPLICATION_JSON_UTF8_VALUE)
-            .filter(document("marks-get"))
+            .filter(document("absences-get"))
             .when()
-            .get("/" + markId)
+            .get("/" + absenceId)
             .then()
             .statusCode(SC_OK)
             .body("pupilName", is(pupilName))
-            .body("value", is(value))
-            .body("note", is(note));
+            .body("reason", is(reason));
         // When update
-        int valueNew = 5;
-        String noteNew = "note";
-        markAsJson.put("id", markId);
-        markAsJson.put("value", valueNew);
-        markAsJson.put("note", noteNew);
+        String reasonNew = "hangover";
+        absenceAsJson.put("id", absenceId);
+        absenceAsJson.put("reason", reasonNew);
         given(documentationSpec)
             .contentType(APPLICATION_JSON_UTF8_VALUE)
-            .filter(document("marks-update"))
+            .filter(document("absences-update"))
             .when()
-            .body(markAsJson.toString())
-            .put("/" + markId)
+            .body(absenceAsJson.toString())
+            .put("/" + absenceId)
             .then()
             .statusCode(SC_OK)
-            .body("value", is(valueNew))
-            .body("note", is(noteNew));
+            .body("reason", is(reasonNew));
         // When delete
         given(documentationSpec)
             .contentType(APPLICATION_JSON_UTF8_VALUE)
-            .filter(document("marks-delete"))
+            .filter(document("absences-delete"))
             .when()
-            .delete("/1")
+            .delete("/" + absenceId)
             .then()
             .statusCode(SC_NO_CONTENT);
     }

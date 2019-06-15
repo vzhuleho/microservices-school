@@ -14,6 +14,8 @@ import java.util.List;
 @ApiModel
 public class LessonDTO {
 
+	private Long id;
+
 	@ApiModelProperty("Lesson's date")
 	@NotNull
 	private LocalDate date;

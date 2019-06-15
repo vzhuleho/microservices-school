@@ -76,7 +76,7 @@ use of HTTP status codes.
 The Schedule resource is used to create, modify and list schedules.
 
 
-[[resource-schedule-list]]
+[[resource-schedules-list]]
 === Listing Schedules
 A `GET` request lists all the schedules.
 
@@ -87,20 +87,6 @@ include::{snippets}/schedules-list/http-request.adoc[]
 ==== Example response
 
 include::{snippets}/schedules-list/http-response.adoc[]
-
-
-[[resource-schedules-get]]
-=== Getting a Schedule
-A `GET` request fetches a specific schedule.
-
-==== Example request
-
-include::{snippets}/schedules-get/http-request.adoc[]
-
-==== Example response
-
-include::{snippets}/schedules-get/http-response.adoc[]
-
 
 [[resource-schedules-create]]
 === Creating a Schedule
@@ -114,17 +100,30 @@ include::{snippets}/schedules-create/http-request.adoc[]
 
 include::{snippets}/schedules-create/http-response.adoc[]
 
-[[resource-schedules-get-or-create]]
-=== Getting or Creating a Schedule
-A `GET` request gets a schedule or creates a new one if it doesn't exist.
+[[resource-schedules-get-by-id]]
+=== Getting a Schedule by id
+A `GET` request gets an existing schedule
 
 ==== Example request
 
-include::{snippets}/schedules-get-or-create/http-request.adoc[]
+include::{snippets}/schedules-get-by-id/http-request.adoc[]
 
 ==== Example response
 
-include::{snippets}/schedules-get-or-create/http-response.adoc[]
+include::{snippets}/schedules-get-by-id/http-response.adoc[]
+
+
+[[resource-schedules-get-by-year-grade-letter]]
+=== Getting a Schedule by year, grade and letter
+A `GET` request gets an existing schedule by its year and grade and letter of its school class
+
+==== Example request
+
+include::{snippets}/schedules-get-by-year-grade-letter/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/schedules-get-by-year-grade-letter/http-response.adoc[]
 
 
 [[resource-schedules-delete]]
@@ -178,7 +177,7 @@ include::{snippets}/schedule-days-get/http-response.adoc[]
 The Schedule Day Lessons resource is used to set and list the lessons of a particular day
 
 [[resource-schedule-day-lessons-list]]
-=== Listing Schedules' Days
+=== Listing the Lessons of the Day
 A `GET` request lists all the schedules.
 
 ==== Example request
@@ -189,68 +188,6 @@ include::{snippets}/schedule-day-lessons-list/http-request.adoc[]
 
 include::{snippets}/schedule-day-lessons-list/http-response.adoc[]
 
-[[resource-schedule-day-lessons-get]]
-=== Getting a Lesson of the Day by its number
-A `GET` request fetches a specific lesson.
-
-==== Example request
-
-include::{snippets}/schedule-day-lessons-get/http-request.adoc[]
-
-==== Example response
-
-include::{snippets}/schedule-day-lessons-get/http-response.adoc[]
-
-
-[[resource-schedule-day-lesson-absences-add]]
-=== Adding an information about pupil's absence to the lesson
-A `POST` request creates a new absence information.
-
-==== Example request
-include::{snippets}/schedule-day-lesson-absences-add/http-request.adoc[]
-
-==== Example response
-include::{snippets}/schedule-day-lesson-absences-add/http-response.adoc[]
-
-
-[[resource-schedule-day-lesson-absences-delete]]
-=== Deleting an information about pupil's absence from the lesson
-A `DELETE` request deletes an existing absence info.
-
-==== Example request
-
-include::{snippets}/schedule-day-lesson-absences-delete/http-request.adoc[]
-
-==== Example response
-
-include::{snippets}/schedule-day-lesson-absences-delete/http-response.adoc[]
-
-
-[[resource-schedule-day-lesson-marks-add]]
-=== Adding an information about pupil's mark to the lesson
-A `POST` request creates a new mark.
-
-==== Example request
-include::{snippets}/schedule-day-lesson-marks-add/http-request.adoc[]
-
-==== Example response
-include::{snippets}/schedule-day-lesson-marks-add/http-response.adoc[]
-
-
-[[resource-schedule-day-lesson-marks-delete]]
-=== Deleting an information about pupil's mark from the lesson
-A `DELETE` request deletes an existing mark.
-
-==== Example request
-
-include::{snippets}/schedule-day-lesson-marks-delete/http-request.adoc[]
-
-==== Example response
-
-include::{snippets}/schedule-day-lesson-absences-delete/http-response.adoc[]
-
-
-
 [[resources-marks]]
 == Marks
 
@@ -260,11 +197,11 @@ A `GET` request retrieves an existing mark.
 
 ==== Example request
 
-include::{snippets}/mark-get/http-request.adoc[]
+include::{snippets}/marks-get/http-request.adoc[]
 
 ==== Example response
 
-include::{snippets}/mark-get/http-response.adoc[]
+include::{snippets}/marks-get/http-response.adoc[]
 
 [[resource-marks-update]]
 === Update mark information
@@ -272,11 +209,11 @@ A `PUT` request updates an existing mark.
 
 ==== Example request
 
-include::{snippets}/mark-update/http-request.adoc[]
+include::{snippets}/marks-update/http-request.adoc[]
 
 ==== Example response
 
-include::{snippets}/mark-update/http-response.adoc[]
+include::{snippets}/marks-update/http-response.adoc[]
 
 [[resource-marks-delete]]
 === Delete mark
@@ -284,8 +221,48 @@ A `DELETE` request deletes an existing mark.
 
 ==== Example request
 
-include::{snippets}/mark-delete/http-request.adoc[]
+include::{snippets}/marks-delete/http-request.adoc[]
 
 ==== Example response
 
-include::{snippets}/mark-delete/http-response.adoc[]
+include::{snippets}/marks-delete/http-response.adoc[]
+
+
+[[resources-absences]]
+== Absences
+
+[[resource-marks-get]]
+=== Get information about absence
+A `GET` request retrieves an existing absence
+
+==== Example request
+
+include::{snippets}/absences-get/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/absences-get/http-response.adoc[]
+
+[[resource-absences-update]]
+=== Update absence's information
+A `PUT` request updates an existing absence
+
+==== Example request
+
+include::{snippets}/absences-update/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/absences-update/http-response.adoc[]
+
+[[resource-absences-delete]]
+=== Delete absence
+A `DELETE` request deletes an existing absence
+
+==== Example request
+
+include::{snippets}/absences-delete/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/absences-delete/http-response.adoc[]

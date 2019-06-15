@@ -22,12 +22,12 @@ public class MarkService {
     private final LessonRepository lessonRepository;
 
     @Transactional
-    public Long markPupilAtLesson(Long pupilId, Long lessonId, int value, String note) {
-        Lesson lesson = lessonRepository.findById(lessonId)
-                .orElseThrow(ResourceNotFoundException::new);
-        Pupil pupil = pupilRepository.findById(pupilId)
-                .orElseThrow(ResourceNotFoundException::new);
-        return markRepository.save(new Mark(value, note, pupil, lesson)).id();
+    public Long addMarkToLesson(MarkDTO markDTO) {
+        Lesson lesson = lessonRepository.findById(markDTO.getLessonId())
+            .orElseThrow(ResourceNotFoundException::new);
+        Pupil pupil = pupilRepository.getByNameAndSchoolClass(markDTO.getPupilName(), lesson.getSchoolClass())
+            .orElseThrow(ResourceNotFoundException::new);
+        return markRepository.save(new Mark(markDTO.getValue(), markDTO.getNote(), pupil, lesson)).id();
     }
 
     @Transactional
@@ -38,15 +38,14 @@ public class MarkService {
     }
 
     @Transactional
-    public Long updateMarkById(Long id, MarkDTO markDTO) {
-        return markRepository.save(
-                findByIdOrElseThrowNotFound(id).applyData(markDTO)
-        ).id();
+    public MarkDTO updateMark(MarkDTO markDTO) {
+        Mark savedMark = markRepository.save(findByIdOrElseThrowNotFound(markDTO.getId()).applyData(markDTO));
+        return savedMark.output();
     }
 
     public MarkDTO getMarkById(Long id) {
         Mark mark = findByIdOrElseThrowNotFound(id);
-        return new MarkDTO(mark.pupil().name(), mark.value(), mark.note());
+        return new MarkDTO(id, mark.pupil().name(), mark.value(), mark.note(), mark.lesson().getId());
     }
 
     private Mark findByIdOrElseThrowNotFound(Long id) {

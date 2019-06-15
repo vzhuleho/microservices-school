@@ -16,6 +16,8 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class MarkDTO {
 
+	private Long id;
+
 	@ApiModelProperty("A pupil's name")
 	@NotBlank
 	private String pupilName;
@@ -27,5 +29,7 @@ public class MarkDTO {
 
 	@ApiModelProperty("A comment for the value")
 	private String note;
+
+	private Long lessonId;
 
 }

@@ -24,46 +24,31 @@ public class ScheduleService {
     private final SchoolClassRepository schoolClassRepository;
     private final ModelMapper mapper;
 
+    public Page<ScheduleDTO> findAll(Pageable pageable) {
+        return scheduleRepository.findAll(pageable).map(schedule -> mapper.map(schedule, ScheduleDTO.class));
+    }
+
     public ScheduleDTO findById(Long scheduleId) {
         return scheduleRepository.findById(scheduleId).map(schedule -> mapper.map(schedule, ScheduleDTO.class))
             .orElseThrow(ResourceNotFoundException::new);
     }
 
     @Transactional
-    public ScheduleDTO findOrCreate(ScheduleDTO scheduleDTO) {
-        return findOrCreate(scheduleDTO.getYear(), scheduleDTO.getSchoolClass());
+    public ScheduleDTO find(int year, int grade, String letter) {
+        return Optional.ofNullable(scheduleRepository.findByYearAndSchoolClassGradeAndSchoolClassLetterIgnoreCase(year, grade, letter))
+            .map(schedule -> mapper.map(schedule, ScheduleDTO.class))
+            .orElseThrow(() -> new ScheduleNotFoundException(grade, letter, year));
     }
 
     @Transactional
-    public ScheduleDTO findOrCreate(int year, int grade, String letter) {
-        SchoolClassDTO schoolClassDTO = new SchoolClassDTO()
-            .setGrade(grade)
-            .setLetter(letter)
-            .setFoundationYear(SchoolClass.currentToFoundationYear(year, grade));
-        return findOrCreate(year, schoolClassDTO);
-    }
-
-    public Page<ScheduleDTO> findAll(Pageable pageable) {
-        return scheduleRepository.findAll(pageable).map(schedule -> mapper.map(schedule, ScheduleDTO.class));
-    }
-
-    public void deleteById(Long id) {
-        scheduleRepository.deleteById(id);
-    }
-
-    private ScheduleDTO findOrCreate(int year, SchoolClassDTO schoolClass) {
-        return find(year, schoolClass).orElseGet(() -> create(year, schoolClass));
-    }
-
-    private ScheduleDTO create(int year, SchoolClassDTO schoolClassDTO) {
-        SchoolClass schoolClass = getSchoolClassFromRepository(schoolClassDTO);
-        Schedule schedule = scheduleRepository.save(new Schedule(year, schoolClass));
+    public ScheduleDTO create(ScheduleDTO scheduleToCreate) {
+        SchoolClass schoolClass = getSchoolClassFromRepository(scheduleToCreate.getSchoolClass());
+        Schedule schedule = scheduleRepository.save(new Schedule(scheduleToCreate.getYear(), schoolClass));
         return mapper.map(schedule, ScheduleDTO.class);
     }
 
-    private Optional<ScheduleDTO> find(int year, SchoolClassDTO schoolClassDTO) {
-        return Optional.ofNullable(scheduleRepository.findByYearAndSchoolClass(year, getSchoolClassFromRepository(schoolClassDTO)))
-            .map(schedule -> mapper.map(schedule, ScheduleDTO.class));
+    public void delete(Long id) {
+        scheduleRepository.deleteById(id);
     }
 
     private SchoolClass getSchoolClassFromRepository(SchoolClassDTO schoolClassDTO) {

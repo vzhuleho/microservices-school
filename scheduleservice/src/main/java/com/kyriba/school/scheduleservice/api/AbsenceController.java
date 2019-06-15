@@ -10,30 +10,37 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @Api(value = "School Schedules Management System")
-@RequestMapping("/api/v1/absences/{id}")
+@RequestMapping("/api/v1/absences")
 @RestController
 @RequiredArgsConstructor
 public class AbsenceController {
     
     private final AbsenceService absenceService;
 
+    @ApiOperation(value = "Add information about pupil's absence to a lesson")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
+    public long addAbsenceToLesson(@RequestBody AbsenceDTO absence) {
+        return absenceService.addAbsenceToLesson(absence);
+    }
+
     @ApiOperation(value = "Retrieve absence information by id", response = AbsenceDTO.class)
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping
+    @GetMapping("/{id}")
     public AbsenceDTO getAbsence(@ApiParam(value = "Absence unique identifier", example = "1", required = true) @PathVariable Long id ) {
         return absenceService.getAbsenceById(id);
     }
 
-    @ApiOperation(value = "Update absence information by id", response = Long.class)
+    @ApiOperation(value = "Update absence information by id", response = AbsenceDTO.class)
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping
-    public Long updateAbsence(@ApiParam(value = "Absence unique identifier", example = "1", required = true) @PathVariable Long id , @RequestBody AbsenceDTO absenceDTO) {
-        return absenceService.updateAbsenceById(id, absenceDTO);
+    @PutMapping("/{id}")
+    public AbsenceDTO updateAbsence(@RequestBody AbsenceDTO absenceDTO) {
+        return absenceService.updateAbsence(absenceDTO);
     }
 
     @ApiOperation(value = "Delete information about the pupil's absence by id")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public void deleteAbsence(@ApiParam(value = "Absence unique identifier", example = "1", required = true) @PathVariable Long id ) {
         absenceService.removeAbsenceById(id);
     }
