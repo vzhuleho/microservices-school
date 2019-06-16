@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: userservice-app
+  labels:
+    app: userservice
+spec:
+  ports:
+    - port: 80
+      targetPort: http
+  selector:
+    app: userservice
+    tier: backend
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: userservice-app
+  labels:
+    app: userservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: userservice
+      tier: backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: userservice
+        tier: backend
+    spec:
+      containers:
+        - image: kyriba/userservice:1.0.0
+          imagePullPolicy: IfNotPresent
+          name: userservice-app
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+            - name: USERSERVICE_DB_HOST
+              value: userservice-db
+            - name: USERSERVICE_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-pass
+                  key: password
+          ports:
+            - containerPort: 8080
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /status
+              port: 8080
+            initialDelaySeconds: 80
+            timeoutSeconds: 10
+            failureThreshold: 10
