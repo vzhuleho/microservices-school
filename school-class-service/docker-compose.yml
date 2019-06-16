@@ -2,7 +2,7 @@ version: '2'
 services:
   database:
     volumes:
-      - /home/vbelkevich/git/micreservices-homework/database:/opt/h2-data
+      - ./target/database:/opt/h2-data
     ports:
       - "81:81"
     image: oscarfonts/h2
@@ -14,5 +14,7 @@ services:
     build: .
     ports:
       - "8082:10000"
+    environment:
+      - H2_DB_ADDRESS=database
     depends_on:
       - database

@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.kyriba.school</groupId>
     <artifactId>school-class-service</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>school-class-service</name>
     <description>School class service</description>
 
