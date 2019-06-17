@@ -2,17 +2,13 @@ package com.kyriba.school.scheduleservice.api;
 
 
 import com.kyriba.school.scheduleservice.domain.dto.ScheduleDTO;
-import com.kyriba.school.scheduleservice.domain.dto.SchoolClassDTO;
+import com.kyriba.school.scheduleservice.service.ScheduleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.Collections;
 
 
 @Api(value="School Schedules Management System")
@@ -20,51 +16,44 @@ import java.util.Collections;
 @RestController
 public class ScheduleController {
 
+    private final ScheduleService scheduleService;
+
+    public ScheduleController(ScheduleService scheduleService) {
+        this.scheduleService = scheduleService;
+    }
+
     @ApiOperation(value = "View a list of available schedules")
     @GetMapping
     public Page<ScheduleDTO> getAllSchedules(Pageable pageable) {
-        return new PageImpl<>(Collections.singletonList(new ScheduleDTO()));
+        return scheduleService.findAll(pageable);
     }
 
     @ApiOperation(value = "Get a schedule by id", response = ScheduleDTO.class)
     @GetMapping(value = "/{id}", produces = "application/hal+json")
     public ScheduleDTO getById(@PathVariable Long id) {
-        ScheduleDTO scheduleDTO = new ScheduleDTO();
-        scheduleDTO.setYear(2018);
-        scheduleDTO.setSchoolClass(new SchoolClassDTO(1L, 1, "A", 2018));
-        return scheduleDTO;
+        return scheduleService.findById(id);
     }
 
     @ApiOperation(value = "Create a new schedule", response = ScheduleDTO.class)
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(produces = "application/hal+json")
-    public ScheduleDTO create(@RequestBody ScheduleDTO scheduleToCreate) {
-        scheduleToCreate.setId(1L);
-        return scheduleToCreate;
+    public long create(@RequestBody ScheduleDTO scheduleToCreate) {
+        return scheduleService.create(scheduleToCreate).getId();
     }
 
-    @ApiOperation(value = "Get a schedule or create a new one if the schedule for the requested year and school class doesn't exist",
+    @ApiOperation(value = "Get a schedule by its year and grade and letter of its school class",
             response = ScheduleDTO.class)
     @GetMapping(value = "/{year}/{grade}/{letter}", produces = "application/hal+json")
-    public ScheduleDTO getOrCreate(@PathVariable int year,
+    public ScheduleDTO get(@PathVariable int year,
                                    @PathVariable int grade,
                                    @PathVariable String letter) {
-        ScheduleDTO scheduleDTO = new ScheduleDTO();
-        scheduleDTO.setYear(year);
-        scheduleDTO.setSchoolClass(new SchoolClassDTO(1L, 1, "A", 2018));
-        return scheduleDTO;
-    }
-
-    @ApiOperation(value = "Update an existing schedule", response = ScheduleDTO.class)
-    @PutMapping(produces = "application/hal+json")
-    public ScheduleDTO updateSchedule(@Valid @RequestBody ScheduleDTO scheduleToUpdate) {
-        return scheduleToUpdate;
-
+        return scheduleService.find(year, grade, letter);
     }
 
     @ApiOperation(value = "Delete a schedule by id")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = "application/hal+json")
     public void deleteById(@PathVariable Long id) {
+        scheduleService.delete(id);
     }
 }

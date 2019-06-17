@@ -28,7 +28,7 @@ public class Day {
 	@Getter
 	@OneToMany(cascade = CascadeType.ALL)
 	@OrderBy("index")
-	private List<Lesson> lessons = new ArrayList<>(8);
+	private List<Lesson> lessons = new ArrayList<>(9);
 
 	public Day(LocalDate date, Schedule schedule) {
 		this.date = date;
@@ -36,16 +36,18 @@ public class Day {
 		initLessons();
 	}
 
-
 	private void initLessons() {
 		for (int i = 1; i < 9; i++) {
 			lessons.add(new Lesson(date, i, schedule.getSchoolClass()));
 		}
 	}
 
-
 	public void setLesson(Lesson lesson) {
 		lessons.set(lesson.getIndex() - 1, lesson);
+	}
+
+	public Lesson getLesson(int index) {
+		return lessons.get(index - 1);
 	}
 }
 

@@ -1,5 +1,6 @@
 package com.kyriba.school.scheduleservice;
 
+import com.kyriba.school.scheduleservice.domain.dto.ScheduleDTO;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
@@ -47,21 +48,33 @@ public class ScheduleControllerTest {
 	}
 
 	@Test
-	public void getOrCreate() {
-		given(documentationSpec)
+	public void get() {
+		Long id = given(documentationSpec)
 				.contentType(APPLICATION_JSON_UTF8_VALUE)
-				.filter(document("schedules-get-or-create"))
+				.filter(document("schedules-get-by-year-grade-letter"))
 				.when()
-				.get(SCHEDULES + "/" + YEAR + "/1/A")
+				.get(String.join("/", SCHEDULES, String.valueOf(2019), String.valueOf(10), "Z"))
 				.then()
 				.statusCode(SC_OK)
-				.body("year", is(YEAR))
-				.body("schoolClass.grade", is(GRADE))
-				.body("schoolClass.letter", is(LETTER));
+				.body("year", is(2019))
+				.body("schoolClass.grade", is(10))
+				.body("schoolClass.letter", is("Z"))
+				.extract().as(ScheduleDTO.class).getId();
+
+		given(documentationSpec)
+				.contentType(APPLICATION_JSON_UTF8_VALUE)
+				.filter(document("schedules-get-by-id"))
+				.when()
+				.get(String.join("/", SCHEDULES, String.valueOf(id)))
+				.then()
+				.statusCode(SC_OK)
+				.body("year", is(2019))
+				.body("schoolClass.grade", is(10))
+				.body("schoolClass.letter", is("Z"));
 	}
 
 	@Test
-	public void testScheduleCRUD() throws JSONException {
+	public void testScheduleCreateAndDelete() throws JSONException {
 
 		// When create
 		JSONObject schoolAsJson = new JSONObject();
@@ -72,7 +85,7 @@ public class ScheduleControllerTest {
 		scheduleAsJson.put("year", YEAR);
 		scheduleAsJson.put("schoolClass", schoolAsJson);
 
-		int id = given(documentationSpec)
+		long id = given(documentationSpec)
 				.contentType(APPLICATION_JSON_UTF8_VALUE)
 				.filter(document("schedules-create"))
 				.when()
@@ -80,12 +93,7 @@ public class ScheduleControllerTest {
 				.post(SCHEDULES)
 				.then()
 				.statusCode(SC_CREATED)
-				.body("year", is(YEAR))
-				.body("schoolClass.grade", is(GRADE))
-				.body("schoolClass.letter", is(LETTER))
-				.extract()
-				.jsonPath()
-				.getInt("id");
+				.extract().as(long.class);
 
 		String pathToSchedule = SCHEDULES + "/" + id;
 
@@ -108,22 +116,7 @@ public class ScheduleControllerTest {
 				.body("schoolClass.grade", is(GRADE))
 				.body("schoolClass.letter", is(LETTER));
 
-		// Given
-		int newExpectedYear = 2019;
-
-		// When update
-		scheduleAsJson.put("year", newExpectedYear);
-		given(documentationSpec)
-				.contentType(APPLICATION_JSON_UTF8_VALUE)
-				.filter(document("schedules-update"))
-				.when()
-				.body(scheduleAsJson.toString())
-				.put(SCHEDULES)
-				.then()
-				.statusCode(SC_OK)
-				.body("year", is(newExpectedYear));
-
-		// When deleteById
+		// When delete
 		given(documentationSpec)
 				.contentType(APPLICATION_JSON_UTF8_VALUE)
 				.filter(document("schedules-delete"))
