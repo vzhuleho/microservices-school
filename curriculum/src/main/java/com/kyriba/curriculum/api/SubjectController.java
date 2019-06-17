@@ -12,11 +12,9 @@ import com.kyriba.curriculum.service.SubjectService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +25,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.List;
 
 
@@ -36,8 +33,6 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/v1/subjects")
-@RequiredArgsConstructor
-@Validated
 @Api
 class SubjectController
 {
@@ -55,7 +50,7 @@ class SubjectController
   @ResponseBody
   @ResponseStatus(HttpStatus.CREATED)
   @ApiOperation(value = "Create subject", notes = "Creating new subject", response = Subject.class)
-  Subject createSubject(@Valid @RequestBody @ApiParam("New subject") SubjectToCreate subjectToCreate)
+  Subject createSubject(@RequestBody @ApiParam("New subject") SubjectToCreate subjectToCreate)
   {
     return subjectService.createSubject(subjectToCreate);
   }
@@ -66,7 +61,7 @@ class SubjectController
   @ApiOperation(value = "Update subject", notes = "Updating an existing subject", response = Subject.class)
   void updateSubject(
       @ApiParam("Subject id of the subject to be updated") @PathVariable("id") long subjectId,
-      @ApiParam("Updated subject") @Valid @RequestBody SubjectToUpdate subjectToUpdate)
+      @ApiParam("Updated subject") @RequestBody SubjectToUpdate subjectToUpdate)
   {
     subjectService.updateSubject(subjectId, subjectToUpdate);
   }

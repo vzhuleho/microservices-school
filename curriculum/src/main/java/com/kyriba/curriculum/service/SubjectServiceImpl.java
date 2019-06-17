@@ -12,10 +12,11 @@ import com.kyriba.curriculum.domain.entity.SubjectEntity;
 import com.kyriba.curriculum.domain.entity.SubjectRepository;
 import com.kyriba.curriculum.service.exception.SubjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -25,15 +26,15 @@ import java.util.stream.StreamSupport;
  * @author M-DBE
  */
 @Service
-@Profile("!test")
 @Transactional
-class SubjectServiceImpl implements SubjectService
+@Validated
+public class SubjectServiceImpl implements SubjectService
 {
   private final SubjectRepository repository;
 
 
   @Autowired
-  SubjectServiceImpl(SubjectRepository repository)
+  public SubjectServiceImpl(SubjectRepository repository)
   {
     this.repository = repository;
   }

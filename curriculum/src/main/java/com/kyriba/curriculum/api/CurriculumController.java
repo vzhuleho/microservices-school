@@ -11,7 +11,6 @@ import com.kyriba.curriculum.domain.dto.CourseToAdd;
 import com.kyriba.curriculum.domain.dto.CourseToUpdate;
 import com.kyriba.curriculum.domain.dto.Curriculum;
 import com.kyriba.curriculum.domain.dto.CurriculumToCreate;
-import com.kyriba.curriculum.domain.dto.constraint.GradeConstraint;
 import com.kyriba.curriculum.service.CurriculumService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,7 +18,6 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,7 +31,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,11 +40,10 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/v1/curricula")
-@Validated
 @Api
 class CurriculumController
 {
-  private final CurriculumService curriculumService;
+  private CurriculumService curriculumService;
 
 
   @Autowired
@@ -61,8 +57,7 @@ class CurriculumController
   @ResponseBody
   @ApiOperation(value = "Get curricula", notes = "Retrieving the collection of curricula", response = BriefCurriculum.class,
       responseContainer = "List")
-  List<BriefCurriculum> getCurricula(
-      @ApiParam("Grade") @GradeConstraint @RequestParam(value = "grade", required = false) Integer grade)
+  List<BriefCurriculum> getCurricula(@ApiParam("Grade") @RequestParam(value = "grade", required = false) Integer grade)
   {
     if (grade == null)
       return curriculumService.findAllCurricula();
@@ -88,8 +83,7 @@ class CurriculumController
   @ResponseBody
   @ResponseStatus(HttpStatus.CREATED)
   @ApiOperation(value = "Create curriculum", notes = "Create new curriculum", response = BriefCurriculum.class)
-  BriefCurriculum createCurriculum(
-      @ApiParam("New curriculum") @Valid @RequestBody CurriculumToCreate curriculumToCreate)
+  BriefCurriculum createCurriculum(@ApiParam("New curriculum") @RequestBody CurriculumToCreate curriculumToCreate)
   {
     return curriculumService.createCurriculum(curriculumToCreate);
   }
@@ -113,7 +107,7 @@ class CurriculumController
   @ResponseStatus(HttpStatus.CREATED)
   @ApiOperation(value = "Add new course", notes = "Add new course to existing curriculum", response = Course.class)
   Course addCourse(@ApiParam("Identifier of existing curriculum") @PathVariable("id") long curriculumId,
-                   @ApiParam("New course") @Valid @RequestBody CourseToAdd courseToAdd)
+                   @ApiParam("New course") @RequestBody CourseToAdd courseToAdd)
   {
     return curriculumService.addCourse(curriculumId, courseToAdd);
   }
@@ -143,7 +137,7 @@ class CurriculumController
   void updateCourse(
       @ApiParam("Identifier of existing curriculum") @PathVariable("curriculumId") long curriculumId,
       @ApiParam("Identifier of existing course") @PathVariable("courseId") long courseId,
-      @ApiParam("Updated course") @Valid @RequestBody CourseToUpdate courseToUpdate)
+      @ApiParam("Updated course") @RequestBody CourseToUpdate courseToUpdate)
   {
     curriculumService.updateCourse(curriculumId, courseId, courseToUpdate);
   }

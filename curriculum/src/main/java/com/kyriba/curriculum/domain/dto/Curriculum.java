@@ -5,7 +5,11 @@
  */
 package com.kyriba.curriculum.domain.dto;
 
-import lombok.Value;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
@@ -13,12 +17,18 @@ import java.util.List;
 /**
  * @author M-DBE
  */
-@Value
+@RequiredArgsConstructor
+@NoArgsConstructor
+@Getter
+@EqualsAndHashCode
 public class Curriculum
 {
-  private final long id;
-  private final int grade;
-  private final List<Course> courses;
+  @NonNull
+  private long id;
+  @NonNull
+  private int grade;
+  @NonNull
+  private List<Course> courses;
 
 
   public BriefCurriculum toBrief()

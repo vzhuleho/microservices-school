@@ -11,12 +11,12 @@ spring:
     hikari:
       connection-timeout: 20000
       maximum-pool-size: 5
-    url: jdbc:postgresql://localhost:5433/postgres
+    url: jdbc:postgresql://postgres-curricula:5432/postgres
     username: test
     password: test
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect

@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.1.4.RELEASE'
     id 'java'
     id "org.asciidoctor.convert" version "1.5.3"
+    id 'com.bmuschko.docker-spring-boot-application' version '4.10.0'
 }
 
 apply plugin: 'io.spring.dependency-management'
@@ -42,6 +43,21 @@ bootJar {
     }
 }
 
+docker {
+    registryCredentials {
+        url = 'https://index.docker.io/v1/'
+        username = 'dbelykyriba'
+        password = 'Bxga8Kdz!C7d462P^XKr$1'
+        email = 'dbelykyriba@outlook.com'
+    }
+
+    springBootApplication {
+        baseImage = 'openjdk:11'
+        ports = [8080]
+        tag = "dbelykyriba/curriculum-service:$version"
+    }
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -68,9 +84,14 @@ dependencies {
     testImplementation "org.junit.vintage:junit-vintage-engine:5.4.2"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:5.4.2"
     testImplementation "org.junit.jupiter:junit-jupiter-params:5.4.2"
-    testImplementation "org.junit.jupiter:junit-jupiter-migrationsupport:5.4.2"
     testImplementation "org.junit.platform:junit-platform-commons:1.4.0"
     testImplementation "org.junit.platform:junit-platform-launcher:1.4.0"
+
+    testImplementation "org.mockito:mockito-core:2.28.2"
+    testImplementation "org.mockito:mockito-junit-jupiter:2.28.2"
+    testImplementation  "io.rest-assured:spring-mock-mvc:3.3.0"
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc:2.0.3.RELEASE'
+
     
     testImplementation ('org.springframework.restdocs:spring-restdocs-restassured') {
         exclude group: 'junit'

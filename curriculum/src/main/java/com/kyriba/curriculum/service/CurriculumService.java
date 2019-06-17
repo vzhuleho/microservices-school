@@ -11,7 +11,10 @@ import com.kyriba.curriculum.domain.dto.CourseToAdd;
 import com.kyriba.curriculum.domain.dto.CourseToUpdate;
 import com.kyriba.curriculum.domain.dto.Curriculum;
 import com.kyriba.curriculum.domain.dto.CurriculumToCreate;
+import com.kyriba.curriculum.domain.dto.constraint.GradeConstraint;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Null;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,23 +27,23 @@ public interface CurriculumService
   List<BriefCurriculum> findAllCurricula();
 
 
-  Optional<Curriculum> findCurriculumByGrade(Integer grade);
+  Optional<Curriculum> findCurriculumByGrade(@GradeConstraint @Null Integer grade);
 
 
   Curriculum getCurriculumById(long id);
 
 
-  BriefCurriculum createCurriculum(CurriculumToCreate curriculumToCreate);
+  BriefCurriculum createCurriculum(@Valid CurriculumToCreate curriculumToCreate);
 
 
   void removeCurriculum(long curriculumId);
 
 
-  Course addCourse(long curriculumId, CourseToAdd courseToAdd);
+  Course addCourse(long curriculumId, @Valid CourseToAdd courseToAdd);
 
 
   void removeCourse(long curriculumId, long courseId);
 
 
-  void updateCourse(long curriculumId, long courseId, CourseToUpdate courseToUpdate);
+  void updateCourse(long curriculumId, long courseId, @Valid CourseToUpdate courseToUpdate);
 }

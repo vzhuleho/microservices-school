@@ -9,6 +9,7 @@ import com.kyriba.curriculum.domain.dto.Subject;
 import com.kyriba.curriculum.domain.dto.SubjectToCreate;
 import com.kyriba.curriculum.domain.dto.SubjectToUpdate;
 
+import javax.validation.Valid;
 import java.util.List;
 
 
@@ -17,10 +18,10 @@ import java.util.List;
  */
 public interface SubjectService
 {
-  Subject createSubject(SubjectToCreate subjectToCreate);
+  Subject createSubject(@Valid SubjectToCreate subjectToCreate);
 
 
-  void updateSubject(long subjectId, SubjectToUpdate subjectToUpdate);
+  void updateSubject(long subjectId, @Valid SubjectToUpdate subjectToUpdate);
 
 
   List<Subject> getAllSubjects();

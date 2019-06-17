@@ -6,6 +6,7 @@
 package com.kyriba.curriculum.domain.dto;
 
 import com.kyriba.curriculum.domain.dto.constraint.GradeConstraint;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @NoArgsConstructor
 @Getter
+@EqualsAndHashCode
 public class CurriculumToCreate
 {
   @GradeConstraint

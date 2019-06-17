@@ -5,15 +5,24 @@
  */
 package com.kyriba.curriculum.domain.dto;
 
-import lombok.Value;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 
 /**
  * @author M-DBE
  */
-@Value
+@RequiredArgsConstructor
+@NoArgsConstructor
+@Getter
+@EqualsAndHashCode
 public class BriefCurriculum
 {
-  private final long id;
-  private final int grade;
+  @NonNull
+  private long id;
+  @NonNull
+  private int grade;
 }
