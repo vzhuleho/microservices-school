@@ -17,21 +17,17 @@ import com.kyriba.curriculum.domain.entity.CurriculumEntity;
 import com.kyriba.curriculum.domain.entity.CurriculumRepository;
 import com.kyriba.curriculum.domain.entity.SubjectEntity;
 import com.kyriba.curriculum.domain.entity.SubjectRepository;
-import com.kyriba.curriculum.service.exception.CourseAlreadyExistsException;
 import com.kyriba.curriculum.service.exception.CourseNotFoundException;
-import com.kyriba.curriculum.service.exception.CurriculumAlreadyExistsException;
+import com.kyriba.curriculum.service.exception.CurriculumForGradeNotImplementedException;
 import com.kyriba.curriculum.service.exception.CurriculumNotFoundException;
 import com.kyriba.curriculum.service.exception.SubjectNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -42,10 +38,9 @@ import java.util.stream.StreamSupport;
 @Service
 @Transactional
 @Validated
+@Qualifier("main")
 class CurriculumServiceImpl implements CurriculumService
 {
-  private static final Logger logger = LoggerFactory.getLogger(CurriculumServiceImpl.class);
-
   private final CurriculumRepository curriculumRepository;
   private final SubjectRepository subjectRepository;
 
@@ -69,10 +64,11 @@ class CurriculumServiceImpl implements CurriculumService
 
 
   @Override
-  public Optional<CurriculumDTO> findCurriculumByGrade(Integer grade)
+  public CurriculumDTO getCurriculumByGrade(int grade)
   {
     return curriculumRepository.findByGrade(grade)
-        .map(CurriculumServiceImpl::to);
+        .map(CurriculumServiceImpl::to)
+        .orElseThrow(() -> new CurriculumForGradeNotImplementedException(grade));
   }
 
 
@@ -89,29 +85,17 @@ class CurriculumServiceImpl implements CurriculumService
   @Override
   public BriefCurriculumDTO createCurriculum(CurriculumToCreateDTO curriculumToCreate)
   {
-    try {
-      CurriculumEntity curriculumEntity = new CurriculumEntity();
-      curriculumEntity.setGrade(curriculumToCreate.getGrade());
-      curriculumRepository.save(curriculumEntity);
-      return to(curriculumEntity).toBrief();
-    }
-    catch (DataIntegrityViolationException e) {
-      logger.error(String.format("Curriculum with grade %d can't be created!", curriculumToCreate.getGrade()), e);
-      throw new CurriculumAlreadyExistsException(curriculumToCreate.getGrade());
-    }
+    CurriculumEntity curriculumEntity = new CurriculumEntity();
+    curriculumEntity.setGrade(curriculumToCreate.getGrade());
+    curriculumRepository.save(curriculumEntity);
+    return to(curriculumEntity).toBrief();
   }
 
 
   @Override
   public void removeCurriculum(long curriculumId)
   {
-    try {
-      curriculumRepository.deleteById(curriculumId);
-    }
-    catch (DataIntegrityViolationException e) {
-      logger.error(String.format("Curriculum with id %d doesn't exist!", curriculumId), e);
-      throw new CurriculumNotFoundException(curriculumId);
-    }
+    curriculumRepository.deleteById(curriculumId);
   }
 
 
@@ -130,19 +114,12 @@ class CurriculumServiceImpl implements CurriculumService
     curriculumEntity.getCourses().add(courseEntity);
     CurriculumEntity savedCurriculum = curriculumRepository.save(curriculumEntity);
 
-    try {
-      return to(savedCurriculum.getCourses().stream()
-          .filter(it -> it.getSubject().getId() == courseToAdd.getSubjectId())
-          .findFirst()
-          .orElseThrow(() -> new IllegalStateException(String.format("Course with subject id %d couldn't be found!",
-              courseToAdd.getSubjectId())))
-      );
-    }
-    catch (DataIntegrityViolationException e) {
-      logger.error(String.format("Course already exists for curriculum %d and subject %d!",
-          curriculumId, courseToAdd.getSubjectId()), e);
-      throw new CourseAlreadyExistsException(curriculumId, courseToAdd.getSubjectId());
-    }
+    return to(savedCurriculum.getCourses().stream()
+        .filter(it -> it.getSubject().getId() == courseToAdd.getSubjectId())
+        .findFirst()
+        .orElseThrow(() -> new IllegalStateException(String.format("Course with subject id %d couldn't be found!",
+            courseToAdd.getSubjectId())))
+    );
   }
 
 
@@ -174,14 +151,7 @@ class CurriculumServiceImpl implements CurriculumService
     subjectRepository.findById(courseToUpdate.getSubjectId()).ifPresentOrElse(course::setSubject,
         () -> { throw new SubjectNotFoundException(courseToUpdate.getSubjectId()); });
 
-    try {
-      curriculumRepository.save(curriculum);
-    }
-    catch (DataIntegrityViolationException e) {
-      logger.error(String.format("Course already exists for curriculum %d and subject %d!",
-          curriculumId, courseToUpdate.getSubjectId()), e);
-      throw new CourseAlreadyExistsException(curriculumId, courseToUpdate.getSubjectId());
-    }
+    curriculumRepository.save(curriculum);
   }
 
 

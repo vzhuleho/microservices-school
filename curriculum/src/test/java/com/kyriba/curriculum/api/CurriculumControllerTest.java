@@ -16,6 +16,7 @@ import com.kyriba.curriculum.service.CurriculumService;
 import com.kyriba.curriculum.service.exception.CourseAlreadyExistsException;
 import com.kyriba.curriculum.service.exception.CourseNotFoundException;
 import com.kyriba.curriculum.service.exception.CurriculumAlreadyExistsException;
+import com.kyriba.curriculum.service.exception.CurriculumForGradeNotImplementedException;
 import com.kyriba.curriculum.service.exception.CurriculumNotFoundException;
 import com.kyriba.curriculum.service.exception.SubjectNotFoundException;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
@@ -44,7 +45,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
@@ -136,9 +136,9 @@ class CurriculumControllerTest
     @Test
     void should_return_brief_curriculum_when_curriculum_exists_for_grade()
     {
-      Integer grade = 5;
+      int grade = 5;
       CurriculumDTO curriculum = new CurriculumDTO(2, grade, List.of());
-      Mockito.when(curriculumService.findCurriculumByGrade(grade)).thenReturn(Optional.of(curriculum));
+      Mockito.when(curriculumService.getCurriculumById(grade)).thenReturn(curriculum);
 
       List<BriefCurriculumDTO> curricula = given()
           .config(config)
@@ -161,8 +161,9 @@ class CurriculumControllerTest
     @Test
     void should_return_NOT_IMPLEMENTED_status_when_curriculum_not_found_for_grade()
     {
-      Integer grade = 1;
-      Mockito.when(curriculumService.findCurriculumByGrade(grade)).thenReturn(Optional.empty());
+      int grade = 1;
+      Mockito.when(curriculumService.getCurriculumByGrade(grade))
+          .thenThrow(new CurriculumForGradeNotImplementedException(grade));
 
       given()
           .config(config)
@@ -179,8 +180,8 @@ class CurriculumControllerTest
     @ValueSource(classes = { ValidationException.class, ConstraintViolationException.class })
     void should_return_BAD_REQUEST_status_when_validation_exception_is_thrown(Class<? extends Throwable> exception)
     {
-      Integer grade = 1;
-      Mockito.when(curriculumService.findCurriculumByGrade(grade)).thenThrow(exception);
+      int grade = 1;
+      Mockito.when(curriculumService.getCurriculumByGrade(grade)).thenThrow(exception);
 
       given()
           .config(config)

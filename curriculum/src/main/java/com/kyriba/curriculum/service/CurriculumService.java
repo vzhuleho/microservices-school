@@ -14,9 +14,7 @@ import com.kyriba.curriculum.domain.dto.CurriculumToCreateDTO;
 import com.kyriba.curriculum.domain.dto.constraint.GradeConstraint;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Null;
 import java.util.List;
-import java.util.Optional;
 
 
 /**
@@ -27,7 +25,7 @@ public interface CurriculumService
   List<BriefCurriculumDTO> findAllCurricula();
 
 
-  Optional<CurriculumDTO> findCurriculumByGrade(@GradeConstraint @Null Integer grade);
+  CurriculumDTO getCurriculumByGrade(@GradeConstraint int grade);
 
 
   CurriculumDTO getCurriculumById(long id);

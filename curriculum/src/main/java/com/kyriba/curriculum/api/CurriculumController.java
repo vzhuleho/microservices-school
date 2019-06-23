@@ -59,14 +59,12 @@ class CurriculumController
       responseContainer = "List")
   List<BriefCurriculumDTO> getCurricula(@ApiParam("Grade") @RequestParam(value = "grade", required = false) Integer grade)
   {
-    if (grade == null)
+    if (grade == null) {
       return curriculumService.findAllCurricula();
-    else
-      return curriculumService.findCurriculumByGrade(grade)
-          .map(CurriculumDTO::toBrief)
-          .map(Collections::singletonList)
-          .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED)
-      );
+    }
+    else {
+      return Collections.singletonList(curriculumService.getCurriculumByGrade(grade).toBrief());
+    }
   }
 
 

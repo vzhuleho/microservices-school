@@ -8,6 +8,7 @@ package com.kyriba.curriculum.api;
 import com.kyriba.curriculum.service.exception.CourseAlreadyExistsException;
 import com.kyriba.curriculum.service.exception.CourseNotFoundException;
 import com.kyriba.curriculum.service.exception.CurriculumAlreadyExistsException;
+import com.kyriba.curriculum.service.exception.CurriculumForGradeNotImplementedException;
 import com.kyriba.curriculum.service.exception.CurriculumNotFoundException;
 import com.kyriba.curriculum.service.exception.CurriculumServiceException;
 import com.kyriba.curriculum.service.exception.SubjectAlreadyExistsException;
@@ -43,6 +44,13 @@ class CustomExceptionHandler
   {
 
     return new ResponseEntity<>(e.getMessage(), textPlain(), HttpStatus.CONFLICT);
+  }
+
+
+  @ExceptionHandler(CurriculumForGradeNotImplementedException.class)
+  ResponseEntity<String> handleNotImplementedException(CurriculumServiceException e)
+  {
+    return new ResponseEntity<>(e.getMessage(), textPlain(), HttpStatus.NOT_IMPLEMENTED);
   }
 
 
