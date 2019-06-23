@@ -5,12 +5,12 @@
  */
 package com.kyriba.curriculum.api;
 
-import com.kyriba.curriculum.domain.dto.BriefCurriculum;
-import com.kyriba.curriculum.domain.dto.Course;
-import com.kyriba.curriculum.domain.dto.CourseToAdd;
-import com.kyriba.curriculum.domain.dto.CourseToUpdate;
-import com.kyriba.curriculum.domain.dto.Curriculum;
-import com.kyriba.curriculum.domain.dto.CurriculumToCreate;
+import com.kyriba.curriculum.domain.dto.BriefCurriculumDTO;
+import com.kyriba.curriculum.domain.dto.CourseDTO;
+import com.kyriba.curriculum.domain.dto.CourseToAddDTO;
+import com.kyriba.curriculum.domain.dto.CourseToUpdateDTO;
+import com.kyriba.curriculum.domain.dto.CurriculumDTO;
+import com.kyriba.curriculum.domain.dto.CurriculumToCreateDTO;
 import com.kyriba.curriculum.service.CurriculumService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -55,15 +55,15 @@ class CurriculumController
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseBody
-  @ApiOperation(value = "Get curricula", notes = "Retrieving the collection of curricula", response = BriefCurriculum.class,
+  @ApiOperation(value = "Get curricula", notes = "Retrieving the collection of curricula", response = BriefCurriculumDTO.class,
       responseContainer = "List")
-  List<BriefCurriculum> getCurricula(@ApiParam("Grade") @RequestParam(value = "grade", required = false) Integer grade)
+  List<BriefCurriculumDTO> getCurricula(@ApiParam("Grade") @RequestParam(value = "grade", required = false) Integer grade)
   {
     if (grade == null)
       return curriculumService.findAllCurricula();
     else
       return curriculumService.findCurriculumByGrade(grade)
-          .map(Curriculum::toBrief)
+          .map(CurriculumDTO::toBrief)
           .map(Collections::singletonList)
           .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED)
       );
@@ -72,8 +72,8 @@ class CurriculumController
 
   @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseBody
-  @ApiOperation(value = "Get curriculum by id", notes = "Retrieving existing curriculum by its identifier", response = Curriculum.class)
-  Curriculum getCurriculumById(@ApiParam("Identifier of existing curriculum") @PathVariable("id") long id)
+  @ApiOperation(value = "Get curriculum by id", notes = "Retrieving existing curriculum by its identifier", response = CurriculumDTO.class)
+  CurriculumDTO getCurriculumById(@ApiParam("Identifier of existing curriculum") @PathVariable("id") long id)
   {
     return curriculumService.getCurriculumById(id);
   }
@@ -82,8 +82,8 @@ class CurriculumController
   @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseBody
   @ResponseStatus(HttpStatus.CREATED)
-  @ApiOperation(value = "Create curriculum", notes = "Create new curriculum", response = BriefCurriculum.class)
-  BriefCurriculum createCurriculum(@ApiParam("New curriculum") @RequestBody CurriculumToCreate curriculumToCreate)
+  @ApiOperation(value = "Create curriculum", notes = "Create new curriculum", response = BriefCurriculumDTO.class)
+  BriefCurriculumDTO createCurriculum(@ApiParam("New curriculum") @RequestBody CurriculumToCreateDTO curriculumToCreate)
   {
     return curriculumService.createCurriculum(curriculumToCreate);
   }
@@ -91,7 +91,7 @@ class CurriculumController
 
   @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ApiOperation(value = "Delete curriculum", notes = "Delete existing curriculum", response = BriefCurriculum.class)
+  @ApiOperation(value = "Delete curriculum", notes = "Delete existing curriculum", response = BriefCurriculumDTO.class)
   void removeCurriculum(@ApiParam("Identifier of curriculum to delete") @PathVariable("id") long curriculumId)
   {
     curriculumService.removeCurriculum(curriculumId);
@@ -105,9 +105,9 @@ class CurriculumController
   )
   @ResponseBody
   @ResponseStatus(HttpStatus.CREATED)
-  @ApiOperation(value = "Add new course", notes = "Add new course to existing curriculum", response = Course.class)
-  Course addCourse(@ApiParam("Identifier of existing curriculum") @PathVariable("id") long curriculumId,
-                   @ApiParam("New course") @RequestBody CourseToAdd courseToAdd)
+  @ApiOperation(value = "Add new course", notes = "Add new course to existing curriculum", response = CourseDTO.class)
+  CourseDTO addCourse(@ApiParam("Identifier of existing curriculum") @PathVariable("id") long curriculumId,
+                      @ApiParam("New course") @RequestBody CourseToAddDTO courseToAdd)
   {
     return curriculumService.addCourse(curriculumId, courseToAdd);
   }
@@ -118,7 +118,7 @@ class CurriculumController
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE
   )
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ApiOperation(value = "Delete course", notes = "Delete existing course", response = Course.class)
+  @ApiOperation(value = "Delete course", notes = "Delete existing course", response = CourseDTO.class)
   void removeCourse(
       @ApiParam("Identifier of existing curriculum") @PathVariable("curriculumId") long curriculumId,
       @ApiParam("Identifier of existing course") @PathVariable("courseId") long courseId)
@@ -133,11 +133,11 @@ class CurriculumController
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE
   )
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ApiOperation(value = "Update lesson count for course", notes = "Update lesson count for existing course", response = Course.class)
+  @ApiOperation(value = "Update lesson count for course", notes = "Update lesson count for existing course", response = CourseDTO.class)
   void updateCourse(
       @ApiParam("Identifier of existing curriculum") @PathVariable("curriculumId") long curriculumId,
       @ApiParam("Identifier of existing course") @PathVariable("courseId") long courseId,
-      @ApiParam("Updated course") @RequestBody CourseToUpdate courseToUpdate)
+      @ApiParam("Updated course") @RequestBody CourseToUpdateDTO courseToUpdate)
   {
     curriculumService.updateCourse(curriculumId, courseId, courseToUpdate);
   }

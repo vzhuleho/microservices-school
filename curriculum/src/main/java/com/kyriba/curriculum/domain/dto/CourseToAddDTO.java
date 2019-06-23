@@ -5,24 +5,24 @@
  */
 package com.kyriba.curriculum.domain.dto;
 
-import com.kyriba.curriculum.domain.dto.constraint.GradeConstraint;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+
+import javax.validation.constraints.Positive;
 
 
 /**
  * @author M-DBE
  */
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode
-public class CurriculumToCreate
+public class CourseToAddDTO
 {
-  @GradeConstraint
-  @NonNull
-  private int grade;
+  private long subjectId;
+  @Positive
+  private int lessonCount;
 }

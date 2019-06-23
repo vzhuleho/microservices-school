@@ -5,9 +5,9 @@
  */
 package com.kyriba.curriculum.api;
 
-import com.kyriba.curriculum.domain.dto.Subject;
-import com.kyriba.curriculum.domain.dto.SubjectToCreate;
-import com.kyriba.curriculum.domain.dto.SubjectToUpdate;
+import com.kyriba.curriculum.domain.dto.SubjectDTO;
+import com.kyriba.curriculum.domain.dto.SubjectToCreateDTO;
+import com.kyriba.curriculum.domain.dto.SubjectToUpdateDTO;
 import com.kyriba.curriculum.service.SubjectService;
 import com.kyriba.curriculum.service.exception.SubjectAlreadyExistsException;
 import com.kyriba.curriculum.service.exception.SubjectNotFoundException;
@@ -86,11 +86,11 @@ class SubjectControllerTest
     @Test
     void should_return_subject_when_subject_for_name_created_successfully()
     {
-      SubjectToCreate subjectToCreate = new SubjectToCreate("chemistry");
+      SubjectToCreateDTO subjectToCreate = new SubjectToCreateDTO("chemistry");
       Mockito.when(subjectService.createSubject(eq(subjectToCreate)))
-          .thenReturn(new Subject(1, subjectToCreate.getName()));
+          .thenReturn(new SubjectDTO(1, subjectToCreate.getName()));
 
-      Subject subject = given()
+      SubjectDTO subject = given()
           .config(config)
           .body(subjectToCreate)
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -99,7 +99,7 @@ class SubjectControllerTest
           .then()
           .apply(document("create-subject-success"))
           .statusCode(HttpStatus.CREATED.value())
-          .extract().jsonPath().getObject(".", Subject.class);
+          .extract().jsonPath().getObject(".", SubjectDTO.class);
 
       assertNotNull(subject);
       assertEquals(subjectToCreate.getName(), subject.getName());
@@ -109,7 +109,7 @@ class SubjectControllerTest
     @Test
     void should_return_CONFLICT_status_when_subject_for_name_already_exists()
     {
-      SubjectToCreate subjectToCreate = new SubjectToCreate("chemistry");
+      SubjectToCreateDTO subjectToCreate = new SubjectToCreateDTO("chemistry");
       Mockito.when(subjectService.createSubject(eq(subjectToCreate)))
           .thenThrow(new SubjectAlreadyExistsException(subjectToCreate.getName()));
 
@@ -129,7 +129,7 @@ class SubjectControllerTest
     @ValueSource(classes = {ValidationException.class, ConstraintViolationException.class })
     void should_return_BAD_REQUEST_status_when_validation_exception_is_thrown(Class<? extends Throwable> exception)
     {
-      SubjectToCreate subjectToCreate = new SubjectToCreate("subject");
+      SubjectToCreateDTO subjectToCreate = new SubjectToCreateDTO("subject");
       when(subjectService.createSubject(subjectToCreate)).thenThrow(exception);
 
       given()
@@ -153,7 +153,7 @@ class SubjectControllerTest
     void should_return_nothing_when_update_was_successful()
     {
       long subjectId = 1;
-      SubjectToUpdate subjectToUpdate = new SubjectToUpdate("chemistry");
+      SubjectToUpdateDTO subjectToUpdate = new SubjectToUpdateDTO("chemistry");
       doNothing().when(subjectService).updateSubject(subjectId, subjectToUpdate);
 
       given()
@@ -174,7 +174,7 @@ class SubjectControllerTest
     void should_return_NOT_FOUND_status_when_subject_for_id_not_found()
     {
       long subjectId = 1;
-      SubjectToUpdate subjectToUpdate = new SubjectToUpdate("chemistry");
+      SubjectToUpdateDTO subjectToUpdate = new SubjectToUpdateDTO("chemistry");
       doThrow(new SubjectNotFoundException(subjectId)).when(subjectService).updateSubject(subjectId, subjectToUpdate);
 
       String message = given()
@@ -201,11 +201,11 @@ class SubjectControllerTest
     @Test
     void should_return_all_subjects_when_get_all_subjects()
     {
-      List<Subject> subjects = List.of(new Subject(1, "algebra"),
-          new Subject(2, "geometry"));
+      List<SubjectDTO> subjects = List.of(new SubjectDTO(1, "algebra"),
+          new SubjectDTO(2, "geometry"));
       Mockito.when(subjectService.getAllSubjects()).thenReturn(subjects);
 
-      List<Subject> result = given()
+      List<SubjectDTO> result = given()
           .config(config)
           .when()
           .get("/api/v1/subjects")
@@ -213,7 +213,7 @@ class SubjectControllerTest
           .apply(document("get-all-subjects"))
           .statusCode(HttpStatus.OK.value())
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-          .extract().jsonPath().getList(".", Subject.class);
+          .extract().jsonPath().getList(".", SubjectDTO.class);
 
       assertNotNull(result);
       assertEquals(Set.of(subjects), Set.of(result));

@@ -5,8 +5,9 @@
  */
 package com.kyriba.curriculum.domain.entity;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -19,13 +20,13 @@ import javax.persistence.Id;
  * @author M-DBE
  */
 @Entity(name = "subject")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class SubjectEntity
 {
   @Id
   @GeneratedValue
-  @Column(nullable = false)
   private long id;
 
   @Basic(optional = false)

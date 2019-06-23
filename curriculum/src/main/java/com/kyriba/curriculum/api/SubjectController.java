@@ -5,9 +5,9 @@
  */
 package com.kyriba.curriculum.api;
 
-import com.kyriba.curriculum.domain.dto.Subject;
-import com.kyriba.curriculum.domain.dto.SubjectToCreate;
-import com.kyriba.curriculum.domain.dto.SubjectToUpdate;
+import com.kyriba.curriculum.domain.dto.SubjectDTO;
+import com.kyriba.curriculum.domain.dto.SubjectToCreateDTO;
+import com.kyriba.curriculum.domain.dto.SubjectToUpdateDTO;
 import com.kyriba.curriculum.service.SubjectService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -49,8 +49,8 @@ class SubjectController
   @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseBody
   @ResponseStatus(HttpStatus.CREATED)
-  @ApiOperation(value = "Create subject", notes = "Creating new subject", response = Subject.class)
-  Subject createSubject(@RequestBody @ApiParam("New subject") SubjectToCreate subjectToCreate)
+  @ApiOperation(value = "Create subject", notes = "Creating new subject", response = SubjectDTO.class)
+  SubjectDTO createSubject(@RequestBody @ApiParam("New subject") SubjectToCreateDTO subjectToCreate)
   {
     return subjectService.createSubject(subjectToCreate);
   }
@@ -58,10 +58,10 @@ class SubjectController
 
   @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ApiOperation(value = "Update subject", notes = "Updating an existing subject", response = Subject.class)
+  @ApiOperation(value = "Update subject", notes = "Updating an existing subject", response = SubjectDTO.class)
   void updateSubject(
       @ApiParam("Subject id of the subject to be updated") @PathVariable("id") long subjectId,
-      @ApiParam("Updated subject") @RequestBody SubjectToUpdate subjectToUpdate)
+      @ApiParam("Updated subject") @RequestBody SubjectToUpdateDTO subjectToUpdate)
   {
     subjectService.updateSubject(subjectId, subjectToUpdate);
   }
@@ -70,8 +70,8 @@ class SubjectController
   @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseBody
   @ApiOperation(value = "Get all subjects", notes = "Retrieving the collection of subjects",
-      response = Subject.class, responseContainer = "List")
-  List<Subject> getAllSubjects()
+      response = SubjectDTO.class, responseContainer = "List")
+  List<SubjectDTO> getAllSubjects()
   {
     return subjectService.getAllSubjects();
   }

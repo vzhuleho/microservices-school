@@ -5,7 +5,8 @@
  */
 package com.kyriba.curriculum.domain.entity;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -13,7 +14,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -23,13 +23,13 @@ import javax.persistence.UniqueConstraint;
  * @author M-DBE
  */
 @Entity(name = "course")
-@Data
+@Setter
+@Getter
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "curriculum_id", "subject_id" }) })
 public class CourseEntity
 {
   @Id
   @GeneratedValue
-  @Column(nullable = false)
   private long id;
 
   @OneToOne(optional = false)
@@ -39,9 +39,4 @@ public class CourseEntity
   @Basic(optional = false)
   @Column(nullable = false)
   private int lessonCount;
-
-
-  /*@ManyToOne
-  @JoinColumn
-  private CurriculumEntity curriculum;*/
 }

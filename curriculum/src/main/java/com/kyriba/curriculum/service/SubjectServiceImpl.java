@@ -5,9 +5,9 @@
  */
 package com.kyriba.curriculum.service;
 
-import com.kyriba.curriculum.domain.dto.Subject;
-import com.kyriba.curriculum.domain.dto.SubjectToCreate;
-import com.kyriba.curriculum.domain.dto.SubjectToUpdate;
+import com.kyriba.curriculum.domain.dto.SubjectDTO;
+import com.kyriba.curriculum.domain.dto.SubjectToCreateDTO;
+import com.kyriba.curriculum.domain.dto.SubjectToUpdateDTO;
 import com.kyriba.curriculum.domain.entity.SubjectEntity;
 import com.kyriba.curriculum.domain.entity.SubjectRepository;
 import com.kyriba.curriculum.service.exception.SubjectNotFoundException;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -41,15 +40,15 @@ public class SubjectServiceImpl implements SubjectService
 
 
   @Override
-  public Subject createSubject(SubjectToCreate subjectToCreate)
+  public SubjectDTO createSubject(SubjectToCreateDTO subjectToCreate)
   {
     SubjectEntity savedEntity = repository.save(new SubjectEntity(subjectToCreate.getName()));
-    return new Subject(savedEntity.getId(), savedEntity.getName());
+    return new SubjectDTO(savedEntity.getId(), savedEntity.getName());
   }
 
 
   @Override
-  public void updateSubject(long subjectId, SubjectToUpdate subjectToUpdate)
+  public void updateSubject(long subjectId, SubjectToUpdateDTO subjectToUpdate)
   {
     SubjectEntity entity = repository.findById(subjectId)
         .orElseThrow(() -> new SubjectNotFoundException(subjectId));
@@ -59,10 +58,10 @@ public class SubjectServiceImpl implements SubjectService
 
 
   @Override
-  public List<Subject> getAllSubjects()
+  public List<SubjectDTO> getAllSubjects()
   {
     return StreamSupport.stream(repository.findAll().spliterator(), false)
-        .map(entity -> new Subject(entity.getId(), entity.getName()))
+        .map(entity -> new SubjectDTO(entity.getId(), entity.getName()))
         .collect(Collectors.toList());
   }
 }

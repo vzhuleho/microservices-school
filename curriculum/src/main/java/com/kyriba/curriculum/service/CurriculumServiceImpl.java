@@ -5,14 +5,13 @@
  */
 package com.kyriba.curriculum.service;
 
-import com.kyriba.curriculum.domain.dto.BriefCurriculum;
-import com.kyriba.curriculum.domain.dto.Course;
-import com.kyriba.curriculum.domain.dto.CourseToAdd;
-import com.kyriba.curriculum.domain.dto.CourseToUpdate;
-import com.kyriba.curriculum.domain.dto.Curriculum;
-import com.kyriba.curriculum.domain.dto.CurriculumToCreate;
-import com.kyriba.curriculum.domain.dto.Subject;
-import com.kyriba.curriculum.domain.dto.constraint.GradeConstraint;
+import com.kyriba.curriculum.domain.dto.BriefCurriculumDTO;
+import com.kyriba.curriculum.domain.dto.CourseDTO;
+import com.kyriba.curriculum.domain.dto.CourseToAddDTO;
+import com.kyriba.curriculum.domain.dto.CourseToUpdateDTO;
+import com.kyriba.curriculum.domain.dto.CurriculumDTO;
+import com.kyriba.curriculum.domain.dto.CurriculumToCreateDTO;
+import com.kyriba.curriculum.domain.dto.SubjectDTO;
 import com.kyriba.curriculum.domain.entity.CourseEntity;
 import com.kyriba.curriculum.domain.entity.CurriculumEntity;
 import com.kyriba.curriculum.domain.entity.CurriculumRepository;
@@ -26,14 +25,11 @@ import com.kyriba.curriculum.service.exception.SubjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Null;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -64,16 +60,16 @@ class CurriculumServiceImpl implements CurriculumService
 
 
   @Override
-  public List<BriefCurriculum> findAllCurricula()
+  public List<BriefCurriculumDTO> findAllCurricula()
   {
     return StreamSupport.stream(curriculumRepository.findAll().spliterator(), false)
-        .map(curriculumEntity -> new BriefCurriculum(curriculumEntity.getId(), curriculumEntity.getGrade()))
+        .map(curriculumEntity -> new BriefCurriculumDTO(curriculumEntity.getId(), curriculumEntity.getGrade()))
         .collect(Collectors.toList());
   }
 
 
   @Override
-  public Optional<Curriculum> findCurriculumByGrade(Integer grade)
+  public Optional<CurriculumDTO> findCurriculumByGrade(Integer grade)
   {
     return curriculumRepository.findByGrade(grade)
         .map(CurriculumServiceImpl::to);
@@ -81,7 +77,7 @@ class CurriculumServiceImpl implements CurriculumService
 
 
   @Override
-  public Curriculum getCurriculumById(long id)
+  public CurriculumDTO getCurriculumById(long id)
   {
     return curriculumRepository.findById(id)
         .map(CurriculumServiceImpl::to)
@@ -91,7 +87,7 @@ class CurriculumServiceImpl implements CurriculumService
 
 
   @Override
-  public BriefCurriculum createCurriculum(CurriculumToCreate curriculumToCreate)
+  public BriefCurriculumDTO createCurriculum(CurriculumToCreateDTO curriculumToCreate)
   {
     try {
       CurriculumEntity curriculumEntity = new CurriculumEntity();
@@ -120,7 +116,7 @@ class CurriculumServiceImpl implements CurriculumService
 
 
   @Override
-  public Course addCourse(long curriculumId, CourseToAdd courseToAdd)
+  public CourseDTO addCourse(long curriculumId, CourseToAddDTO courseToAdd)
   {
     CurriculumEntity curriculumEntity = curriculumRepository.findById(curriculumId)
         .orElseThrow(() -> new CurriculumNotFoundException(curriculumId));
@@ -165,7 +161,7 @@ class CurriculumServiceImpl implements CurriculumService
 
 
   @Override
-  public void updateCourse(long curriculumId, long courseId, CourseToUpdate courseToUpdate)
+  public void updateCourse(long curriculumId, long courseId, CourseToUpdateDTO courseToUpdate)
   {
     CurriculumEntity curriculum = curriculumRepository.findById(curriculumId)
         .orElseThrow(() -> new CurriculumNotFoundException(curriculumId));
@@ -189,22 +185,22 @@ class CurriculumServiceImpl implements CurriculumService
   }
 
 
-  private static Curriculum to(CurriculumEntity entity)
+  private static CurriculumDTO to(CurriculumEntity entity)
   {
-    return new Curriculum(entity.getId(), entity.getGrade(), entity.getCourses().stream()
+    return new CurriculumDTO(entity.getId(), entity.getGrade(), entity.getCourses().stream()
         .map(CurriculumServiceImpl::to)
         .collect(Collectors.toList()));
   }
 
 
-  private static Course to(CourseEntity courseEntity)
+  private static CourseDTO to(CourseEntity courseEntity)
   {
-    return new Course(courseEntity.getId(), to(courseEntity.getSubject()), courseEntity.getLessonCount());
+    return new CourseDTO(courseEntity.getId(), to(courseEntity.getSubject()), courseEntity.getLessonCount());
   }
 
 
-  private static Subject to(SubjectEntity subjectEntity)
+  private static SubjectDTO to(SubjectEntity subjectEntity)
   {
-    return new Subject(subjectEntity.getId(), subjectEntity.getName());
+    return new SubjectDTO(subjectEntity.getId(), subjectEntity.getName());
   }
 }

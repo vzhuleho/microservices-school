@@ -5,24 +5,32 @@
  */
 package com.kyriba.curriculum.domain.dto;
 
-import com.kyriba.curriculum.domain.dto.constraint.SubjectNameConstraint;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 
 
 /**
  * @author M-DBE
  */
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode
-public class SubjectToUpdate
+public class CurriculumDTO
 {
-  @SubjectNameConstraint
+  private long id;
+  private int grade;
   @NonNull
-  private String name;
+  private List<CourseDTO> courses;
+
+
+  public BriefCurriculumDTO toBrief()
+  {
+    return new BriefCurriculumDTO(getId(), getGrade());
+  }
 }

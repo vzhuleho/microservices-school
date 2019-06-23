@@ -5,9 +5,9 @@
  */
 package com.kyriba.curriculum.service;
 
-import com.kyriba.curriculum.domain.dto.Subject;
-import com.kyriba.curriculum.domain.dto.SubjectToCreate;
-import com.kyriba.curriculum.domain.dto.SubjectToUpdate;
+import com.kyriba.curriculum.domain.dto.SubjectDTO;
+import com.kyriba.curriculum.domain.dto.SubjectToCreateDTO;
+import com.kyriba.curriculum.domain.dto.SubjectToUpdateDTO;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -18,11 +18,11 @@ import java.util.List;
  */
 public interface SubjectService
 {
-  Subject createSubject(@Valid SubjectToCreate subjectToCreate);
+  SubjectDTO createSubject(@Valid SubjectToCreateDTO subjectToCreate);
 
 
-  void updateSubject(long subjectId, @Valid SubjectToUpdate subjectToUpdate);
+  void updateSubject(long subjectId, @Valid SubjectToUpdateDTO subjectToUpdate);
 
 
-  List<Subject> getAllSubjects();
+  List<SubjectDTO> getAllSubjects();
 }

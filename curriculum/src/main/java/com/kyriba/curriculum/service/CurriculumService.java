@@ -5,12 +5,12 @@
  */
 package com.kyriba.curriculum.service;
 
-import com.kyriba.curriculum.domain.dto.BriefCurriculum;
-import com.kyriba.curriculum.domain.dto.Course;
-import com.kyriba.curriculum.domain.dto.CourseToAdd;
-import com.kyriba.curriculum.domain.dto.CourseToUpdate;
-import com.kyriba.curriculum.domain.dto.Curriculum;
-import com.kyriba.curriculum.domain.dto.CurriculumToCreate;
+import com.kyriba.curriculum.domain.dto.BriefCurriculumDTO;
+import com.kyriba.curriculum.domain.dto.CourseDTO;
+import com.kyriba.curriculum.domain.dto.CourseToAddDTO;
+import com.kyriba.curriculum.domain.dto.CourseToUpdateDTO;
+import com.kyriba.curriculum.domain.dto.CurriculumDTO;
+import com.kyriba.curriculum.domain.dto.CurriculumToCreateDTO;
 import com.kyriba.curriculum.domain.dto.constraint.GradeConstraint;
 
 import javax.validation.Valid;
@@ -24,26 +24,26 @@ import java.util.Optional;
  */
 public interface CurriculumService
 {
-  List<BriefCurriculum> findAllCurricula();
+  List<BriefCurriculumDTO> findAllCurricula();
 
 
-  Optional<Curriculum> findCurriculumByGrade(@GradeConstraint @Null Integer grade);
+  Optional<CurriculumDTO> findCurriculumByGrade(@GradeConstraint @Null Integer grade);
 
 
-  Curriculum getCurriculumById(long id);
+  CurriculumDTO getCurriculumById(long id);
 
 
-  BriefCurriculum createCurriculum(@Valid CurriculumToCreate curriculumToCreate);
+  BriefCurriculumDTO createCurriculum(@Valid CurriculumToCreateDTO curriculumToCreate);
 
 
   void removeCurriculum(long curriculumId);
 
 
-  Course addCourse(long curriculumId, @Valid CourseToAdd courseToAdd);
+  CourseDTO addCourse(long curriculumId, @Valid CourseToAddDTO courseToAdd);
 
 
   void removeCourse(long curriculumId, long courseId);
 
 
-  void updateCourse(long curriculumId, long courseId, @Valid CourseToUpdate courseToUpdate);
+  void updateCourse(long curriculumId, long courseId, @Valid CourseToUpdateDTO courseToUpdate);
 }

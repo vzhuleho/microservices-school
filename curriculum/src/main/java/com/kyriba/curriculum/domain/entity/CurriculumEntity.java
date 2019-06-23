@@ -5,7 +5,8 @@
  */
 package com.kyriba.curriculum.domain.entity;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -23,12 +24,12 @@ import java.util.List;
  * @author M-DBE
  */
 @Entity(name = "curriculum")
-@Data
+@Setter
+@Getter
 public class CurriculumEntity
 {
   @Id
   @GeneratedValue
-  @Column(nullable = false)
   private long id;
 
   @Basic(optional = false)

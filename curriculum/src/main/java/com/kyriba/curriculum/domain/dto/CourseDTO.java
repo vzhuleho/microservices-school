@@ -5,24 +5,24 @@
  */
 package com.kyriba.curriculum.domain.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 
 /**
  * @author M-DBE
  */
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode
-public class Subject
+public class CourseDTO
 {
-  @NonNull
   private long id;
   @NonNull
-  private String name;
+  private SubjectDTO subject;
+  private int lessonCount;
 }

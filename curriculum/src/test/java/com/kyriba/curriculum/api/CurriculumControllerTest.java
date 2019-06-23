@@ -5,13 +5,13 @@
  */
 package com.kyriba.curriculum.api;
 
-import com.kyriba.curriculum.domain.dto.BriefCurriculum;
-import com.kyriba.curriculum.domain.dto.Course;
-import com.kyriba.curriculum.domain.dto.CourseToAdd;
-import com.kyriba.curriculum.domain.dto.CourseToUpdate;
-import com.kyriba.curriculum.domain.dto.Curriculum;
-import com.kyriba.curriculum.domain.dto.CurriculumToCreate;
-import com.kyriba.curriculum.domain.dto.Subject;
+import com.kyriba.curriculum.domain.dto.BriefCurriculumDTO;
+import com.kyriba.curriculum.domain.dto.CourseDTO;
+import com.kyriba.curriculum.domain.dto.CourseToAddDTO;
+import com.kyriba.curriculum.domain.dto.CourseToUpdateDTO;
+import com.kyriba.curriculum.domain.dto.CurriculumDTO;
+import com.kyriba.curriculum.domain.dto.CurriculumToCreateDTO;
+import com.kyriba.curriculum.domain.dto.SubjectDTO;
 import com.kyriba.curriculum.service.CurriculumService;
 import com.kyriba.curriculum.service.exception.CourseAlreadyExistsException;
 import com.kyriba.curriculum.service.exception.CourseNotFoundException;
@@ -110,10 +110,10 @@ class CurriculumControllerTest
     void should_return_full_curriculum_when_curriculum_exists_for_id()
     {
       long curriculumId = 1;
-      Curriculum curriculum = new Curriculum(curriculumId, 10, List.of());
+      CurriculumDTO curriculum = new CurriculumDTO(curriculumId, 10, List.of());
       Mockito.when(curriculumService.getCurriculumById(curriculumId)).thenReturn(curriculum);
 
-      Curriculum result = given()
+      CurriculumDTO result = given()
           .config(config)
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
@@ -122,7 +122,7 @@ class CurriculumControllerTest
           .apply(document("get-curriculum-by-id-success"))
           .statusCode(HttpStatus.OK.value())
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-          .extract().jsonPath().getObject(".", Curriculum.class);
+          .extract().jsonPath().getObject(".", CurriculumDTO.class);
 
       assertEquals(curriculum, result);
     }
@@ -137,10 +137,10 @@ class CurriculumControllerTest
     void should_return_brief_curriculum_when_curriculum_exists_for_grade()
     {
       Integer grade = 5;
-      Curriculum curriculum = new Curriculum(2, grade, List.of());
+      CurriculumDTO curriculum = new CurriculumDTO(2, grade, List.of());
       Mockito.when(curriculumService.findCurriculumByGrade(grade)).thenReturn(Optional.of(curriculum));
 
-      List<BriefCurriculum> curricula = given()
+      List<BriefCurriculumDTO> curricula = given()
           .config(config)
           .queryParam("grade", grade)
           .when()
@@ -149,7 +149,7 @@ class CurriculumControllerTest
           .apply(document("get-curriculum-by-grade-success"))
           .statusCode(HttpStatus.OK.value())
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-          .extract().jsonPath().getList(".", BriefCurriculum.class);
+          .extract().jsonPath().getList(".", BriefCurriculumDTO.class);
 
       assertNotNull(curricula);
       assertEquals(1, curricula.size());
@@ -201,10 +201,10 @@ class CurriculumControllerTest
     @Test
     void should_return_all_curricula_in_brief()
     {
-      List<BriefCurriculum> allCurricula = List.of(new BriefCurriculum(1, 1), new BriefCurriculum(2, 2));
+      List<BriefCurriculumDTO> allCurricula = List.of(new BriefCurriculumDTO(1, 1), new BriefCurriculumDTO(2, 2));
       Mockito.when(curriculumService.findAllCurricula()).thenReturn(allCurricula);
 
-      List<BriefCurriculum> result = given()
+      List<BriefCurriculumDTO> result = given()
           .config(config)
           .when()
           .get("/api/v1/curricula")
@@ -212,7 +212,7 @@ class CurriculumControllerTest
           .apply(document("get-all-curricula"))
           .statusCode(HttpStatus.OK.value())
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-          .extract().jsonPath().getList(".", BriefCurriculum.class);
+          .extract().jsonPath().getList(".", BriefCurriculumDTO.class);
 
       assertEquals(Set.copyOf(allCurricula), Set.copyOf(result));
     }
@@ -226,11 +226,11 @@ class CurriculumControllerTest
     @Test
     void should_return_brief_curriculum_when_curriculum_for_grade_created_successfully()
     {
-      CurriculumToCreate curriculumToCreate = new CurriculumToCreate(5);
-      BriefCurriculum createdCurriculum = new BriefCurriculum(1, curriculumToCreate.getGrade());
+      CurriculumToCreateDTO curriculumToCreate = new CurriculumToCreateDTO(5);
+      BriefCurriculumDTO createdCurriculum = new BriefCurriculumDTO(1, curriculumToCreate.getGrade());
       Mockito.when(curriculumService.createCurriculum(curriculumToCreate)).thenReturn(createdCurriculum);
 
-      BriefCurriculum result = given()
+      BriefCurriculumDTO result = given()
           .config(config)
           .body(curriculumToCreate)
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -239,7 +239,7 @@ class CurriculumControllerTest
           .then()
           .apply(document("create-curriculum-success"))
           .statusCode(HttpStatus.CREATED.value())
-          .extract().jsonPath().getObject(".", BriefCurriculum.class);
+          .extract().jsonPath().getObject(".", BriefCurriculumDTO.class);
 
       assertNotNull(result);
       assertEquals(createdCurriculum, result);
@@ -249,7 +249,7 @@ class CurriculumControllerTest
     @Test
     void should_return_CONFLICT_status_when_curriculum_for_grade_already_exists()
     {
-      CurriculumToCreate curriculumToCreate = new CurriculumToCreate(11);
+      CurriculumToCreateDTO curriculumToCreate = new CurriculumToCreateDTO(11);
       Mockito.when(curriculumService.createCurriculum(curriculumToCreate))
           .thenThrow(new CurriculumAlreadyExistsException(curriculumToCreate.getGrade()));
 
@@ -269,7 +269,7 @@ class CurriculumControllerTest
     @ValueSource(classes = { ValidationException.class, ConstraintViolationException.class })
     void should_return_BAD_REQUEST_status_when_validation_exception_is_thrown(Class<? extends Throwable> exception)
     {
-      CurriculumToCreate curriculumToCreate = new CurriculumToCreate(11);
+      CurriculumToCreateDTO curriculumToCreate = new CurriculumToCreateDTO(11);
       Mockito.when(curriculumService.createCurriculum(curriculumToCreate))
           .thenThrow(exception);
 
@@ -331,7 +331,7 @@ class CurriculumControllerTest
     void should_return_NOT_FOUND_with_message_when_curriculum_for_id_not_found()
     {
       long curriculumId = 1;
-      CourseToAdd courseToAdd = new CourseToAdd(2, 100);
+      CourseToAddDTO courseToAdd = new CourseToAddDTO(2, 100);
       Mockito.when(curriculumService.addCourse(curriculumId, courseToAdd))
           .thenThrow(new CurriculumNotFoundException(curriculumId));
 
@@ -354,7 +354,7 @@ class CurriculumControllerTest
     void should_return_NOT_FOUND_with_message_when_subject_for_id_not_found()
     {
       long curriculumId = 1;
-      CourseToAdd courseToAdd = new CourseToAdd(2, 100);
+      CourseToAddDTO courseToAdd = new CourseToAddDTO(2, 100);
       Mockito.when(curriculumService.addCourse(curriculumId, courseToAdd))
           .thenThrow(new SubjectNotFoundException(courseToAdd.getSubjectId()));
 
@@ -377,7 +377,7 @@ class CurriculumControllerTest
     void should_return_CONFLICT_with_message_when_course_for_subject_already_exists()
     {
       long curriculumId = 1;
-      CourseToAdd courseToAdd = new CourseToAdd(2, 100);
+      CourseToAddDTO courseToAdd = new CourseToAddDTO(2, 100);
       Mockito.when(curriculumService.addCourse(curriculumId, courseToAdd))
           .thenThrow(new CourseAlreadyExistsException(curriculumId, courseToAdd.getSubjectId()));
 
@@ -400,12 +400,12 @@ class CurriculumControllerTest
     void should_return_course_when_course_added_successfully()
     {
       long curriculumId = 1;
-      CourseToAdd courseToAdd = new CourseToAdd(2, 100);
-      Course course = new Course(10, new Subject(courseToAdd.getSubjectId(), "Algebra"), courseToAdd.getLessonCount());
+      CourseToAddDTO courseToAdd = new CourseToAddDTO(2, 100);
+      CourseDTO course = new CourseDTO(10, new SubjectDTO(courseToAdd.getSubjectId(), "Algebra"), courseToAdd.getLessonCount());
       Mockito.when(curriculumService.addCourse(curriculumId, courseToAdd))
           .thenReturn(course);
 
-      Course result = given()
+      CourseDTO result = given()
           .config(config)
           .body(courseToAdd)
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -414,7 +414,7 @@ class CurriculumControllerTest
           .then()
           .apply(document("add-course-success"))
           .statusCode(HttpStatus.CREATED.value())
-          .extract().jsonPath().getObject(".", Course.class);
+          .extract().jsonPath().getObject(".", CourseDTO.class);
 
       assertNotNull(course);
       assertEquals(course, result);
@@ -426,7 +426,7 @@ class CurriculumControllerTest
     void should_return_BAD_REQUEST_when_validation_exception_is_thrown(Class<? extends Throwable> exception)
     {
       long curriculumId = 1;
-      CourseToAdd courseToAdd = new CourseToAdd(2, 100);
+      CourseToAddDTO courseToAdd = new CourseToAddDTO(2, 100);
       Mockito.when(curriculumService.addCourse(curriculumId, courseToAdd)).thenThrow(exception);
 
       given()
@@ -451,7 +451,7 @@ class CurriculumControllerTest
     {
       long curriculumId = 1;
       long courseId = 100;
-      CourseToUpdate courseToUpdate = new CourseToUpdate(1000, 300);
+      CourseToUpdateDTO courseToUpdate = new CourseToUpdateDTO(1000, 300);
       doNothing().when(curriculumService).updateCourse(curriculumId, courseId, courseToUpdate);
 
       given()
@@ -471,7 +471,7 @@ class CurriculumControllerTest
     {
       long curriculumId = 1;
       long courseId = 100;
-      CourseToUpdate courseToUpdate = new CourseToUpdate(1003, 300);
+      CourseToUpdateDTO courseToUpdate = new CourseToUpdateDTO(1003, 300);
       doThrow(new CourseNotFoundException(curriculumId, courseId)).when(curriculumService)
           .updateCourse(curriculumId, courseId, courseToUpdate);
 
@@ -496,7 +496,7 @@ class CurriculumControllerTest
     {
       long curriculumId = 1;
       long courseId = 100;
-      CourseToUpdate courseToUpdate = new CourseToUpdate(1003, 300);
+      CourseToUpdateDTO courseToUpdate = new CourseToUpdateDTO(1003, 300);
       doThrow(new CourseAlreadyExistsException(curriculumId, courseId)).when(curriculumService)
           .updateCourse(curriculumId, courseId, courseToUpdate);
 
@@ -517,7 +517,7 @@ class CurriculumControllerTest
     {
       long curriculumId = 1;
       long courseId = 100;
-      CourseToUpdate courseToUpdate = new CourseToUpdate(1003, 300);
+      CourseToUpdateDTO courseToUpdate = new CourseToUpdateDTO(1003, 300);
       doThrow(new CurriculumNotFoundException(curriculumId)).when(curriculumService)
           .updateCourse(curriculumId, courseId, courseToUpdate);
 
@@ -542,7 +542,7 @@ class CurriculumControllerTest
     {
       long curriculumId = 1;
       long courseId = 100;
-      CourseToUpdate courseToUpdate = new CourseToUpdate(1003, 300);
+      CourseToUpdateDTO courseToUpdate = new CourseToUpdateDTO(1003, 300);
       doThrow(exception).when(curriculumService).updateCourse(curriculumId, courseId, courseToUpdate);
 
       given()
