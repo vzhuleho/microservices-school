@@ -12,11 +12,10 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 
 /**
@@ -25,11 +24,11 @@ import javax.persistence.UniqueConstraint;
 @Entity(name = "course")
 @Setter
 @Getter
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "curriculum_id", "subject_id" }) })
 public class CourseEntity
 {
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "course_id")
   private long id;
 
   @OneToOne(optional = false)
@@ -37,6 +36,5 @@ public class CourseEntity
   private SubjectEntity subject;
 
   @Basic(optional = false)
-  @Column(nullable = false)
   private int lessonCount;
 }

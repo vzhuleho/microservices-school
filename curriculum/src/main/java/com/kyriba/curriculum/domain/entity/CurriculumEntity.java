@@ -13,6 +13,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -29,11 +30,11 @@ import java.util.List;
 public class CurriculumEntity
 {
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "curriculum_id")
   private long id;
 
   @Basic(optional = false)
-  @Column(nullable = false, unique = true)
   private int grade;
 
 

@@ -138,7 +138,7 @@ class CurriculumControllerTest
     {
       int grade = 5;
       CurriculumDTO curriculum = new CurriculumDTO(2, grade, List.of());
-      Mockito.when(curriculumService.getCurriculumById(grade)).thenReturn(curriculum);
+      Mockito.when(curriculumService.getCurriculumByGrade(grade)).thenReturn(curriculum);
 
       List<BriefCurriculumDTO> curricula = given()
           .config(config)

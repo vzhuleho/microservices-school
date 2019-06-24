@@ -3,12 +3,13 @@ plugins {
     id 'java'
     id "org.asciidoctor.convert" version "1.5.3"
     id 'com.bmuschko.docker-spring-boot-application' version '4.10.0'
+    id "org.liquibase.gradle" version "2.0.1"
 }
 
 apply plugin: 'io.spring.dependency-management'
 
 group = 'com.kyriba'
-version = '0.0.1'
+version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
@@ -43,6 +44,14 @@ bootJar {
     }
 }
 
+bootRun {
+    args += "--spring.datasource.url=$datasource_url"
+    args += "--spring.datasource.username=$datasource_username"
+    args += "--spring.datasource.password=$datasource_password"
+    args += "--spring.datasource.driver-class-name=$datasource_driver"
+}
+
+
 docker {
     registryCredentials {
         url = 'https://index.docker.io/v1/'
@@ -58,6 +67,18 @@ docker {
     }
 }
 
+liquibase {
+    activities {
+        main {
+            changeLogFile "${project.rootDir}/src/main/resources/changelog.json"
+            url datasource_url
+            username datasource_username
+            password datasource_password
+            driver datasource_driver
+        }
+    }
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -69,12 +90,19 @@ dependencies {
     implementation 'io.springfox:springfox-bean-validators:2.9.2'
     implementation 'org.hibernate.validator:hibernate-validator'
 
+    implementation 'org.liquibase:liquibase-core:3.6.3'
     implementation 'ch.qos.logback:logback-classic:1.2.3'
     //implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:2.1.1.RELEASE'
     
     compileOnly 'org.projectlombok:lombok'
     //runtimeOnly 'com.h2database:h2'
     runtimeOnly 'org.postgresql:postgresql:42.2.5'
+
+    liquibaseRuntime 'org.liquibase:liquibase-core:3.6.3'
+    liquibaseRuntime 'org.liquibase:liquibase-groovy-dsl:2.0.1'
+    liquibaseRuntime 'org.postgresql:postgresql:42.2.5'
+    liquibaseRuntime 'ch.qos.logback:logback-classic:1.2.3'
+    
     annotationProcessor 'org.projectlombok:lombok'
     
     testImplementation ('org.springframework.boot:spring-boot-starter-test') {

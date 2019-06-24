@@ -5,9 +5,13 @@ volumes:
 
 services:
   curriculum:
-    image: dbelykyriba/curriculum-service:0.0.1
+    image: dbelykyriba/curriculum-service:0.0.1-SNAPSHOT
     depends_on:
       - postgres-curricula
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-curricula:5432/postgres
+      SPRING_DATASOURCE_USERNAME: ${DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DATASOURCE_USERNAME}
     ports:
       - "8080:8080"
   postgres-curricula:
@@ -16,7 +20,7 @@ services:
       - postgres_curricula:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: curricula
-      POSTGRES_USER: test
-      POSTGRES_PASSWORD: test
+      POSTGRES_USER: ${DATASOURCE_USERNAME}
+      POSTGRES_PASSWORD: ${DATASOURCE_USERNAME}
     ports:
       - "5432:5432"

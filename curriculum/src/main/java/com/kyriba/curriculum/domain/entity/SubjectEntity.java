@@ -13,6 +13,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 
@@ -26,7 +27,8 @@ import javax.persistence.Id;
 public class SubjectEntity
 {
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "subject_id")
   private long id;
 
   @Basic(optional = false)

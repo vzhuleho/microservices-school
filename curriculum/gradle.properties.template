@@ -1,0 +1,8 @@
+docker_username=
+docker_password=
+docker_email=
+
+datasource_url=jdbc:postgresql://localhost:5432/postgres
+datasource_username=
+datasource_password=
+datasource_driver=org.postgresql.Driver
