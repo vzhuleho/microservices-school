@@ -3,17 +3,21 @@
  * The content of this file is copyrighted by Kyriba Corporation and can not be
  * reproduced, distributed, altered or used in any form, in whole or in part.
  */
-package com.kyriba.curriculum.domain.dto;
-
-import lombok.Value;
-
+package com.kyriba.curriculum.service.exception;
 
 /**
  * @author M-DBE
  */
-@Value
-public class Subject
+public class CurriculumServiceException extends RuntimeException
 {
-  private final long id;
-  private final String name;
+  public CurriculumServiceException()
+  {
+
+  }
+
+
+  public CurriculumServiceException(String message)
+  {
+    super(message);
+  }
 }

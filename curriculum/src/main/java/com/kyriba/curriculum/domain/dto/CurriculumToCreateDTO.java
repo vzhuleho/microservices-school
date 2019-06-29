@@ -5,22 +5,22 @@
  */
 package com.kyriba.curriculum.domain.dto;
 
-import com.kyriba.curriculum.domain.dto.constraint.SubjectNameConstraint;
+import com.kyriba.curriculum.domain.dto.constraint.GradeConstraint;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 
 /**
  * @author M-DBE
  */
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class SubjectToUpdate
+@EqualsAndHashCode
+public class CurriculumToCreateDTO
 {
-  @SubjectNameConstraint
-  @NonNull
-  private String name;
+  @GradeConstraint
+  private int grade;
 }

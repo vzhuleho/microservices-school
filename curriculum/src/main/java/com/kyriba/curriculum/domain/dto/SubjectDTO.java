@@ -5,18 +5,23 @@
  */
 package com.kyriba.curriculum.domain.dto;
 
-import lombok.Value;
-
-import javax.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 
 /**
  * @author M-DBE
  */
-@Value
-public class CourseToUpdate
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@EqualsAndHashCode
+public class SubjectDTO
 {
-  private final long subjectId;
-  @Positive
-  private final int lessonCount;
+  private long id;
+  @NonNull
+  private String name;
 }
