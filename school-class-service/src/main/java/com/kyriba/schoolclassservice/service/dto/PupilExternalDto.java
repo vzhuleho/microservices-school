@@ -3,27 +3,30 @@
  * The content of this file is copyrighted by Kyriba Corporation and can not be *
  * reproduced, distributed, altered or used in any form, in whole or in part.   *
  *   Date            Author        Changes                                      *
- * 14.6.19         M-VBE         Created                                      *
+ * 11.5.19         M-VBE         Created                                      *
  ********************************************************************************/
-package com.kyriba.schoolclassservice.service;
+package com.kyriba.schoolclassservice.service.dto;
 
-import com.kyriba.schoolclassservice.service.dto.HeadTeacherDto;
-import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import lombok.Getter;
+import lombok.Setter;
 
 
 /**
  * @author M-VBE
  * @since 19.2
  */
-@Component
-//Mock of the external microservice
-public class TeacherServiceClient
+@Getter
+@Setter
+public class PupilExternalDto
 {
-  //todo: here we should pass id only but now it's a mock so takes full dto
-  public Optional<HeadTeacherDto> findById(HeadTeacherDto teacher)
+  private long id;
+
+  private UserInfo userInfo;
+
+
+  public PupilDto toInternal()
   {
-    return Optional.ofNullable(teacher);
+    return new PupilDto(id, userInfo.getName());
   }
 }

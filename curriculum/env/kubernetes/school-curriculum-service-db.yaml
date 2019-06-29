@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: school-class-curriculum-db
+  labels:
+    app: school-curriculum-service
+spec:
+  ports:
+    - port: 5432
+      targetPort: postgres
+  selector:
+    app: school-curriculum-service
+    tier: postgres
+  clusterIP: None
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: school-curriculum-service-db-pv-claim
+  labels:
+    app: school-curriculum-service
+spec:
+  storageClassName: fast
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 250Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: school-curriculum-service-db
+  labels:
+    app: school-curriculum-service
+spec:
+  selector:
+    matchLabels:
+      app: school-curriculum-service
+      tier: postgres
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: school-curriculum-service
+        tier: postgres
+    spec:
+      containers:
+        - image: postgres:latest
+          name: school-curriculum-service-h2
+          resources:
+            limits:
+              memory: "1000Mi"
+            requests:
+              memory: "500Mi"
+          env:
+            - name: POSTGRES_USER
+              value: dbuser
+            - name: POSTGRES_DB
+              value: curricula
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-pass
+                  key: password
+          ports:
+            - containerPort: 5432
+              name: postgres
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-persistent-storage
+      volumes:
+        - name: postgres-persistent-storage
+          persistentVolumeClaim:
+            claimName: school-curriculum-service-db-pv-claim

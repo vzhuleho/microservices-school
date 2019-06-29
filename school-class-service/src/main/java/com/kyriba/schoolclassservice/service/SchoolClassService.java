@@ -43,9 +43,8 @@ public class SchoolClassService
   private final TeacherRepository headTeacherRepository;
   private final PupilRepository pupilRepository;
 
-  //External services clients
-  private final TeacherServiceClient teacherServiceClient;
-  private final PupilServiceClient pupilServiceClient;
+  //External services client
+  private final UserServiceClient userServiceClient;
 
 
   public List<SchoolClassDto> getAll()
@@ -81,7 +80,7 @@ public class SchoolClassService
       final Optional<HeadTeacherEntity> teacherLocalStorage = headTeacherRepository.findById(
           teacherId);
       if (!teacherLocalStorage.isPresent()) {
-        final HeadTeacherEntity headTeacherEntity = teacherServiceClient.findById(headTeacherDto)
+        final HeadTeacherEntity headTeacherEntity = userServiceClient.findById(headTeacherDto)
             .orElseThrow(() -> new ResourceNotFoundException("Teacher with " + teacherId + " is not found!"))
             .toEntity();
 
@@ -153,7 +152,7 @@ public class SchoolClassService
     if (pupilDto != null) {
       final Long id = pupilDto.getId();
       final Optional<PupilEntity> pupil = pupilRepository.findById(id);
-      result = pupil.orElseGet(() -> pupilServiceClient.findById(pupilDto)
+      result = pupil.orElseGet(() -> userServiceClient.findById(pupilDto)
           .orElseThrow(() -> new ResourceNotFoundException("Pupil with " + id + " is not found!"))
           .toEntity());
     }

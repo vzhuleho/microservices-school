@@ -19,11 +19,12 @@ metadata:
   labels:
     app: userservice
 spec:
+  storageClassName: fast
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 250Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -47,6 +48,11 @@ spec:
       containers:
         - image: mysql:latest
           name: userservice-mysql
+          resources:
+            limits:
+              memory: "1000Mi"
+            requests:
+              memory: "500Mi"
           env:
             - name: MYSQL_USER
               value: dbuser

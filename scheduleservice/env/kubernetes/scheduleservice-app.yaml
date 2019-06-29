@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: scheduleservice-app
+  labels:
+    app: scheduleservice
+spec:
+  ports:
+    - port: 80
+      targetPort: http
+  selector:
+    app: scheduleservice
+    tier: backend
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scheduleservice-app
+  labels:
+    app: scheduleservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scheduleservice
+      tier: backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: scheduleservice
+        tier: backend
+    spec:
+      containers:
+        - image: kyriba/scheduleservice:1.0.0
+          imagePullPolicy: IfNotPresent
+          name: scheduleservice-app
+          resources:
+            limits:
+              memory: "1000Mi"
+            requests:
+              memory: "500Mi"
+          ports:
+            - containerPort: 8080
+              name: http
