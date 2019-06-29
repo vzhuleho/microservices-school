@@ -18,10 +18,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
 
@@ -32,8 +30,7 @@ import java.util.Set;
  */
 @Api(value = "School classes endpoint")
 @RestController
-@RequestMapping(value = "${api.version.path}/classes", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
-    produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = "${api.version.path}/classes")
 @AllArgsConstructor
 public class SchoolClassController
 {
@@ -60,7 +57,7 @@ public class SchoolClassController
   @ApiOperation(value = "Register a new school class")
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  private ClassCreated add(@Valid @RequestBody SchoolClassDto schoolClass)
+  private ClassCreated add(@RequestBody SchoolClassDto schoolClass)
   {
     schoolClass.setId(null);
     return new ClassCreated(service.create(schoolClass).getId());
@@ -71,7 +68,7 @@ public class SchoolClassController
   @PutMapping(value = "/{classId}")
   private SchoolClassDto update(@ApiParam(value = "Class unique identifier", example = "1", required = true)
                                 @PathVariable Long classId,
-                                @Valid @RequestBody ClassUpdateRequest updateRequest)
+                                @RequestBody ClassUpdateRequest updateRequest)
   {
     return service.updateClass(classId, updateRequest);
   }
@@ -89,7 +86,7 @@ public class SchoolClassController
   @PutMapping(value = "/{classId}/pupils")
   private PupilAdded addPupilToClass(@ApiParam(value = "Class unique identifier", example = "1", required = true)
                                      @PathVariable Long classId,
-                                     @Valid @RequestBody PupilDto pupil)
+                                     @RequestBody PupilDto pupil)
   {
     return new PupilAdded(service.addPupilToClass(classId, pupil).getId());
   }
