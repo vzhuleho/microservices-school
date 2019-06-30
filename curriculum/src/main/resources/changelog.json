@@ -214,6 +214,22 @@
         }]
       
     }
+  },
+
+
+  {
+    "changeSet": {
+      "id": "1561352722695-9",
+      "author": "dbely (generated)",
+      "changes": [
+        {
+          "addUniqueConstraint": {
+            "columnNames": "name",
+            "constraintName": "xak_subject_name",
+            "tableName": "subject"
+          }
+        }]
+
+    }
   }
-  
 ]}

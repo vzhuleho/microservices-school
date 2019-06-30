@@ -5,6 +5,8 @@
  */
 package com.kyriba.curriculum.domain.entity;
 
+import com.kyriba.curriculum.domain.dto.SubjectDTO;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,6 +26,7 @@ import javax.persistence.Id;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class SubjectEntity
 {
   @Id
@@ -39,5 +42,11 @@ public class SubjectEntity
   public SubjectEntity(String name)
   {
     this.name = name;
+  }
+
+
+  public SubjectDTO toSubjectDTO()
+  {
+    return new SubjectDTO(id, name);
   }
 }

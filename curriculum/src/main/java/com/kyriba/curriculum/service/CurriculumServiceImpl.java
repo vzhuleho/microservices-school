@@ -11,7 +11,6 @@ import com.kyriba.curriculum.domain.dto.CourseToAddDTO;
 import com.kyriba.curriculum.domain.dto.CourseToUpdateDTO;
 import com.kyriba.curriculum.domain.dto.CurriculumDTO;
 import com.kyriba.curriculum.domain.dto.CurriculumToCreateDTO;
-import com.kyriba.curriculum.domain.dto.SubjectDTO;
 import com.kyriba.curriculum.domain.entity.CourseEntity;
 import com.kyriba.curriculum.domain.entity.CurriculumEntity;
 import com.kyriba.curriculum.domain.entity.CurriculumRepository;
@@ -58,7 +57,7 @@ class CurriculumServiceImpl implements CurriculumService
   public List<BriefCurriculumDTO> findAllCurricula()
   {
     return StreamSupport.stream(curriculumRepository.findAll().spliterator(), false)
-        .map(curriculumEntity -> new BriefCurriculumDTO(curriculumEntity.getId(), curriculumEntity.getGrade()))
+        .map(CurriculumEntity::toBriefCurriculumDTO)
         .collect(Collectors.toList());
   }
 
@@ -67,7 +66,7 @@ class CurriculumServiceImpl implements CurriculumService
   public CurriculumDTO getCurriculumByGrade(int grade)
   {
     return curriculumRepository.findByGrade(grade)
-        .map(CurriculumServiceImpl::to)
+        .map(CurriculumEntity::toCurriculumDTO)
         .orElseThrow(() -> new CurriculumForGradeNotImplementedException(grade));
   }
 
@@ -76,7 +75,7 @@ class CurriculumServiceImpl implements CurriculumService
   public CurriculumDTO getCurriculumById(long id)
   {
     return curriculumRepository.findById(id)
-        .map(CurriculumServiceImpl::to)
+        .map(CurriculumEntity::toCurriculumDTO)
         .orElseThrow(() -> new CurriculumNotFoundException(id));
 
   }
@@ -87,8 +86,7 @@ class CurriculumServiceImpl implements CurriculumService
   {
     CurriculumEntity curriculumEntity = new CurriculumEntity();
     curriculumEntity.setGrade(curriculumToCreate.getGrade());
-    curriculumRepository.save(curriculumEntity);
-    return to(curriculumEntity).toBrief();
+    return curriculumRepository.save(curriculumEntity).toBriefCurriculumDTO();
   }
 
 
@@ -112,14 +110,12 @@ class CurriculumServiceImpl implements CurriculumService
     courseEntity.setLessonCount(courseToAdd.getLessonCount());
 
     curriculumEntity.getCourses().add(courseEntity);
-    CurriculumEntity savedCurriculum = curriculumRepository.save(curriculumEntity);
-
-    return to(savedCurriculum.getCourses().stream()
+    return curriculumRepository.save(curriculumEntity).getCourses().stream()
         .filter(it -> it.getSubject().getId() == courseToAdd.getSubjectId())
         .findFirst()
+        .map(CourseEntity::toCourseDTO)
         .orElseThrow(() -> new IllegalStateException(String.format("Course with subject id %d couldn't be found!",
-            courseToAdd.getSubjectId())))
-    );
+            courseToAdd.getSubjectId())));
   }
 
 
@@ -152,25 +148,5 @@ class CurriculumServiceImpl implements CurriculumService
         () -> { throw new SubjectNotFoundException(courseToUpdate.getSubjectId()); });
 
     curriculumRepository.save(curriculum);
-  }
-
-
-  private static CurriculumDTO to(CurriculumEntity entity)
-  {
-    return new CurriculumDTO(entity.getId(), entity.getGrade(), entity.getCourses().stream()
-        .map(CurriculumServiceImpl::to)
-        .collect(Collectors.toList()));
-  }
-
-
-  private static CourseDTO to(CourseEntity courseEntity)
-  {
-    return new CourseDTO(courseEntity.getId(), to(courseEntity.getSubject()), courseEntity.getLessonCount());
-  }
-
-
-  private static SubjectDTO to(SubjectEntity subjectEntity)
-  {
-    return new SubjectDTO(subjectEntity.getId(), subjectEntity.getName());
   }
 }

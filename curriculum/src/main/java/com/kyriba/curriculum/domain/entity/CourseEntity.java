@@ -5,6 +5,7 @@
  */
 package com.kyriba.curriculum.domain.entity;
 
+import com.kyriba.curriculum.domain.dto.CourseDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -37,4 +38,10 @@ public class CourseEntity
 
   @Basic(optional = false)
   private int lessonCount;
+
+
+  public CourseDTO toCourseDTO()
+  {
+    return new CourseDTO(id, subject.toSubjectDTO(), lessonCount);
+  }
 }

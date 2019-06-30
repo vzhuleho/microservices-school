@@ -12,13 +12,23 @@ import com.kyriba.curriculum.domain.dto.CourseToUpdateDTO;
 import com.kyriba.curriculum.domain.dto.CurriculumDTO;
 import com.kyriba.curriculum.domain.dto.CurriculumToCreateDTO;
 import com.kyriba.curriculum.service.CurriculumService;
+import com.kyriba.curriculum.service.exception.CourseAlreadyExistsException;
+import com.kyriba.curriculum.service.exception.CourseNotFoundException;
+import com.kyriba.curriculum.service.exception.CurriculumAlreadyExistsException;
+import com.kyriba.curriculum.service.exception.CurriculumForGradeNotImplementedException;
+import com.kyriba.curriculum.service.exception.CurriculumNotFoundException;
+import com.kyriba.curriculum.service.exception.CurriculumServiceException;
+import com.kyriba.curriculum.service.exception.SubjectNotFoundException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -137,5 +147,34 @@ class CurriculumController
       @ApiParam("Updated course") @RequestBody CourseToUpdateDTO courseToUpdate)
   {
     curriculumService.updateCourse(curriculumId, courseId, courseToUpdate);
+  }
+
+
+  @ControllerAdvice(assignableTypes = CurriculumController.class)
+  static class ControllerExceptionHandler
+  {
+    @ExceptionHandler({ CurriculumNotFoundException.class, CourseNotFoundException.class,
+        SubjectNotFoundException.class })
+    @ResponseBody
+    ResponseEntity<ErrorMessage> handleNotFoundException(CurriculumServiceException e)
+    {
+      return new ResponseEntity<>(new ErrorMessage(e.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+
+    @ExceptionHandler({ CourseAlreadyExistsException.class, CurriculumAlreadyExistsException.class })
+    @ResponseBody
+    ResponseEntity<ErrorMessage> handleConflictException(CurriculumServiceException e)
+    {
+
+      return new ResponseEntity<>(new ErrorMessage(e.getMessage()), HttpStatus.CONFLICT);
+    }
+
+
+    @ExceptionHandler(CurriculumForGradeNotImplementedException.class)
+    ResponseEntity<ErrorMessage> handleNotImplementedException(CurriculumServiceException e)
+    {
+      return new ResponseEntity<>(new ErrorMessage(e.getMessage()), HttpStatus.NOT_IMPLEMENTED);
+    }
   }
 }

@@ -5,6 +5,8 @@
  */
 package com.kyriba.curriculum.domain.entity;
 
+import com.kyriba.curriculum.domain.dto.BriefCurriculumDTO;
+import com.kyriba.curriculum.domain.dto.CurriculumDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,6 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -42,4 +45,18 @@ public class CurriculumEntity
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "curriculum_id")
   private List<CourseEntity> courses = new ArrayList<>();
+
+
+  public CurriculumDTO toCurriculumDTO()
+  {
+    return new CurriculumDTO(id, grade, courses.stream()
+        .map(CourseEntity::toCourseDTO)
+        .collect(Collectors.toList()));
+  }
+
+
+  public BriefCurriculumDTO toBriefCurriculumDTO()
+  {
+    return new BriefCurriculumDTO(id, grade);
+  }
 }

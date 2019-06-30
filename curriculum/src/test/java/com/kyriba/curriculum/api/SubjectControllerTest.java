@@ -73,7 +73,8 @@ class SubjectControllerTest
   void before(RestDocumentationContextProvider restDocumentation)
   {
     RestAssuredMockMvc.standaloneSetup(subjectController, new ValidationExceptionHandler(),
-        new CustomExceptionHandler(), MockMvcRestDocumentation.documentationConfiguration(restDocumentation));
+        new SubjectController.ControllerExceptionHandler(),
+        MockMvcRestDocumentation.documentationConfiguration(restDocumentation));
     config = RestAssuredMockMvcConfig.config()
         .mockMvcConfig(mockMvcConfig().automaticallyApplySpringRestDocsMockMvcSupport());
   }
@@ -177,7 +178,7 @@ class SubjectControllerTest
       SubjectToUpdateDTO subjectToUpdate = new SubjectToUpdateDTO("chemistry");
       doThrow(new SubjectNotFoundException(subjectId)).when(subjectService).updateSubject(subjectId, subjectToUpdate);
 
-      String message = given()
+      ErrorMessage message = given()
           .config(config)
           .body(subjectToUpdate)
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -186,10 +187,10 @@ class SubjectControllerTest
           .then()
           .apply(document("update-subject-fail-subject-id-not-found"))
           .statusCode(HttpStatus.NOT_FOUND.value())
-          .extract().response().asString();
+          .extract().jsonPath().getObject(".", ErrorMessage.class);
 
       assertNotNull(message);
-      assertEquals("Subject with id 1 not found.", message);
+      assertEquals("Subject with id 1 not found.", message.getMessage());
     }
   }
 

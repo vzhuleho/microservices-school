@@ -79,7 +79,8 @@ class CurriculumControllerTest
   void before(RestDocumentationContextProvider restDocumentation)
   {
     RestAssuredMockMvc.standaloneSetup(curriculumController, new ValidationExceptionHandler(),
-        new CustomExceptionHandler(), MockMvcRestDocumentation.documentationConfiguration(restDocumentation));
+        new CurriculumController.ControllerExceptionHandler(),
+        MockMvcRestDocumentation.documentationConfiguration(restDocumentation));
     config = RestAssuredMockMvcConfig.config()
         .mockMvcConfig(mockMvcConfig().automaticallyApplySpringRestDocsMockMvcSupport());
   }
@@ -336,7 +337,7 @@ class CurriculumControllerTest
       Mockito.when(curriculumService.addCourse(curriculumId, courseToAdd))
           .thenThrow(new CurriculumNotFoundException(curriculumId));
 
-      String message = given()
+      ErrorMessage message = given()
           .config(config)
           .body(courseToAdd)
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -345,9 +346,9 @@ class CurriculumControllerTest
           .then()
           .apply(document("add-course-fail-curriculum-not-found"))
           .statusCode(HttpStatus.NOT_FOUND.value())
-          .extract().response().asString();
+          .extract().jsonPath().getObject(".", ErrorMessage.class);
 
-      assertEquals("Curriculum with id 1 not found.", message);
+      assertEquals("Curriculum with id 1 not found.", message.getMessage());
     }
 
 
@@ -359,7 +360,7 @@ class CurriculumControllerTest
       Mockito.when(curriculumService.addCourse(curriculumId, courseToAdd))
           .thenThrow(new SubjectNotFoundException(courseToAdd.getSubjectId()));
 
-      String message = given()
+      ErrorMessage message = given()
           .config(config)
           .body(courseToAdd)
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -368,9 +369,9 @@ class CurriculumControllerTest
           .then()
           .apply(document("add-course-fail-subject-not-found"))
           .statusCode(HttpStatus.NOT_FOUND.value())
-          .extract().response().asString();
+          .extract().jsonPath().getObject(".", ErrorMessage.class);
 
-      assertEquals("Subject with id 2 not found.", message);
+      assertEquals("Subject with id 2 not found.", message.getMessage());
     }
 
 
@@ -382,7 +383,7 @@ class CurriculumControllerTest
       Mockito.when(curriculumService.addCourse(curriculumId, courseToAdd))
           .thenThrow(new CourseAlreadyExistsException(curriculumId, courseToAdd.getSubjectId()));
 
-      String message = given()
+      ErrorMessage message = given()
           .config(config)
           .body(courseToAdd)
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -391,9 +392,9 @@ class CurriculumControllerTest
           .then()
           .apply(document("add-course-fail-already-exists"))
           .statusCode(HttpStatus.CONFLICT.value())
-          .extract().response().asString();
+          .extract().jsonPath().getObject(".", ErrorMessage.class);
 
-      assertEquals("Course for curriculum with id 1 and subject with id 2 already exists.", message);
+      assertEquals("Course for curriculum with id 1 and subject with id 2 already exists.", message.getMessage());
     }
 
 
@@ -476,7 +477,7 @@ class CurriculumControllerTest
       doThrow(new CourseNotFoundException(curriculumId, courseId)).when(curriculumService)
           .updateCourse(curriculumId, courseId, courseToUpdate);
 
-      String message = given()
+      ErrorMessage message = given()
           .config(config)
           .body(courseToUpdate)
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -485,10 +486,10 @@ class CurriculumControllerTest
           .then()
           .apply(document("update-course-updated-fail-course-id-not-found"))
           .statusCode(HttpStatus.NOT_FOUND.value())
-          .extract().response().asString();
+          .extract().jsonPath().getObject(".", ErrorMessage.class);
 
       assertNotNull(message);
-      assertEquals("Course with id 100 for curriculum with id 1 not found.", message);
+      assertEquals("Course with id 100 for curriculum with id 1 not found.", message.getMessage());
     }
 
 
@@ -522,7 +523,7 @@ class CurriculumControllerTest
       doThrow(new CurriculumNotFoundException(curriculumId)).when(curriculumService)
           .updateCourse(curriculumId, courseId, courseToUpdate);
 
-      String message = given()
+      ErrorMessage message = given()
           .config(config)
           .body(courseToUpdate)
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -531,9 +532,9 @@ class CurriculumControllerTest
           .then()
           .apply(document("update-course-fail-curriculum-not-found"))
           .statusCode(HttpStatus.NOT_FOUND.value())
-          .extract().response().asString();
+          .extract().jsonPath().getObject(".", ErrorMessage.class);
 
-      assertEquals("Curriculum with id 1 not found.", message);
+      assertEquals("Curriculum with id 1 not found.", message.getMessage());
     }
 
 
@@ -588,16 +589,16 @@ class CurriculumControllerTest
       doThrow(new CurriculumNotFoundException(curriculumId)).when(curriculumService)
           .removeCourse(curriculumId, courseId);
 
-      String message = given()
+      ErrorMessage message = given()
           .config(config)
           .when()
           .delete("/api/v1/curricula/{curriculumId}/courses/{courseId}", curriculumId, courseId)
           .then()
           .apply(document("remove-course-curriculum-not-found"))
           .statusCode(HttpStatus.NOT_FOUND.value())
-          .extract().response().asString();
+          .extract().jsonPath().getObject(".", ErrorMessage.class);
 
-      assertEquals("Curriculum with id 1 not found.", message);
+      assertEquals("Curriculum with id 1 not found.", message.getMessage());
     }
 
 
@@ -609,16 +610,16 @@ class CurriculumControllerTest
       doThrow(new CourseNotFoundException(curriculumId, courseId)).when(curriculumService)
           .removeCourse(curriculumId, courseId);
 
-      String message = given()
+      ErrorMessage message = given()
           .config(config)
           .when()
           .delete("/api/v1/curricula/{curriculumId}/courses/{courseId}", curriculumId, courseId)
           .then()
           .apply(document("remove-course-curriculum-not-found"))
           .statusCode(HttpStatus.NOT_FOUND.value())
-          .extract().response().asString();
+          .extract().jsonPath().getObject(".", ErrorMessage.class);
 
-      assertEquals("Course with id 100 for curriculum with id 1 not found.", message);
+      assertEquals("Course with id 100 for curriculum with id 1 not found.", message.getMessage());
     }
   }
 }
