@@ -1,6 +1,10 @@
 package com.kyriba.schoolclassservice.domain;
 
-import lombok.*;
+import com.kyriba.schoolclassservice.service.dto.HeadTeacherDto;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +20,6 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @NoArgsConstructor
-@Builder
 @AllArgsConstructor
 public class HeadTeacherEntity
 {
@@ -26,5 +29,23 @@ public class HeadTeacherEntity
 
   @Column(name = "FULL_NAME")
   String fullname;
+
+
+  public static HeadTeacherEntity fromDto(HeadTeacherDto dto)
+  {
+    final HeadTeacherEntity headTeacherEntity = new HeadTeacherEntity();
+    headTeacherEntity.setId(dto.getId());
+    headTeacherEntity.setFullname(dto.getName());
+    return headTeacherEntity;
+  }
+
+
+  public HeadTeacherDto toDto()
+  {
+    final HeadTeacherDto headTeacherDto = new HeadTeacherDto();
+    headTeacherDto.setId(getId());
+    headTeacherDto.setName(getFullname());
+    return headTeacherDto;
+  }
 }
 

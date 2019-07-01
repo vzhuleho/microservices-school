@@ -114,6 +114,29 @@ public class SpringClassApiTest
   }
 
 
+
+  @Test
+  public void verifyClassValidation()
+  {
+    given(requestSpecification)
+        .contentType(APPLICATION_JSON_UTF8_VALUE)
+        .filter(document("school-class-create"))
+        .body("{\n" +
+            "  \"grade\": \"11\",\n" +
+            "  \"letter\": \"A\",\n" +
+            "  \"headTeacher\": {\n" +
+            "    \"id\": \"123\",\n" +
+            "    \"name\": \"Иван Петрович\"\n" +
+            "  }\n" +
+            "}")
+        .when()
+        .post("/classes")
+        .then()
+        .statusCode(HttpStatus.BAD_REQUEST.value())
+        .contentType(APPLICATION_JSON_UTF8_VALUE);
+  }
+
+
   @Test
   public void schoolClassCanBeCreated()
   {

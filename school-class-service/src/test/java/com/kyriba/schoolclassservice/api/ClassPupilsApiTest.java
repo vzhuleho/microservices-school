@@ -114,6 +114,22 @@ public class ClassPupilsApiTest
 
 
   @Test
+  public void verifyPupilValidation()
+  {
+    given(requestSpecification)
+        .contentType(APPLICATION_JSON_UTF8_VALUE)
+        .filter(document("school-class-pupils-add"))
+        .body("{\n" +
+            "    \"id\": \"123\"\n" +
+            "  }\n")
+        .when()
+        .put("/classes/" + newClass.getId() + "/pupils")
+        .then()
+        .statusCode(HttpStatus.BAD_REQUEST.value())
+        .contentType(APPLICATION_JSON_UTF8_VALUE);
+  }
+
+  @Test
   public void pupilsCanBeRetrieved()
   {
     final List<PupilDto> pupilDtos = given(requestSpecification)

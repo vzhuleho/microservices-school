@@ -7,7 +7,6 @@
  ********************************************************************************/
 package com.kyriba.schoolclassservice.service.dto;
 
-import com.kyriba.schoolclassservice.domain.SchoolClassEntity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
@@ -30,11 +29,4 @@ public class ClassUpdateRequest
   @ApiModelProperty(value = "School class letter", example = "A")
   @Size(min = 1, max = 1)
   String letter;
-
-
-  public SchoolClassEntity toEntity(SchoolClassEntity entity) {
-    entity.setGrade(grade);
-    entity.setLetter(letter);
-    return entity;
-  }
 }

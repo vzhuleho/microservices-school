@@ -3,27 +3,23 @@
  * The content of this file is copyrighted by Kyriba Corporation and can not be *
  * reproduced, distributed, altered or used in any form, in whole or in part.   *
  *   Date            Author        Changes                                      *
- * 14.6.19         M-VBE         Created                                      *
+ * 26.6.19         M-VBE         Created                                      *
  ********************************************************************************/
-package com.kyriba.schoolclassservice.service;
+package com.kyriba.schoolclassservice.service.exceptions;
 
-import com.kyriba.schoolclassservice.service.dto.HeadTeacherDto;
-import org.springframework.stereotype.Component;
-
-import java.util.Optional;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 
 /**
  * @author M-VBE
  * @since 19.2
  */
-@Component
-//Mock of the external microservice
-public class TeacherServiceClient
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class TeacherNotFoundException extends RuntimeException
 {
-  //todo: here we should pass id only but now it's a mock so takes full dto
-  public Optional<HeadTeacherDto> findById(HeadTeacherDto teacher)
+  public TeacherNotFoundException(Long teacherId)
   {
-    return Optional.ofNullable(teacher);
+    super("Teacher with id=" + teacherId + "not found");
   }
 }

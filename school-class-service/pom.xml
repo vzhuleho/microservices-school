@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.kyriba.school</groupId>
     <artifactId>school-class-service</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>school-class-service</name>
     <description>School class service</description>
 
@@ -38,6 +38,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>2.1.1.RELEASE</version>
         </dependency>
 
 
@@ -133,9 +138,6 @@
                     <buildArgs>
                         <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
                     </buildArgs>
-                    <!--docker.io should be defined as server locally in settings.xml file in ~/.m2 directory-->
-                    <registryUrl>https://index.docker.io/v1/</registryUrl>
-                    <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
                 </configuration>
                 <executions>
                     <execution>
@@ -143,12 +145,41 @@
                         <phase>install</phase>
                         <goals>
                             <goal>build</goal>
-                            <goal>push</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>container</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.spotify</groupId>
+                        <artifactId>dockerfile-maven-plugin</artifactId>
+                        <configuration>
+                            <!--docker.io should be defined as server locally in settings.xml file in ~/.m2 directory-->
+                            <registryUrl>https://index.docker.io/v1/</registryUrl>
+                            <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>default</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                    <goal>push</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

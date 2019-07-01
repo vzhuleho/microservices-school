@@ -7,7 +7,6 @@
  ********************************************************************************/
 package com.kyriba.schoolclassservice.service.dto;
 
-import com.kyriba.schoolclassservice.domain.SchoolClassEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -43,23 +42,4 @@ public class SchoolClassDto
   int year;
   @ApiModelProperty(value = "Class head teacher")
   HeadTeacherDto headTeacher;
-
-    public static SchoolClassDto of(SchoolClassEntity entity) {
-        return SchoolClassDto.builder()
-                .id(entity.getId())
-                .grade(entity.getGrade())
-                .letter(entity.getLetter())
-                .year(entity.getYear())
-                .headTeacher(HeadTeacherDto.of(entity.getHeadTeacherEntity()))
-                .build();
-    }
-
-    public SchoolClassEntity toEntity() {
-        return SchoolClassEntity.builder()
-                .id(getId())
-                .grade(getGrade())
-                .letter(getLetter())
-                .year(getYear())
-                .build();
-    }
 }

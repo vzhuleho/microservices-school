@@ -7,6 +7,7 @@
  ********************************************************************************/
 package com.kyriba.schoolclassservice.api;
 
+import com.kyriba.schoolclassservice.service.PupilService;
 import com.kyriba.schoolclassservice.service.SchoolClassService;
 import com.kyriba.schoolclassservice.service.dto.ClassUpdateRequest;
 import com.kyriba.schoolclassservice.service.dto.PupilDto;
@@ -17,9 +18,13 @@ import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import java.util.List;
 import java.util.Set;
 
@@ -34,14 +39,17 @@ import java.util.Set;
 @AllArgsConstructor
 public class SchoolClassController
 {
-  private final SchoolClassService service;
+  private final SchoolClassService schoolClassService;
+  private final PupilService pupilService;
+
+  private static final Logger logger = LoggerFactory.getLogger(SchoolClassController.class);
 
 
   @ApiOperation(value = "Get all school classes")
   @GetMapping
   private List<SchoolClassDto> list()
   {
-    return service.getAll();
+    return schoolClassService.getAll();
   }
 
 
@@ -50,7 +58,7 @@ public class SchoolClassController
   private SchoolClassDto get(@ApiParam(value = "Class unique identifier", example = "1", required = true)
                              @PathVariable Long classId)
   {
-    return service.getById(classId);
+    return schoolClassService.getById(classId);
   }
 
 
@@ -60,7 +68,7 @@ public class SchoolClassController
   private ClassCreated add(@RequestBody SchoolClassDto schoolClass)
   {
     schoolClass.setId(null);
-    return new ClassCreated(service.create(schoolClass).getId());
+    return new ClassCreated(schoolClassService.create(schoolClass).getId());
   }
 
 
@@ -70,7 +78,7 @@ public class SchoolClassController
                                 @PathVariable Long classId,
                                 @RequestBody ClassUpdateRequest updateRequest)
   {
-    return service.updateClass(classId, updateRequest);
+    return schoolClassService.updateClass(classId, updateRequest);
   }
 
 
@@ -78,7 +86,7 @@ public class SchoolClassController
   @GetMapping(value = "/{classId}/pupils")
   private Set<PupilDto> getPupils(@PathVariable Long classId)
   {
-    return service.getPupilsForClass(classId);
+    return schoolClassService.getPupilsForClass(classId);
   }
 
 
@@ -88,7 +96,7 @@ public class SchoolClassController
                                      @PathVariable Long classId,
                                      @RequestBody PupilDto pupil)
   {
-    return new PupilAdded(service.addPupilToClass(classId, pupil).getId());
+    return new PupilAdded(pupilService.addPupilToClass(classId, pupil).getId());
   }
 
 
@@ -100,7 +108,15 @@ public class SchoolClassController
       @ApiParam(value = "Pupil unique identifier", example = "2", required = true)
       @PathVariable Long pupilId)
   {
-    service.removePupilFromClass(classId, pupilId);
+    pupilService.removePupilFromClass(classId, pupilId);
+  }
+
+
+  @ExceptionHandler(value = { ConstraintViolationException.class, ValidationException.class })
+  @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+  public String validationError(Exception ex)
+  {
+    return ex.getMessage();
   }
 
 

@@ -5,10 +5,10 @@
  *   Date            Author        Changes                                      *
  * 14.6.19         M-VBE         Created                                      *
  ********************************************************************************/
-package com.kyriba.schoolclassservice.service;
+package com.kyriba.schoolclassservice.service.externalservices;
 
+import com.kyriba.schoolclassservice.domain.PupilEntity;
 import com.kyriba.schoolclassservice.service.dto.PupilDto;
-import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
@@ -17,12 +17,7 @@ import java.util.Optional;
  * @author M-VBE
  * @since 19.2
  */
-@Component
-//Mock of the external microservice
-public class PupilServiceClient
+public interface PupilServiceClient
 {
-  public Optional<PupilDto> findById(PupilDto pupul)
-  {
-    return Optional.ofNullable(pupul);
-  }
+  Optional<PupilEntity> findById(PupilDto pupul);
 }

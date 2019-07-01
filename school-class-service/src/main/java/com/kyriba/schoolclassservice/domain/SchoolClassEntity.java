@@ -1,5 +1,7 @@
 package com.kyriba.schoolclassservice.domain;
 
+import com.kyriba.schoolclassservice.service.dto.ClassUpdateRequest;
+import com.kyriba.schoolclassservice.service.dto.SchoolClassDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,7 +20,6 @@ public class SchoolClassEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter(AccessLevel.PROTECTED)
     @Column(name = "SCHOOL_CLASS_ID", nullable = false)
     Long id;
 
@@ -30,10 +31,42 @@ public class SchoolClassEntity {
     int year;
 
 
-    @OneToMany(mappedBy = "schoolClass", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "schoolClass")
     Set<PupilEntity> pupils = new HashSet<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "TEACHER_ID")
     HeadTeacherEntity headTeacherEntity;
+
+
+  public SchoolClassEntity populateFrom(ClassUpdateRequest classUpdateRequest)
+  {
+    setGrade(classUpdateRequest.getGrade());
+    setLetter(classUpdateRequest.getLetter());
+    return this;
+  }
+
+
+  public SchoolClassDto toDto()
+  {
+    return SchoolClassDto.builder()
+        .id(this.getId())
+        .grade(this.getGrade())
+        .letter(this.getLetter())
+        .year(this.getYear())
+        .headTeacher(this.getHeadTeacherEntity() == null ? null : this.getHeadTeacherEntity().toDto())
+        .build();
+  }
+
+
+  public SchoolClassEntity populateFrom(SchoolClassDto dto)
+  {
+    if (getId() == null) {
+      setId(dto.getId());
+    }
+    setGrade(dto.getGrade());
+    setLetter(dto.getLetter());
+    setYear(dto.getYear());
+    return this;
+  }
 }
