@@ -5,29 +5,30 @@
  */
 package com.kyriba.curriculum.api;
 
-import com.google.common.collect.Lists;
-import com.kyriba.curriculum.api.exception.CourseAlreadyExistsException;
-import com.kyriba.curriculum.api.exception.CourseNotFoundException;
-import com.kyriba.curriculum.api.exception.CurriculumAlreadyExistsException;
-import com.kyriba.curriculum.api.exception.CurriculumNotFoundException;
-import com.kyriba.curriculum.api.exception.SubjectNotFoundException;
-import com.kyriba.curriculum.domain.dto.BriefCurriculum;
-import com.kyriba.curriculum.domain.dto.Course;
-import com.kyriba.curriculum.domain.dto.CourseToAdd;
-import com.kyriba.curriculum.domain.dto.CourseToUpdate;
-import com.kyriba.curriculum.domain.dto.Curriculum;
-import com.kyriba.curriculum.domain.dto.CurriculumToCreate;
-import com.kyriba.curriculum.domain.dto.Subject;
-import com.kyriba.curriculum.domain.dto.constraint.GradeConstraint;
+import com.kyriba.curriculum.domain.dto.BriefCurriculumDTO;
+import com.kyriba.curriculum.domain.dto.CourseDTO;
+import com.kyriba.curriculum.domain.dto.CourseToAddDTO;
+import com.kyriba.curriculum.domain.dto.CourseToUpdateDTO;
+import com.kyriba.curriculum.domain.dto.CurriculumDTO;
+import com.kyriba.curriculum.domain.dto.CurriculumToCreateDTO;
+import com.kyriba.curriculum.service.CurriculumService;
+import com.kyriba.curriculum.service.exception.CourseAlreadyExistsException;
+import com.kyriba.curriculum.service.exception.CourseNotFoundException;
+import com.kyriba.curriculum.service.exception.CurriculumAlreadyExistsException;
+import com.kyriba.curriculum.service.exception.CurriculumForGradeNotImplementedException;
+import com.kyriba.curriculum.service.exception.CurriculumNotFoundException;
+import com.kyriba.curriculum.service.exception.CurriculumServiceException;
+import com.kyriba.curriculum.service.exception.SubjectNotFoundException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,20 +39,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
-import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import static com.kyriba.curriculum.api.SubjectController.ALGEBRA;
-import static com.kyriba.curriculum.api.SubjectController.ENGLISH;
-import static com.kyriba.curriculum.api.SubjectController.GEOMETRY;
-import static com.kyriba.curriculum.api.SubjectController.SUBJECTS;
 
 
 /**
@@ -59,108 +49,59 @@ import static com.kyriba.curriculum.api.SubjectController.SUBJECTS;
  */
 @RestController
 @RequestMapping("/api/v1/curricula")
-@RequiredArgsConstructor
-@Validated
 @Api
 class CurriculumController
 {
-  static final Supplier<List<Curriculum>> DEFAULT_CURRICULA = () -> Lists.newArrayList(
-      new Curriculum(1, 11, Lists.newArrayList(
-          new Course(100, ALGEBRA, 100),
-          new Course(101, GEOMETRY, 100),
-          new Course(102, ENGLISH, 100))
-      ),
-      new Curriculum(2, 10, Lists.newArrayList(
-          new Course(103, ALGEBRA, 110),
-          new Course(104, GEOMETRY, 90),
-          new Course(105, ENGLISH, 80))
-      )
-  );
-  static List<Curriculum> CURRICULA = DEFAULT_CURRICULA.get();
+  private CurriculumService curriculumService;
 
-  private static final AtomicLong COUNTER = new AtomicLong(10_000);
+
+  @Autowired
+  CurriculumController(CurriculumService curriculumService)
+  {
+    this.curriculumService = curriculumService;
+  }
 
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseBody
-  @ApiOperation(value = "Get all curricula", notes = "Retrieving the collection of curricula", response = BriefCurriculum.class,
+  @ApiOperation(value = "Get curricula", notes = "Retrieving the collection of curricula", response = BriefCurriculumDTO.class,
       responseContainer = "List")
-  List<BriefCurriculum> getAllCurricula()
+  List<BriefCurriculumDTO> getCurricula(@ApiParam("Grade") @RequestParam(value = "grade", required = false) Integer grade)
   {
-    return CURRICULA.stream()
-        .map(Curriculum::toBrief)
-        .collect(Collectors.toList());
+    if (grade == null) {
+      return curriculumService.findAllCurricula();
+    }
+    else {
+      return Collections.singletonList(curriculumService.getCurriculumByGrade(grade).toBrief());
+    }
   }
 
 
   @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseBody
-  @ApiOperation(value = "Get curriculum by id", notes = "Retrieving existing curriculum by its identifier", response = Curriculum.class)
-  Curriculum getCurriculumById(@ApiParam("Identifier of existing curriculum") @PathVariable("id") long id)
+  @ApiOperation(value = "Get curriculum by id", notes = "Retrieving existing curriculum by its identifier", response = CurriculumDTO.class)
+  CurriculumDTO getCurriculumById(@ApiParam("Identifier of existing curriculum") @PathVariable("id") long id)
   {
-    return findCurriculumById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-  }
-
-
-  @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  @ResponseBody
-  @ApiOperation(value = "Find existing curriculum by grade", notes = "Retrieving existing curriculum by grade", response = Curriculum.class)
-  Curriculum searchByParameters(@ApiParam("Grade") @GradeConstraint @RequestParam("grade") int grade)
-  {
-    return findCurriculumByGrade(grade)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED));
+    return curriculumService.getCurriculumById(id);
   }
 
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   @ResponseBody
   @ResponseStatus(HttpStatus.CREATED)
-  @ApiOperation(value = "Create curriculum", notes = "Create new curriculum", response = BriefCurriculum.class)
-  BriefCurriculum createCurriculum(
-      @ApiParam("New curriculum") @Valid @RequestBody CurriculumToCreate curriculumToCreate)
+  @ApiOperation(value = "Create curriculum", notes = "Create new curriculum", response = BriefCurriculumDTO.class)
+  BriefCurriculumDTO createCurriculum(@ApiParam("New curriculum") @RequestBody CurriculumToCreateDTO curriculumToCreate)
   {
-    if (findCurriculumByGrade(curriculumToCreate.getGrade()).isPresent()) {
-      throw new CurriculumAlreadyExistsException(curriculumToCreate.getGrade());
-    }
-
-    Curriculum curriculum = new Curriculum(COUNTER.incrementAndGet(), curriculumToCreate.getGrade(),
-        Collections.emptyList());
-    CURRICULA.add(curriculum);
-
-    return curriculum.toBrief();
-  }
-
-
-  private Optional<Curriculum> findCurriculumByGrade(int grade)
-  {
-    return CURRICULA.stream()
-        .filter(it -> it.getGrade() == grade)
-        .findFirst();
+    return curriculumService.createCurriculum(curriculumToCreate);
   }
 
 
   @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  @ResponseBody
-  @ApiOperation(value = "Delete curriculum", notes = "Delete existing curriculum", response = BriefCurriculum.class)
-  BriefCurriculum removeCurriculum(
-      @ApiParam("Identifier of curriculum to delete") @PathVariable("id") long curriculumId)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ApiOperation(value = "Delete curriculum", notes = "Delete existing curriculum", response = BriefCurriculumDTO.class)
+  void removeCurriculum(@ApiParam("Identifier of curriculum to delete") @PathVariable("id") long curriculumId)
   {
-    Curriculum curriculum = findCurriculumById(curriculumId)
-        .orElseThrow(() -> new CurriculumNotFoundException(curriculumId));
-
-    boolean removed = CURRICULA.remove(curriculum);
-    if (!removed)
-      throw new CurriculumNotFoundException(curriculumId);
-
-    return curriculum.toBrief();
-  }
-
-
-  private Optional<Curriculum> findCurriculumById(long id)
-  {
-    return CURRICULA.stream()
-        .filter(it -> it.getId() == id).findFirst();
+    curriculumService.removeCurriculum(curriculumId);
   }
 
 
@@ -171,24 +112,11 @@ class CurriculumController
   )
   @ResponseBody
   @ResponseStatus(HttpStatus.CREATED)
-  @ApiOperation(value = "Add new course", notes = "Add new course to existing curriculum", response = Course.class)
-  Course addCourse(@ApiParam("Identifier of existing curriculum") @PathVariable("id") long curriculumId,
-                   @ApiParam("New course") @Valid @RequestBody CourseToAdd courseToAdd)
+  @ApiOperation(value = "Add new course", notes = "Add new course to existing curriculum", response = CourseDTO.class)
+  CourseDTO addCourse(@ApiParam("Identifier of existing curriculum") @PathVariable("id") long curriculumId,
+                      @ApiParam("New course") @RequestBody CourseToAddDTO courseToAdd)
   {
-    Curriculum curriculum = findCurriculumById(curriculumId)
-        .orElseThrow(() -> new CurriculumNotFoundException(curriculumId));
-
-    Subject subject = getSubjectById(courseToAdd.getSubjectId())
-        .orElseThrow(() -> new SubjectNotFoundException(courseToAdd.getSubjectId()));
-
-    if (curriculum.getCourses().stream()
-        .anyMatch(it -> it.getSubject().equals(subject))) {
-      throw new CourseAlreadyExistsException(curriculumId, courseToAdd.getSubjectId());
-    }
-
-    Course createdCourse = new Course(COUNTER.incrementAndGet(), subject, courseToAdd.getLessonCount());
-    curriculum.getCourses().add(createdCourse);
-    return createdCourse;
+    return curriculumService.addCourse(curriculumId, courseToAdd);
   }
 
 
@@ -197,18 +125,12 @@ class CurriculumController
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE
   )
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ApiOperation(value = "Delete course", notes = "Delete existing course", response = Course.class)
+  @ApiOperation(value = "Delete course", notes = "Delete existing course", response = CourseDTO.class)
   void removeCourse(
       @ApiParam("Identifier of existing curriculum") @PathVariable("curriculumId") long curriculumId,
       @ApiParam("Identifier of existing course") @PathVariable("courseId") long courseId)
   {
-    Curriculum curriculum = findCurriculumById(curriculumId)
-        .orElseThrow(() -> new CurriculumNotFoundException(curriculumId));
-    Course course = curriculum.getCourses().stream()
-        .filter(it -> it.getId() == courseId)
-        .findFirst()
-        .orElseThrow(() -> new CourseNotFoundException(curriculumId, courseId));
-    curriculum.getCourses().remove(course);
+    curriculumService.removeCourse(curriculumId, courseId);
   }
 
 
@@ -217,33 +139,42 @@ class CurriculumController
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE
   )
-  @ResponseBody
-  @ApiOperation(value = "Update lesson count for course", notes = "Update lesson count for existing course", response = Course.class)
-  ResponseEntity<Course> updateCourse(
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ApiOperation(value = "Update lesson count for course", notes = "Update lesson count for existing course", response = CourseDTO.class)
+  void updateCourse(
       @ApiParam("Identifier of existing curriculum") @PathVariable("curriculumId") long curriculumId,
       @ApiParam("Identifier of existing course") @PathVariable("courseId") long courseId,
-      @ApiParam("Updated course") @Valid @RequestBody CourseToUpdate courseToUpdate)
+      @ApiParam("Updated course") @RequestBody CourseToUpdateDTO courseToUpdate)
   {
-    Curriculum curriculum = findCurriculumById(curriculumId)
-        .orElseThrow(() -> new CurriculumNotFoundException(curriculumId));
-
-    Subject subject = getSubjectById(courseToUpdate.getSubjectId())
-        .orElseThrow(() -> new SubjectNotFoundException(courseToUpdate.getSubjectId()));
-
-    if (curriculum.getCourses().stream()
-        .anyMatch(it -> it.getSubject().equals(subject) && it.getId() != courseId))
-      throw new CourseAlreadyExistsException(curriculumId, courseToUpdate.getSubjectId());
-
-    Course updatedCourse = new Course(courseId, subject, courseToUpdate.getLessonCount());
-    boolean removed = curriculum.getCourses().removeIf(it -> it.getId() == courseId);
-    curriculum.getCourses().add(updatedCourse);
-    return new ResponseEntity<>(updatedCourse, removed ? HttpStatus.OK : HttpStatus.CREATED);
+    curriculumService.updateCourse(curriculumId, courseId, courseToUpdate);
   }
 
 
-  private Optional<Subject> getSubjectById(long subjectId)
+  @ControllerAdvice(assignableTypes = CurriculumController.class)
+  static class ControllerExceptionHandler
   {
-    return SUBJECTS.stream()
-        .filter(subject -> subject.getId() == subjectId).findFirst();
+    @ExceptionHandler({ CurriculumNotFoundException.class, CourseNotFoundException.class,
+        SubjectNotFoundException.class })
+    @ResponseBody
+    ResponseEntity<ErrorMessage> handleNotFoundException(CurriculumServiceException e)
+    {
+      return new ResponseEntity<>(new ErrorMessage(e.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+
+    @ExceptionHandler({ CourseAlreadyExistsException.class, CurriculumAlreadyExistsException.class })
+    @ResponseBody
+    ResponseEntity<ErrorMessage> handleConflictException(CurriculumServiceException e)
+    {
+
+      return new ResponseEntity<>(new ErrorMessage(e.getMessage()), HttpStatus.CONFLICT);
+    }
+
+
+    @ExceptionHandler(CurriculumForGradeNotImplementedException.class)
+    ResponseEntity<ErrorMessage> handleNotImplementedException(CurriculumServiceException e)
+    {
+      return new ResponseEntity<>(new ErrorMessage(e.getMessage()), HttpStatus.NOT_IMPLEMENTED);
+    }
   }
 }

@@ -6,19 +6,21 @@
 package com.kyriba.curriculum.domain.dto;
 
 import com.kyriba.curriculum.domain.dto.constraint.SubjectNameConstraint;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 
 /**
  * @author M-DBE
  */
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class SubjectToCreate
+@EqualsAndHashCode
+public class SubjectToCreateDTO
 {
   @SubjectNameConstraint
   @NonNull

@@ -5,12 +5,14 @@
  */
 package com.kyriba.curriculum.api;
 
-import com.kyriba.curriculum.domain.dto.Subject;
-import com.kyriba.curriculum.domain.dto.SubjectToCreate;
-import com.kyriba.curriculum.domain.dto.SubjectToUpdate;
-import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.specification.RequestSpecification;
-import org.junit.jupiter.api.AfterEach;
+import com.kyriba.curriculum.domain.dto.SubjectDTO;
+import com.kyriba.curriculum.domain.dto.SubjectToCreateDTO;
+import com.kyriba.curriculum.domain.dto.SubjectToUpdateDTO;
+import com.kyriba.curriculum.service.SubjectService;
+import com.kyriba.curriculum.service.exception.SubjectAlreadyExistsException;
+import com.kyriba.curriculum.service.exception.SubjectNotFoundException;
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import io.restassured.module.mockmvc.config.RestAssuredMockMvcConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -18,54 +20,63 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Arrays;
-import java.util.HashSet;
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
-import static io.restassured.RestAssured.given;
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
+import static io.restassured.module.mockmvc.config.MockMvcConfig.mockMvcConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document;
-import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 
 
 /**
  * @author M-DBE
  */
 @ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 @ExtendWith(RestDocumentationExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@AutoConfigureRestDocs
 class SubjectControllerTest
 {
-  private RequestSpecification spec;
-  private List<Subject> prevSubjects;
+  @Mock
+  private SubjectService subjectService;
+  @InjectMocks
+  private SubjectController subjectController;
+
+  private RestAssuredMockMvcConfig config;
 
 
   @BeforeEach
   void before(RestDocumentationContextProvider restDocumentation)
   {
-    this.spec = new RequestSpecBuilder()
-        .addFilter(documentationConfiguration(restDocumentation))
-        .setBasePath("/api/v1")
-        .build();
-    prevSubjects = SubjectController.SUBJECTS;
-    SubjectController.SUBJECTS = SubjectController.DEFAULT_SUBJECTS.get();
-  }
-
-
-  @AfterEach
-  void after()
-  {
-    SubjectController.SUBJECTS = prevSubjects;
+    RestAssuredMockMvc.standaloneSetup(subjectController, new ValidationExceptionHandler(),
+        new SubjectController.ControllerExceptionHandler(),
+        MockMvcRestDocumentation.documentationConfiguration(restDocumentation));
+    config = RestAssuredMockMvcConfig.config()
+        .mockMvcConfig(mockMvcConfig().automaticallyApplySpringRestDocsMockMvcSupport());
   }
 
 
@@ -76,46 +87,60 @@ class SubjectControllerTest
     @Test
     void should_return_subject_when_subject_for_name_created_successfully()
     {
-      String subjectName = "chemistry";
-      Subject subject = given(spec)
-          .filter(document("create-subject-success"))
-          .body(new SubjectToCreate(subjectName))
+      SubjectToCreateDTO subjectToCreate = new SubjectToCreateDTO("chemistry");
+      Mockito.when(subjectService.createSubject(eq(subjectToCreate)))
+          .thenReturn(new SubjectDTO(1, subjectToCreate.getName()));
+
+      SubjectDTO subject = given()
+          .config(config)
+          .body(subjectToCreate)
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
-          .post("/subjects")
+          .post("/api/v1/subjects")
           .then()
+          .apply(document("create-subject-success"))
           .statusCode(HttpStatus.CREATED.value())
-          .extract().jsonPath().getObject(".", Subject.class);
+          .extract().jsonPath().getObject(".", SubjectDTO.class);
 
       assertNotNull(subject);
-      assertEquals(subjectName, subject.getName());
+      assertEquals(subjectToCreate.getName(), subject.getName());
     }
 
 
     @Test
     void should_return_CONFLICT_status_when_subject_for_name_already_exists()
     {
-      given(spec)
-          .filter(document("create-subject-fail-already-exists"))
-          .body(new SubjectToCreate("algebra"))
+      SubjectToCreateDTO subjectToCreate = new SubjectToCreateDTO("chemistry");
+      Mockito.when(subjectService.createSubject(eq(subjectToCreate)))
+          .thenThrow(new SubjectAlreadyExistsException(subjectToCreate.getName()));
+
+      given()
+          .config(config)
+          .body(subjectToCreate)
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
-          .post("/subjects")
+          .post("/api/v1/subjects")
           .then()
+          .apply(document("create-subject-fail-already-exists"))
           .statusCode(HttpStatus.CONFLICT.value());
     }
 
 
-    @Test
-    void should_return_BAD_REQUEST_status_when_subject_name_is_invalid()
+    @ParameterizedTest
+    @ValueSource(classes = {ValidationException.class, ConstraintViolationException.class })
+    void should_return_BAD_REQUEST_status_when_validation_exception_is_thrown(Class<? extends Throwable> exception)
     {
-      given(spec)
-          .filter(document("create-subject-fail-name-is-invalid"))
-          .body(new SubjectToCreate("1algebra"))
+      SubjectToCreateDTO subjectToCreate = new SubjectToCreateDTO("subject");
+      when(subjectService.createSubject(subjectToCreate)).thenThrow(exception);
+
+      given()
+          .config(config)
+          .body(subjectToCreate)
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
-          .post("/subjects")
+          .post("/api/v1/subjects")
           .then()
+          .apply(document("create-subject-fail-validation"))
           .statusCode(HttpStatus.BAD_REQUEST.value());
     }
   }
@@ -126,42 +151,46 @@ class SubjectControllerTest
   class SubjectUpdate
   {
     @Test
-    void should_return_updated_subject_when_update_was_successful()
+    void should_return_nothing_when_update_was_successful()
     {
-      String subjectName = "chemistry";
-      Subject subject = given(spec)
-          .filter(document("update-subject-success"))
-          .pathParam("id", 1000)
-          .body(new SubjectToUpdate(subjectName))
+      long subjectId = 1;
+      SubjectToUpdateDTO subjectToUpdate = new SubjectToUpdateDTO("chemistry");
+      doNothing().when(subjectService).updateSubject(subjectId, subjectToUpdate);
+
+      given()
+          .config(config)
+          .body(subjectToUpdate)
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
-          .put("/subjects/{id}")
+          .put("/api/v1/subjects/{id}", subjectId)
           .then()
-          .statusCode(HttpStatus.OK.value())
-          .extract().jsonPath().getObject(".", Subject.class);
+          .apply(document("update-subject-success"))
+          .statusCode(HttpStatus.NO_CONTENT.value());
 
-      assertNotNull(subject);
-      assertEquals(subjectName, subject.getName());
+      verify(subjectService).updateSubject(subjectId, subjectToUpdate);
     }
 
 
     @Test
-    void should_return_newly_created_subject_when_subject_for_id_not_found()
+    void should_return_NOT_FOUND_status_when_subject_for_id_not_found()
     {
-      String subjectName = "chemistry";
-      Subject subject = given(spec)
-          .filter(document("update-subject-success"))
-          .pathParam("id", 999)
-          .body(new SubjectToUpdate(subjectName))
+      long subjectId = 1;
+      SubjectToUpdateDTO subjectToUpdate = new SubjectToUpdateDTO("chemistry");
+      doThrow(new SubjectNotFoundException(subjectId)).when(subjectService).updateSubject(subjectId, subjectToUpdate);
+
+      ErrorMessage message = given()
+          .config(config)
+          .body(subjectToUpdate)
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
-          .put("/subjects/{id}")
+          .put("/api/v1/subjects/{id}", subjectId)
           .then()
-          .statusCode(HttpStatus.CREATED.value())
-          .extract().jsonPath().getObject(".", Subject.class);
+          .apply(document("update-subject-fail-subject-id-not-found"))
+          .statusCode(HttpStatus.NOT_FOUND.value())
+          .extract().jsonPath().getObject(".", ErrorMessage.class);
 
-      assertNotNull(subject);
-      assertEquals(subjectName, subject.getName());
+      assertNotNull(message);
+      assertEquals("Subject with id 1 not found.", message.getMessage());
     }
   }
 
@@ -173,22 +202,22 @@ class SubjectControllerTest
     @Test
     void should_return_all_subjects_when_get_all_subjects()
     {
-      List<Subject> subjects = given(spec)
-          .filter(document("get-all-subjects"))
+      List<SubjectDTO> subjects = List.of(new SubjectDTO(1, "algebra"),
+          new SubjectDTO(2, "geometry"));
+      Mockito.when(subjectService.getAllSubjects()).thenReturn(subjects);
+
+      List<SubjectDTO> result = given()
+          .config(config)
           .when()
-          .get("/subjects")
+          .get("/api/v1/subjects")
           .then()
+          .apply(document("get-all-subjects"))
           .statusCode(HttpStatus.OK.value())
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-          .extract().jsonPath().getList(".", Subject.class);
+          .extract().jsonPath().getList(".", SubjectDTO.class);
 
-      assertNotNull(subjects);
-      assertEquals(4, subjects.size());
-      assertEquals(new HashSet<>(Arrays.asList("algebra", "geometry", "english", "physics")),
-          new HashSet<>(subjects.stream()
-              .map(Subject::getName)
-              .collect(Collectors.toSet())));
-
+      assertNotNull(result);
+      assertEquals(Set.of(subjects), Set.of(result));
     }
   }
 }

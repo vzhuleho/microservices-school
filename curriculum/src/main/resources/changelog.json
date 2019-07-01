@@ -1,0 +1,235 @@
+{ "databaseChangeLog": [
+  {
+    "changeSet": {
+      "id": "1561352722695-1",
+      "author": "dbely (generated)",
+      "changes": [
+        {
+          "createTable": {
+            "columns": [
+              {
+                "column": {
+                  "autoIncrement": true,
+                  "constraints": {
+                    "primaryKey": true,
+                    "primaryKeyName": "course_pkey"
+                  },
+                  "name": "course_id",
+                  "type": "BIGSERIAL"
+                }
+              },
+              {
+                "column": {
+                  "constraints": {
+                    "nullable": false
+                  },
+                  "name": "lesson_count",
+                  "type": "INTEGER"
+                }
+              },
+              {
+                "column": {
+                  "constraints": {
+                    "nullable": false
+                  },
+                  "name": "subject_id",
+                  "type": "BIGINT"
+                }
+              },
+              {
+                "column": {
+                  "name": "curriculum_id",
+                  "type": "BIGINT"
+                }
+              }]
+            ,
+            "tableName": "course"
+          }
+        }]
+      
+    }
+  },
+  
+  {
+    "changeSet": {
+      "id": "1561352722695-2",
+      "author": "dbely (generated)",
+      "changes": [
+        {
+          "createTable": {
+            "columns": [
+              {
+                "column": {
+                  "autoIncrement": true,
+                  "constraints": {
+                    "primaryKey": true,
+                    "primaryKeyName": "curriculum_pkey"
+                  },
+                  "name": "curriculum_id",
+                  "type": "BIGSERIAL"
+                }
+              },
+              {
+                "column": {
+                  "constraints": {
+                    "nullable": false
+                  },
+                  "name": "grade",
+                  "type": "INTEGER"
+                }
+              }]
+            ,
+            "tableName": "curriculum"
+          }
+        }]
+      
+    }
+  },
+  
+  {
+    "changeSet": {
+      "id": "1561352722695-3",
+      "author": "dbely (generated)",
+      "changes": [
+        {
+          "createTable": {
+            "columns": [
+              {
+                "column": {
+                  "autoIncrement": true,
+                  "constraints": {
+                    "primaryKey": true,
+                    "primaryKeyName": "subject_pkey"
+                  },
+                  "name": "subject_id",
+                  "type": "BIGSERIAL"
+                }
+              },
+              {
+                "column": {
+                  "constraints": {
+                    "nullable": false
+                  },
+                  "name": "name",
+                  "type": "VARCHAR(255)"
+                }
+              }]
+            ,
+            "tableName": "subject"
+          }
+        }]
+      
+    }
+  },
+  
+  {
+    "changeSet": {
+      "id": "1561352722695-4",
+      "author": "dbely (generated)",
+      "changes": [
+        {
+          "addUniqueConstraint": {
+            "columnNames": "subject_id",
+            "constraintName": "uk_3lc797bk6ixah0s5xb66q0ov6",
+            "tableName": "course"
+          }
+        }]
+      
+    }
+  },
+  
+  {
+    "changeSet": {
+      "id": "1561352722695-5",
+      "author": "dbely (generated)",
+      "changes": [
+        {
+          "addUniqueConstraint": {
+            "columnNames": "grade",
+            "constraintName": "xak_curriculum_grade",
+            "tableName": "curriculum"
+          }
+        }]
+      
+    }
+  },
+  
+  {
+    "changeSet": {
+      "id": "1561352722695-6",
+      "author": "dbely (generated)",
+      "changes": [
+        {
+          "addUniqueConstraint": {
+            "columnNames": "curriculum_id, subject_id",
+            "constraintName": "xak_curriculum_id_subject_id",
+            "tableName": "course"
+          }
+        }]
+      
+    }
+  },
+  
+  {
+    "changeSet": {
+      "id": "1561352722695-7",
+      "author": "dbely (generated)",
+      "changes": [
+        {
+          "addForeignKeyConstraint": {
+            "baseColumnNames": "curriculum_id",
+            "baseTableName": "course",
+            "constraintName": "fk_curriculum_id",
+            "deferrable": false,
+            "initiallyDeferred": false,
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "referencedColumnNames": "curriculum_id",
+            "referencedTableName": "curriculum",
+            "validate": true
+          }
+        }]
+      
+    }
+  },
+  
+  {
+    "changeSet": {
+      "id": "1561352722695-8",
+      "author": "dbely (generated)",
+      "changes": [
+        {
+          "addForeignKeyConstraint": {
+            "baseColumnNames": "subject_id",
+            "baseTableName": "course",
+            "constraintName": "fk_subject_id",
+            "deferrable": false,
+            "initiallyDeferred": false,
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "referencedColumnNames": "subject_id",
+            "referencedTableName": "subject",
+            "validate": true
+          }
+        }]
+      
+    }
+  },
+
+
+  {
+    "changeSet": {
+      "id": "1561352722695-9",
+      "author": "dbely (generated)",
+      "changes": [
+        {
+          "addUniqueConstraint": {
+            "columnNames": "name",
+            "constraintName": "xak_subject_name",
+            "tableName": "subject"
+          }
+        }]
+
+    }
+  }
+]}
