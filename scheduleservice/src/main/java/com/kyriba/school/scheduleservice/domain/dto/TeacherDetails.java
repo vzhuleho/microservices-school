@@ -1,11 +1,8 @@
 package com.kyriba.school.scheduleservice.domain.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.annotation.Transient;
 
 import javax.validation.constraints.NotBlank;
@@ -26,6 +23,10 @@ public class TeacherDetails {
 	private UserInfo userInfo;
 
 	public void setUserInfo(UserInfo userInfo) {
+		if (userInfo == null) {
+			this.userInfo = null;
+			return;
+		}
 		this.userInfo = userInfo;
 		name = userInfo.name;
 		status = userInfo.status;

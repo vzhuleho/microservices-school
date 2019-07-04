@@ -4,6 +4,7 @@ import com.kyriba.school.scheduleservice.dao.SubjectRepository;
 import com.kyriba.school.scheduleservice.dao.TeacherRepository;
 import com.kyriba.school.scheduleservice.domain.dto.SubjectDetails;
 import com.kyriba.school.scheduleservice.domain.dto.TeacherDetails;
+import com.kyriba.school.scheduleservice.domain.entity.Subject;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -49,7 +50,8 @@ public class LocalDataProviderConfiguration {
 
 		@Override
 		public SubjectDetails getSubject(long id) {
-			return mapper.map(subjectRepository.findById(id), SubjectDetails.class);
+			Subject subject = subjectRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+			return mapper.map(subject, SubjectDetails.class);
 		}
 
 		@Override
