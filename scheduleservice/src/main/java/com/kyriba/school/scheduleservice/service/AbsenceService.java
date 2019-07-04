@@ -3,7 +3,8 @@ package com.kyriba.school.scheduleservice.service;
 import com.kyriba.school.scheduleservice.dao.AbsenceRepository;
 import com.kyriba.school.scheduleservice.dao.LessonRepository;
 import com.kyriba.school.scheduleservice.dao.PupilRepository;
-import com.kyriba.school.scheduleservice.domain.dto.AbsenceDTO;
+import com.kyriba.school.scheduleservice.domain.dto.AbsenceDetails;
+import com.kyriba.school.scheduleservice.domain.dto.AbsenceRequest;
 import com.kyriba.school.scheduleservice.domain.entity.Absence;
 import com.kyriba.school.scheduleservice.domain.entity.Lesson;
 import com.kyriba.school.scheduleservice.domain.entity.Pupil;
@@ -21,28 +22,18 @@ public class AbsenceService {
     private final PupilRepository pupilRepository;
     private final LessonRepository lessonRepository;
 
-
-    @Transactional
-    public Long pupilIsAbsentAtLessonBecauseOf(Long pupilId, Long lessonId, String reason) {
-        Lesson lesson = lessonRepository.findById(lessonId)
-                .orElseThrow(ResourceNotFoundException::new);
-        Pupil pupil = pupilRepository.findById(pupilId)
-                .orElseThrow(ResourceNotFoundException::new);
-        return absenceRepository.save(new Absence(reason, pupil, lesson)).id();
-    }
-
     @Transactional
     public void removeAbsenceById(Long id) {
         absenceRepository.deleteById(id);
     }
 
     @Transactional
-    public AbsenceDTO updateAbsence(AbsenceDTO absenceDTO) {
-        Absence absence = findByIdOrElseThrowNotFound(absenceDTO.getId()).applyData(absenceDTO);
+    public AbsenceDetails updateAbsence(AbsenceRequest absenceRequest) {
+        Absence absence = findByIdOrElseThrowNotFound(absenceRequest.getId()).applyData(absenceRequest);
         return absenceRepository.save(absence).output();
     }
 
-    public AbsenceDTO getAbsenceById(Long id) {
+    public AbsenceDetails getAbsenceById(Long id) {
         return findByIdOrElseThrowNotFound(id).output();
     }
 
@@ -51,17 +42,11 @@ public class AbsenceService {
     }
 
     @Transactional
-    public Long addAbsenceToLesson(AbsenceDTO absenceDTO) {
-        Lesson lesson = lessonRepository.findById(absenceDTO.getLessonId())
+    public Long addAbsenceToLesson(AbsenceRequest absenceRequest) {
+        Lesson lesson = lessonRepository.findById(absenceRequest.getLessonId())
             .orElseThrow(ResourceNotFoundException::new);
-        Pupil pupil = pupilRepository.getByNameAndSchoolClass(absenceDTO.getPupilName(), lesson.getSchoolClass())
-            .orElseThrow(ResourceNotFoundException::new);
-        return absenceRepository.save(new Absence(absenceDTO.getReason(), pupil, lesson)).id();
-    }
-
-    @Transactional
-    public void removeAbsenceFromLesson(Long absenceId) {
-        absenceRepository.deleteById(absenceId);
+        Pupil pupil = pupilRepository.findById(absenceRequest.getPupilId()).orElseThrow(ResourceNotFoundException::new);
+        return absenceRepository.save(new Absence(absenceRequest.getReason(), pupil, lesson)).getId();
     }
 
     class AbsenceNotFound extends ResourceNotFoundException {

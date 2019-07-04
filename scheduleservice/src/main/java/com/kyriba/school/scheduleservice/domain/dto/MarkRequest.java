@@ -8,28 +8,30 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @ApiModel
 @AllArgsConstructor
 @NoArgsConstructor
-public class MarkDTO {
+public class MarkRequest {
 
 	private Long id;
 
-	@ApiModelProperty("A pupil's name")
-	@NotBlank
-	private String pupilName;
+	@ApiModelProperty("A pupil's id")
+	@NotNull
+	private Long pupilId;
 
-	@ApiModelProperty("An integer representation of pupil's work")
+	@ApiModelProperty("A pupil's mark")
 	@Min(1)
 	@Max(10)
 	private int value;
 
-	@ApiModelProperty("A comment for the value")
+	@ApiModelProperty("Any comment")
 	private String note;
 
+	@ApiModelProperty("A lesson's id")
+	@NotNull
 	private Long lessonId;
 
 }

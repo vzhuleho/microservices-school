@@ -2,34 +2,31 @@ package com.kyriba.school.scheduleservice.domain.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
 @ApiModel
-public class SchoolClassDTO {
+public class SchoolClassDetails {
 
 	private Long id;
 
 	@ApiModelProperty("A school class' grade (e.g. 1, 2, 3 etc.)")
-	@Min(1)
-	@Max(11)
 	private int grade;
 
 	@ApiModelProperty("A school class' letter (e.g. A, B, C etc.)")
-	@Pattern(regexp = "[A-Za-zА-Яа-я]")
 	private String letter;
 
 	@ApiModelProperty("A year of the school class foundation")
-	private int foundationYear;
+	private int year;
+
+	@ApiModelProperty("Pupils list of this class")
+	private List<PupilDetails> pupils = new ArrayList<>();
 
 }

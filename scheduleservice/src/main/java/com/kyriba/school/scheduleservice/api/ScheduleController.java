@@ -1,7 +1,8 @@
 package com.kyriba.school.scheduleservice.api;
 
 
-import com.kyriba.school.scheduleservice.domain.dto.ScheduleDTO;
+import com.kyriba.school.scheduleservice.domain.dto.ScheduleDetails;
+import com.kyriba.school.scheduleservice.domain.dto.ScheduleRequest;
 import com.kyriba.school.scheduleservice.service.ScheduleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,29 +25,29 @@ public class ScheduleController {
 
     @ApiOperation(value = "View a list of available schedules")
     @GetMapping
-    public Page<ScheduleDTO> getAllSchedules(Pageable pageable) {
+    public Page<ScheduleDetails> getAllSchedules(Pageable pageable) {
         return scheduleService.findAll(pageable);
     }
 
-    @ApiOperation(value = "Get a schedule by id", response = ScheduleDTO.class)
+    @ApiOperation(value = "Get a schedule by id", response = ScheduleDetails.class)
     @GetMapping(value = "/{id}", produces = "application/hal+json")
-    public ScheduleDTO getById(@PathVariable Long id) {
+    public ScheduleDetails getById(@PathVariable Long id) {
         return scheduleService.findById(id);
     }
 
-    @ApiOperation(value = "Create a new schedule", response = ScheduleDTO.class)
+    @ApiOperation(value = "Create a new schedule", response = ScheduleDetails.class)
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(produces = "application/hal+json")
-    public long create(@RequestBody ScheduleDTO scheduleToCreate) {
+    public long create(@RequestBody ScheduleRequest scheduleToCreate) {
         return scheduleService.create(scheduleToCreate).getId();
     }
 
     @ApiOperation(value = "Get a schedule by its year and grade and letter of its school class",
-            response = ScheduleDTO.class)
+            response = ScheduleDetails.class)
     @GetMapping(value = "/{year}/{grade}/{letter}", produces = "application/hal+json")
-    public ScheduleDTO get(@PathVariable int year,
-                                   @PathVariable int grade,
-                                   @PathVariable String letter) {
+    public ScheduleDetails get(@PathVariable int year,
+                               @PathVariable int grade,
+                               @PathVariable String letter) {
         return scheduleService.find(year, grade, letter);
     }
 

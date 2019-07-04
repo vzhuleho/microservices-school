@@ -12,7 +12,7 @@ import java.util.List;
 
 @Data
 @ApiModel
-public class LessonDTO {
+public class LessonDetails {
 
 	private Long id;
 
@@ -27,25 +27,25 @@ public class LessonDTO {
 
 	@ApiModelProperty("A subject of the lesson")
 	@NotNull
-	private SubjectDTO subject;
+	private SubjectDetails subject;
 
 	@ApiModelProperty("A teacher who conducts the lesson")
 	@NotNull
-	private TeacherDTO teacher;
+	private TeacherDetails teacher;
 
 	@ApiModelProperty("A school class which attends the lesson")
 	@NotNull
-	private SchoolClassDTO schoolClass;
+	private SchoolClassDetails schoolClass;
 
 	@ApiModelProperty("A custom note about the lesson")
 	private String note;
 
 	@ApiModelProperty("A list of absent pupil")
 	@NotNull
-	private List<AbsenceDTO> absences = new ArrayList<>();
+	private List<AbsenceDetails> absences = new ArrayList<>();
 
 	@ApiModelProperty("A list of marks which pupils got during the lesson")
 	@NotNull
-	private List<MarkDTO> marks = new ArrayList<>();
+	private List<MarkDetails> marks = new ArrayList<>();
 
 }

@@ -1,6 +1,7 @@
 package com.kyriba.school.scheduleservice;
 
-import com.kyriba.school.scheduleservice.domain.dto.ScheduleDTO;
+import com.kyriba.school.scheduleservice.dao.SchoolClassRepository;
+import com.kyriba.school.scheduleservice.domain.dto.ScheduleDetails;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
@@ -10,9 +11,11 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static io.restassured.RestAssured.given;
@@ -26,6 +29,7 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
 public class ScheduleControllerTest {
 
 	@Rule
@@ -35,6 +39,9 @@ public class ScheduleControllerTest {
 
 	@LocalServerPort
 	int port;
+
+	@Autowired
+	private SchoolClassRepository schoolClassRepository;
 
 	private static final String SCHEDULES = "/api/v1/schedules";
 	private static final int YEAR = 2018;
@@ -49,7 +56,7 @@ public class ScheduleControllerTest {
 
 	@Test
 	public void get() {
-		Long id = given(documentationSpec)
+		long id = given(documentationSpec)
 				.contentType(APPLICATION_JSON_UTF8_VALUE)
 				.filter(document("schedules-get-by-year-grade-letter"))
 				.when()
@@ -59,7 +66,7 @@ public class ScheduleControllerTest {
 				.body("year", is(2019))
 				.body("schoolClass.grade", is(10))
 				.body("schoolClass.letter", is("Z"))
-				.extract().as(ScheduleDTO.class).getId();
+				.extract().as(ScheduleDetails.class).getId();
 
 		given(documentationSpec)
 				.contentType(APPLICATION_JSON_UTF8_VALUE)
@@ -76,14 +83,13 @@ public class ScheduleControllerTest {
 	@Test
 	public void testScheduleCreateAndDelete() throws JSONException {
 
+		long schoolClassId = schoolClassRepository.findByGradeAndLetterIgnoreCaseAndYear(GRADE, LETTER, YEAR).getId();
+
 		// When create
-		JSONObject schoolAsJson = new JSONObject();
-		schoolAsJson.put("grade", GRADE);
-		schoolAsJson.put("letter", LETTER);
-		schoolAsJson.put("foundationYear", YEAR);
+
 		JSONObject scheduleAsJson = new JSONObject();
 		scheduleAsJson.put("year", YEAR);
-		scheduleAsJson.put("schoolClass", schoolAsJson);
+		scheduleAsJson.put("schoolClassId", schoolClassId);
 
 		long id = given(documentationSpec)
 				.contentType(APPLICATION_JSON_UTF8_VALUE)

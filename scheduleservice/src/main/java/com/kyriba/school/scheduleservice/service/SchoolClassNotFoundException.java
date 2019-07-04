@@ -8,7 +8,11 @@ class SchoolClassNotFoundException extends ResourceNotFoundException {
         super(createMessage(grade, letter, year));
     }
 
-    private static String createMessage(int grade, String letter, int year) {
+	public SchoolClassNotFoundException(Long schoolClassId) {
+		super(String.format("School class with id [%d] was not found", schoolClassId));
+	}
+
+	private static String createMessage(int grade, String letter, int year) {
         return String.format("School class [%s%s of %s] was not found", grade, letter.toUpperCase(), year);
     }
 }

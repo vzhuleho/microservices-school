@@ -1,10 +1,10 @@
 package com.kyriba.school.scheduleservice.api;
 
 
-import com.kyriba.school.scheduleservice.domain.dto.AbsenceDTO;
-import com.kyriba.school.scheduleservice.domain.dto.LessonDTO;
-import com.kyriba.school.scheduleservice.domain.dto.MarkDTO;
-import com.kyriba.school.scheduleservice.domain.entity.Lesson;
+import com.kyriba.school.scheduleservice.domain.dto.AbsenceDetails;
+import com.kyriba.school.scheduleservice.domain.dto.LessonDetails;
+import com.kyriba.school.scheduleservice.domain.dto.LessonRequest;
+import com.kyriba.school.scheduleservice.domain.dto.MarkDetails;
 import com.kyriba.school.scheduleservice.service.LessonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,30 +31,31 @@ public class LessonController {
 
     @ApiOperation(value = "List lessons of a day for a particular schedule (by its year, grade and letter)")
     @GetMapping(value = "/{year}/{grade}/{letter}/{date}", produces = "application/hal+json")
-    public Iterable<LessonDTO> getLessonsByScheduleAndDate(@PathVariable int year,
-                                                           @PathVariable int grade,
-                                                           @PathVariable String letter,
-                                                           @PathVariable String date) {
+    @ResponseBody
+    public Iterable<LessonDetails> getLessonsByScheduleAndDate(@PathVariable int year,
+                                                               @PathVariable int grade,
+                                                               @PathVariable String letter,
+                                                               @PathVariable String date) {
         return lessonService.getLessons(year, grade, letter, LocalDate.parse(date));
     }
 
-   @ApiOperation(value = "Update a lesson", response = LessonDTO.class)
+   @ApiOperation(value = "Update a lesson", response = LessonRequest.class)
     @PutMapping("/{id}")
-    public LessonDTO updateLesson(@Valid @RequestBody LessonDTO lessonDTO) {
-        return lessonService.update(lessonDTO);
+    public LessonDetails updateLesson(@Valid @RequestBody LessonRequest lessonRequest) {
+        return lessonService.update(lessonRequest);
     }
 
-    @ApiOperation(value = "Retrieve all absences for given lesson", response = AbsenceDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Retrieve all absences for given lesson", response = AbsenceDetails.class, responseContainer = "List")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}/absences")
-    public Iterable<AbsenceDTO> getAbsencesByLesson(@PathVariable long id) {
+    public Iterable<AbsenceDetails> getAbsencesByLesson(@PathVariable long id) {
         return lessonService.getAbsencesByLesson(id);
     }
 
-    @ApiOperation(value = "Retrieve all marks for given lesson", response = MarkDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Retrieve all marks for given lesson", response = MarkDetails.class, responseContainer = "List")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}/marks")
-    public List<MarkDTO> getMarksByLesson(@PathVariable long id) {
+    public List<MarkDetails> getMarksByLesson(@PathVariable long id) {
         return lessonService.getMarksByLesson(id);
     }
 

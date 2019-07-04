@@ -8,10 +8,11 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 @ApiModel
-public class SubjectDTO {
+public class SubjectDetails {
+
+	private Long id;
 
 	@ApiModelProperty("A subject's name")
-	@NotBlank
 	private String name;
 
 }

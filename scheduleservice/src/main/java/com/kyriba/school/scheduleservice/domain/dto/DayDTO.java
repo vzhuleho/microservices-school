@@ -23,10 +23,10 @@ public class DayDTO {
 
 	@ApiModelProperty("A schedule to which this day pertains")
 	@NotNull
-	private ScheduleDTO schedule;
+	private ScheduleDetails schedule;
 
 	@ApiModelProperty("A list of the lessons for this day")
 	@NotNull
-	private List<LessonDTO> lessons = new ArrayList<>();
+	private List<LessonDetails> lessons = new ArrayList<>();
 
 }

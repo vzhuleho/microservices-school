@@ -7,6 +7,6 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(exported = false)
 public interface SchoolClassRepository extends CrudRepository<SchoolClass, Long> {
 
-    SchoolClass findByGradeAndLetterIgnoreCaseAndFoundationYear(int grade, String letter, int year);
+    SchoolClass findByGradeAndLetterIgnoreCaseAndYear(int grade, String letter, int year);
 
 }
