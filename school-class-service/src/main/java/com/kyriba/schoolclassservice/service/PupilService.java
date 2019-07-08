@@ -14,7 +14,7 @@ import com.kyriba.schoolclassservice.repository.SchoolClassRepository;
 import com.kyriba.schoolclassservice.service.dto.PupilDto;
 import com.kyriba.schoolclassservice.service.exceptions.PupilNotFoundException;
 import com.kyriba.schoolclassservice.service.exceptions.SchoolClassNotFoundException;
-import com.kyriba.schoolclassservice.service.externalservices.PupilServiceClient;
+import com.kyriba.schoolclassservice.service.externalservices.UserDataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +34,7 @@ public class PupilService
 {
   private final SchoolClassRepository classRepository;
   private final PupilRepository pupilRepository;
-  private final PupilServiceClient pupilServiceClient;
+  private final UserDataService userDataService;
 
 
   @Transactional
@@ -43,7 +43,7 @@ public class PupilService
     final SchoolClassEntity schoolClassEntity = classRepository.findById(classId)
         .orElseThrow(() -> new SchoolClassNotFoundException(classId));
 
-    final PupilEntity newPupil = pupilServiceClient.findById(pupil)
+    final PupilEntity newPupil = userDataService.findById(pupil)
         .orElseThrow(() -> new PupilNotFoundException(pupil.getId()));
 
     newPupil.setSchoolClass(schoolClassEntity);

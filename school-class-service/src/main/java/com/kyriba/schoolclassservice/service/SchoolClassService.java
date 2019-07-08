@@ -16,7 +16,7 @@ import com.kyriba.schoolclassservice.service.dto.PupilDto;
 import com.kyriba.schoolclassservice.service.dto.SchoolClassDto;
 import com.kyriba.schoolclassservice.service.exceptions.SchoolClassNotFoundException;
 import com.kyriba.schoolclassservice.service.exceptions.TeacherNotFoundException;
-import com.kyriba.schoolclassservice.service.externalservices.TeacherServiceClient;
+import com.kyriba.schoolclassservice.service.externalservices.UserDataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +39,7 @@ public class SchoolClassService
 {
 
   private final SchoolClassRepository classRepository;
-  private final TeacherServiceClient teacherServiceClient;
+  private final UserDataService userDataService;
 
 
   public List<SchoolClassDto> getAll()
@@ -62,7 +62,7 @@ public class SchoolClassService
   {
     final SchoolClassEntity classEntity = new SchoolClassEntity().populateFrom(schoolClass);
     if (schoolClass.getHeadTeacher() != null) {
-      HeadTeacherEntity teacher = teacherServiceClient.findById(schoolClass.getHeadTeacher())
+      HeadTeacherEntity teacher = userDataService.findById(schoolClass.getHeadTeacher())
           .orElseThrow(() -> new TeacherNotFoundException(schoolClass.getHeadTeacher().getId()));
       classEntity.setHeadTeacherEntity(teacher);
     }
@@ -78,7 +78,7 @@ public class SchoolClassService
         .orElseThrow(() -> new SchoolClassNotFoundException(classId));
     schoolClassEntity.populateFrom(updateRequest);
     if (updateRequest.getHeadTeacher() != null) {
-      HeadTeacherEntity teacher = teacherServiceClient.findById(updateRequest.getHeadTeacher())
+      HeadTeacherEntity teacher = userDataService.findById(updateRequest.getHeadTeacher())
           .orElseThrow(() -> new TeacherNotFoundException(updateRequest.getHeadTeacher().getId()));
       schoolClassEntity.setHeadTeacherEntity(teacher);
     }

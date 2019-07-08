@@ -3,21 +3,23 @@
  * The content of this file is copyrighted by Kyriba Corporation and can not be *
  * reproduced, distributed, altered or used in any form, in whole or in part.   *
  *   Date            Author        Changes                                      *
- * 14.6.19         M-VBE         Created                                      *
+ * 30.6.19         M-VBE         Created                                      *
  ********************************************************************************/
-package com.kyriba.schoolclassservice.service.externalservices;
+package com.kyriba.schoolclassservice.configuration;
 
-import com.kyriba.schoolclassservice.domain.PupilEntity;
-import com.kyriba.schoolclassservice.service.dto.PupilDto;
-
-import java.util.Optional;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 
 /**
  * @author M-VBE
  * @since 19.2
  */
-public interface PupilServiceClient
-{
-  Optional<PupilEntity> findById(PupilDto pupul);
+@Configuration
+@EnableDiscoveryClient
+@EnableFeignClients
+@Profile("container")
+public class ProductionConfiguration {
 }
