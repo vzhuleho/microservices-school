@@ -18,10 +18,16 @@ import javax.persistence.Id;
 public class  Teacher {
 
 	@Id
-	@GeneratedValue
 	@Column
 	private Long id;
 
 	@Column(nullable = false)
 	private String name;
+
+	@Column(nullable = false)
+	private Status status;
+
+	public enum Status {
+		ACTIVE, INACTIVE
+	}
 }

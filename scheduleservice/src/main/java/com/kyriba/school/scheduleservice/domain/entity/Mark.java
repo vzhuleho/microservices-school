@@ -1,6 +1,7 @@
 package com.kyriba.school.scheduleservice.domain.entity;
 
-import com.kyriba.school.scheduleservice.domain.dto.MarkDTO;
+import com.kyriba.school.scheduleservice.domain.dto.MarkDetails;
+import com.kyriba.school.scheduleservice.domain.dto.MarkRequest;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -49,17 +50,17 @@ public class Mark {
         note(note);
     }
 
-    public Mark(MarkDTO dto) {
-        this(dto.getValue(), dto.getNote());
+    public Mark(MarkRequest markRequest) {
+        this(markRequest.getValue(), markRequest.getNote());
     }
 
-    public Mark applyData(MarkDTO dto) {
-        value(dto.getValue());
-        note(dto.getNote());
+    public Mark applyData(MarkRequest markRequest) {
+        value(markRequest.getValue());
+        note(markRequest.getNote());
         return this;
     }
 
-    public MarkDTO output() {
-        return new MarkDTO(id, pupil.name(), value, note, lesson.getId());
+    public MarkDetails output() {
+        return new MarkDetails(id, pupil.output(), value, note, lesson.getId());
     }
 }

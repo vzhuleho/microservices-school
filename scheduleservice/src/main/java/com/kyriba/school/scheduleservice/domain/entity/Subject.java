@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
@@ -18,7 +17,6 @@ import javax.persistence.Id;
 public class Subject {
 
 	@Id
-	@GeneratedValue
 	@Column
 	private Long id;
 

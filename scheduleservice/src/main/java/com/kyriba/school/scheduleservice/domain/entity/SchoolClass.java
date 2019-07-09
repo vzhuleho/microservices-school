@@ -6,7 +6,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -29,16 +30,11 @@ public class SchoolClass {
 	private String letter;
 
 	@Column(nullable = false)
-	private int foundationYear;
+	private int year;
 
 	@OneToMany(mappedBy = "schoolClass")
-	private Set<Pupil> pupils;
+	private List<Pupil> pupils = new ArrayList<>();
 
 	@OneToOne(mappedBy = "schoolClass")
 	private Schedule schedule;
-
-
-	public static int currentToFoundationYear(int currentYear, int grade) {
-		return grade == FIRST_GRADE ? currentYear : currentYear - grade;
-	}
 }

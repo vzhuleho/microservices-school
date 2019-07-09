@@ -1,7 +1,7 @@
 package com.kyriba.school.scheduleservice.domain.entity;
 
+import com.kyriba.school.scheduleservice.domain.dto.PupilDetails;
 import lombok.*;
-import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.List;
@@ -11,12 +11,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @Getter
 @Setter
-@Accessors(fluent = true)
 public class Pupil {
 
     @Id
-    @GeneratedValue
     @Column
+    @NonNull
     private Long id;
 
     @Column
@@ -35,4 +34,9 @@ public class Pupil {
     @Getter
     @NonNull
     private SchoolClass schoolClass;
+
+
+    PupilDetails output() {
+        return new PupilDetails(id, name);
+    }
 }

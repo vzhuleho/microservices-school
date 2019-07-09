@@ -6,21 +6,23 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @ApiModel
 @AllArgsConstructor
 @NoArgsConstructor
-public class ScheduleDTO {
+public class AbsenceDetails {
 
 	private Long id;
 
-	@ApiModelProperty("A year for which this schedule was created")
-	private int year;
+	@ApiModelProperty("A a pupil which was absent")
+	@NotBlank
+	private PupilDetails pupil;
 
-	@ApiModelProperty("A school class for which this schedule was created")
-	@NotNull
-	private SchoolClassDTO schoolClass;
+	@ApiModelProperty("A reason of a pupil's absence")
+	private String reason;
 
+	@ApiModelProperty("A lesson's id")
+	private Long lessonId;
 }

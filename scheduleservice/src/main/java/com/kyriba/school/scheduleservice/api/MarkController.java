@@ -1,7 +1,7 @@
 package com.kyriba.school.scheduleservice.api;
 
-import com.kyriba.school.scheduleservice.domain.dto.MarkDTO;
-import com.kyriba.school.scheduleservice.domain.entity.Lesson;
+import com.kyriba.school.scheduleservice.domain.dto.MarkDetails;
+import com.kyriba.school.scheduleservice.domain.dto.MarkRequest;
 import com.kyriba.school.scheduleservice.service.MarkService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,25 +21,25 @@ public class MarkController {
 
     private final MarkService markService;
 
-    @ApiOperation(value = "Retrieve mark information by id", response = MarkDTO.class)
+    @ApiOperation(value = "Retrieve mark information by id", response = MarkDetails.class)
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
-    public MarkDTO getMark(@ApiParam(value = "Mark unique identifier", example = "1", required = true) @PathVariable Long id) {
+    public MarkDetails getMark(@ApiParam(value = "Mark unique identifier", example = "1", required = true) @PathVariable Long id) {
         return markService.getMarkById(id);
     }
 
     @ApiOperation(value = "Add information about pupil's mark to a lesson", response = long.class)
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public long addMarkToLesson(@RequestBody MarkDTO mark) {
-        return markService.addMarkToLesson(mark);
+    public long addMarkToLesson(@RequestBody MarkRequest markRequest) {
+        return markService.addMarkToLesson(markRequest);
     }
 
-    @ApiOperation(value = "Update mark information by id", response = MarkDTO.class)
+    @ApiOperation(value = "Update mark information by id", response = MarkDetails.class)
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/{id}")
-    public MarkDTO updateMark(@RequestBody MarkDTO markDTO) {
-        return markService.updateMark(markDTO);
+    public MarkDetails updateMark(@RequestBody MarkRequest markRequest) {
+        return markService.updateMark(markRequest);
     }
 
     @ApiOperation(value = "Delete information about the mark by id")

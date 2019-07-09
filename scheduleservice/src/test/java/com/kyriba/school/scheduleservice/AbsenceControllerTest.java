@@ -1,6 +1,7 @@
 package com.kyriba.school.scheduleservice;
 
-import com.kyriba.school.scheduleservice.domain.dto.LessonDTO;
+import com.kyriba.school.scheduleservice.domain.dto.LessonDetails;
+import com.kyriba.school.scheduleservice.domain.dto.PupilDetails;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
@@ -50,21 +51,22 @@ public class AbsenceControllerTest {
     @Test
     public void testAbsencesCRUD() throws JSONException {
         // Given
-        String pupilName = "Uasya";
         String reason = "illness";
-        long lessonId = with().contentType(APPLICATION_JSON_UTF8_VALUE)
+        LessonDetails lesson = with().contentType(APPLICATION_JSON_UTF8_VALUE)
             .get("/api/v1/lessons/2019/10/Z/2019-09-01")
-            .as(LessonDTO[].class)[0].getId();
+            .as(LessonDetails[].class)[0];
+        long lessonId = lesson.getId();
+        PupilDetails pupilDetails = lesson.getSchoolClass().getPupils().get(0);
         // When add
-        JSONObject absenceAsJson = new JSONObject();
-        absenceAsJson.put("pupilName", pupilName);
-        absenceAsJson.put("reason", reason);
-        absenceAsJson.put("lessonId", lessonId);
+        JSONObject absenceRequest = new JSONObject();
+        absenceRequest.put("pupilId", pupilDetails.getId());
+        absenceRequest.put("reason", reason);
+        absenceRequest.put("lessonId", lessonId);
         long absenceId = given(documentationSpec)
             .contentType(APPLICATION_JSON_UTF8_VALUE)
             .filter(document("absences-add"))
             .when()
-            .body(absenceAsJson.toString())
+            .body(absenceRequest.toString())
             .post()
             .then()
             .statusCode(SC_CREATED)
@@ -77,17 +79,17 @@ public class AbsenceControllerTest {
             .get("/" + absenceId)
             .then()
             .statusCode(SC_OK)
-            .body("pupilName", is(pupilName))
+            .body("pupil.name", is(pupilDetails.getName()))
             .body("reason", is(reason));
         // When update
         String reasonNew = "hangover";
-        absenceAsJson.put("id", absenceId);
-        absenceAsJson.put("reason", reasonNew);
+        absenceRequest.put("id", absenceId);
+        absenceRequest.put("reason", reasonNew);
         given(documentationSpec)
             .contentType(APPLICATION_JSON_UTF8_VALUE)
             .filter(document("absences-update"))
             .when()
-            .body(absenceAsJson.toString())
+            .body(absenceRequest.toString())
             .put("/" + absenceId)
             .then()
             .statusCode(SC_OK)

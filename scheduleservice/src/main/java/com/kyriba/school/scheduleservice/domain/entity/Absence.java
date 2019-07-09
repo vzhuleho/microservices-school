@@ -1,6 +1,7 @@
 package com.kyriba.school.scheduleservice.domain.entity;
 
-import com.kyriba.school.scheduleservice.domain.dto.AbsenceDTO;
+import com.kyriba.school.scheduleservice.domain.dto.AbsenceDetails;
+import com.kyriba.school.scheduleservice.domain.dto.AbsenceRequest;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-@Accessors(fluent = true)
+@Accessors
 public class Absence {
 
     @Id
@@ -33,28 +34,24 @@ public class Absence {
 
     public Absence(String reason, Pupil pupil, Lesson lesson) {
         this(reason, pupil);
-        lesson(lesson);
+        setLesson(lesson);
     }
 
     public Absence(String reason, Pupil pupil) {
         this(reason);
-        pupil(pupil);
+        setPupil(pupil);
     }
 
     public Absence(String reason) {
-        reason(reason);
+        setReason(reason);
     }
 
-    public Absence(AbsenceDTO dto) {
-        this(dto.getReason());
-    }
-
-    public Absence applyData(AbsenceDTO dto) {
-        reason(dto.getReason());
+    public Absence applyData(AbsenceRequest absenceRequest) {
+        setReason(absenceRequest.getReason());
         return this;
     }
 
-    public AbsenceDTO output() {
-        return new AbsenceDTO(id, pupil.name(), reason, lesson.getId());
+    public AbsenceDetails output() {
+        return new AbsenceDetails(id, pupil.output(), reason, lesson.getId());
     }
 }

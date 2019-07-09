@@ -3,7 +3,8 @@ package com.kyriba.school.scheduleservice.service;
 import com.kyriba.school.scheduleservice.dao.LessonRepository;
 import com.kyriba.school.scheduleservice.dao.MarkRepository;
 import com.kyriba.school.scheduleservice.dao.PupilRepository;
-import com.kyriba.school.scheduleservice.domain.dto.MarkDTO;
+import com.kyriba.school.scheduleservice.domain.dto.MarkDetails;
+import com.kyriba.school.scheduleservice.domain.dto.MarkRequest;
 import com.kyriba.school.scheduleservice.domain.entity.Lesson;
 import com.kyriba.school.scheduleservice.domain.entity.Mark;
 import com.kyriba.school.scheduleservice.domain.entity.Pupil;
@@ -22,12 +23,11 @@ public class MarkService {
     private final LessonRepository lessonRepository;
 
     @Transactional
-    public Long addMarkToLesson(MarkDTO markDTO) {
-        Lesson lesson = lessonRepository.findById(markDTO.getLessonId())
+    public Long addMarkToLesson(MarkRequest markRequest) {
+        Lesson lesson = lessonRepository.findById(markRequest.getLessonId())
             .orElseThrow(ResourceNotFoundException::new);
-        Pupil pupil = pupilRepository.getByNameAndSchoolClass(markDTO.getPupilName(), lesson.getSchoolClass())
-            .orElseThrow(ResourceNotFoundException::new);
-        return markRepository.save(new Mark(markDTO.getValue(), markDTO.getNote(), pupil, lesson)).id();
+        Pupil pupil = pupilRepository.findById(markRequest.getPupilId()).orElseThrow(ResourceNotFoundException::new);
+        return markRepository.save(new Mark(markRequest.getValue(), markRequest.getNote(), pupil, lesson)).id();
     }
 
     @Transactional
@@ -38,14 +38,13 @@ public class MarkService {
     }
 
     @Transactional
-    public MarkDTO updateMark(MarkDTO markDTO) {
-        Mark savedMark = markRepository.save(findByIdOrElseThrowNotFound(markDTO.getId()).applyData(markDTO));
+    public MarkDetails updateMark(MarkRequest marmarkRequest) {
+        Mark savedMark = markRepository.save(findByIdOrElseThrowNotFound(marmarkRequest.getId()).applyData(marmarkRequest));
         return savedMark.output();
     }
 
-    public MarkDTO getMarkById(Long id) {
-        Mark mark = findByIdOrElseThrowNotFound(id);
-        return new MarkDTO(id, mark.pupil().name(), mark.value(), mark.note(), mark.lesson().getId());
+    public MarkDetails getMarkById(Long id) {
+        return findByIdOrElseThrowNotFound(id).output();
     }
 
     private Mark findByIdOrElseThrowNotFound(Long id) {

@@ -1,6 +1,7 @@
 package com.kyriba.school.scheduleservice;
 
-import com.kyriba.school.scheduleservice.domain.dto.LessonDTO;
+import com.kyriba.school.scheduleservice.domain.dto.LessonDetails;
+import com.kyriba.school.scheduleservice.domain.dto.PupilDetails;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
@@ -50,15 +51,16 @@ public class MarkControllerTest {
     @Test
     public void testMarksCRUD() throws JSONException {
         // Given
-        String pupilName = "Uasya";
         int value = 2;
         String note = "Terrible";
-        long lessonId = with().contentType(APPLICATION_JSON_UTF8_VALUE)
+        LessonDetails lesson = with().contentType(APPLICATION_JSON_UTF8_VALUE)
             .get("/api/v1/lessons/2019/10/Z/2019-09-01")
-            .as(LessonDTO[].class)[0].getId();
+            .as(LessonDetails[].class)[0];
+        long lessonId = lesson.getId();
+        PupilDetails pupilDetails = lesson.getSchoolClass().getPupils().get(0);
         // When add
         JSONObject markAsJson = new JSONObject();
-        markAsJson.put("pupilName", pupilName);
+        markAsJson.put("pupilId", pupilDetails.getId());
         markAsJson.put("value", value);
         markAsJson.put("note", note);
         markAsJson.put("lessonId", lessonId);
@@ -79,7 +81,7 @@ public class MarkControllerTest {
             .get("/" + markId)
             .then()
             .statusCode(SC_OK)
-            .body("pupilName", is(pupilName))
+            .body("pupil.name", is(pupilDetails.getName()))
             .body("value", is(value))
             .body("note", is(note));
         // When update

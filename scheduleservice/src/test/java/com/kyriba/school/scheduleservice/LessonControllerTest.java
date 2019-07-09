@@ -42,12 +42,7 @@ public class LessonControllerTest {
 	@LocalServerPort
 	int port;
 
-	private static final String LETTER = "Z";
-	private static final int GRADE = 10;
-	private static final int FOUNDATION_YEAR = 2009;
-	private String FIRST_OF_SEPTEMBER = "2019-09-01";
-
-	long lessonId;
+	private long lessonId;
 
 	@Before
 	public void setUp() {
@@ -59,19 +54,20 @@ public class LessonControllerTest {
 
 		lessonId = with().contentType(APPLICATION_JSON_UTF8_VALUE)
 				.get("/api/v1/lessons/2019/10/Z/2019-09-01")
-				.as(LessonDTO[].class)[0].getId();
+				.as(LessonDetails[].class)[0].getId();
 	}
 
 	@Test
 	public void getLessonsByScheduleIdAndDate() {
-		LessonDTO[] lessons = given(documentationSpec)
+		LessonDetails[] lessons = given(documentationSpec)
                 .contentType(APPLICATION_JSON_UTF8_VALUE)
 				.filter(document("schedule-day-lessons-list"))
 				.when()
 				.get("/2019/10/Z/2019-09-01")
 				.then()
 				.statusCode(SC_OK)
-				.extract().as(LessonDTO[].class);
+				.extract().as(LessonDetails[].class);
+		String FIRST_OF_SEPTEMBER = "2019-09-01";
 		assertEquals(LocalDate.parse(FIRST_OF_SEPTEMBER), lessons[0].getDate());
 		assertEquals(1, lessons[0].getIndex());
 	}
@@ -79,24 +75,19 @@ public class LessonControllerTest {
 	@Test
 	public void updateLesson() throws JSONException {
 		String expectedNote = "Some note";
-		JSONObject lessonAsJson = new JSONObject(new LessonDTO(), true);
-		lessonAsJson.put("id", lessonId);
-		lessonAsJson.put("date", "2019-09-15");
-		lessonAsJson.put("index", 1);
-		lessonAsJson.put("subject", new JSONObject(new SubjectDTO()));
-		lessonAsJson.put("teacher", new JSONObject(new TeacherDTO()));
-		SchoolClassDTO schoolClassDTO = new SchoolClassDTO()
-				.setGrade(GRADE)
-				.setLetter(LETTER)
-				.setFoundationYear(FOUNDATION_YEAR);
-		lessonAsJson.put("schoolClass", new JSONObject(schoolClassDTO));
-		lessonAsJson.put("note", expectedNote);
+		JSONObject lessonRequestAsJson = new JSONObject(new LessonRequest(), true);
+		lessonRequestAsJson.put("id", lessonId);
+		lessonRequestAsJson.put("date", "2019-09-15");
+		lessonRequestAsJson.put("index", 1);
+		lessonRequestAsJson.put("teacherId", 1);
+		lessonRequestAsJson.put("subjectId", 1);
+		lessonRequestAsJson.put("note", expectedNote);
 
 		given(documentationSpec)
 				.contentType(APPLICATION_JSON_UTF8_VALUE)
 				.filter(document("schedule-day-lessons-update"))
 				.when()
-				.body(lessonAsJson.toString())
+				.body(lessonRequestAsJson.toString())
 				.put("/" + lessonId)
 				.then()
 				.statusCode(SC_OK)
@@ -105,33 +96,33 @@ public class LessonControllerTest {
 
 	@Test
 	public void getAbsencesByLesson() {
-        AbsenceDTO[] absences = given(documentationSpec)
-                .contentType(APPLICATION_JSON_UTF8_VALUE)
-                .filter(document("schedule-day-lesson-absences-list"))
-                .when()
-                .get("/" + lessonId + "/absences")
-                .then()
-                .statusCode(SC_OK)
-                .extract().as(AbsenceDTO[].class);
-        assertNotNull(absences);
-        assertNotEquals(0, absences.length);
-    }
+		AbsenceDetails[] absences = given(documentationSpec)
+				.contentType(APPLICATION_JSON_UTF8_VALUE)
+				.filter(document("schedule-day-lesson-absences-list"))
+				.when()
+				.get("/" + lessonId + "/absences")
+				.then()
+				.statusCode(SC_OK)
+				.extract().as(AbsenceDetails[].class);
+		assertNotNull(absences);
+		assertNotEquals(0, absences.length);
+	}
 
-    @Test
-    public void getMarksForLesson() throws JSONException {
-        MarkDTO[] marks = given(documentationSpec)
-                .contentType(APPLICATION_JSON_UTF8_VALUE)
-                .filter(document("schedule-day-lesson-marks-list"))
-                .when()
-                .get("/" + lessonId + "/marks")
-                .then()
-                .statusCode(SC_OK)
-                .extract().as(MarkDTO[].class);
+	@Test
+	public void getMarksForLesson() {
+		MarkDetails[] marks = given(documentationSpec)
+				.contentType(APPLICATION_JSON_UTF8_VALUE)
+				.filter(document("schedule-day-lesson-marks-list"))
+				.when()
+				.get("/" + lessonId + "/marks")
+				.then()
+				.statusCode(SC_OK)
+				.extract().as(MarkDetails[].class);
 
-        assertNotNull(marks);
-        assertNotEquals(0, marks.length);
+		assertNotNull(marks);
+		assertNotEquals(0, marks.length);
 
-    }
+	}
 
 
 }
