@@ -9,10 +9,7 @@ package com.kyriba.schoolclassservice.service.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.Positive;
@@ -26,6 +23,7 @@ import javax.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @ApiModel(value = "School class data")
 public class SchoolClassDto
 {

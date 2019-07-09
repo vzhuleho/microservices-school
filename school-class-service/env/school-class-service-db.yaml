@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: school-class-service-db
+  labels:
+    app: school-class-service
+spec:
+  ports:
+    - port: 1521
+  selector:
+    app: school-class-service
+    tier: h2
+  clusterIP: None
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: school-class-service-db-pv-claim
+  labels:
+    app: school-class-service
+spec:
+  storageClassName: fast
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 250Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: school-class-service-db
+  labels:
+    app: school-class-service
+spec:
+  selector:
+    matchLabels:
+      app: school-class-service
+      tier: h2
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: school-class-service
+        tier: h2
+    spec:
+      containers:
+        - image: oscarfonts/h2:latest
+          name: school-class-service-h2
+          resources:
+            limits:
+              memory: "1000Mi"
+            requests:
+              memory: "500Mi"
+          ports:
+            - containerPort: 1521
+              name: h2
+          volumeMounts:
+            - mountPath: /opt/h2-data
+              name: h2-persistent-storage
+      volumes:
+        - name: h2-persistent-storage
+          persistentVolumeClaim:
+            claimName: school-class-service-db-pv-claim

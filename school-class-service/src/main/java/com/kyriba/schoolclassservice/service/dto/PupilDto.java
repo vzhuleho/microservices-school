@@ -30,8 +30,9 @@ public class PupilDto
   @ApiModelProperty(value = "Pupil id", example = "123", required = true)
   @NotNull
   Long id;
-  @ApiModelProperty(value = "Pupil name", example = "Indiana Jones", required = true)
+  @ApiModelProperty(value = "Pupil full name", example = "Indiana Jones", required = true)
   @Size(min = 3, max = 50)
   @NotNull
   String name;
+
 }

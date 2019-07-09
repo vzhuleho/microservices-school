@@ -38,7 +38,7 @@ public class SwaggerConfiguration
         .groupName("School class")
         .select()
         .apis(RequestHandlerSelectors.basePackage("com.kyriba.schoolclassservice.api"))
-        .paths(PathSelectors.ant(apiPrefix + "/classes"))
+        .paths(PathSelectors.ant(apiPrefix + "/classes/**"))
         .build()
         .apiInfo(apiInfo());
   }
