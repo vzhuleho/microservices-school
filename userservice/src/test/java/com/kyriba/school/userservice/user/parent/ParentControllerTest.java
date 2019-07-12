@@ -1,7 +1,9 @@
 package com.kyriba.school.userservice.user.parent;
 
+import com.kyriba.school.userservice.user.NoSuchUserException;
 import com.kyriba.school.userservice.user.UserInfo;
 import com.kyriba.school.userservice.user.address.AddressInfo;
+import javax.validation.ValidationException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -78,6 +80,81 @@ public class ParentControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("addressInfo.locationInfo.city")
             .value("Kletsk"))
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(13));
+  }
+
+  @Test
+  public void testAdd_validation_fails() throws Exception
+  {
+    // given
+    ValidationException exception = new ValidationException("My message");
+    Mockito.when(parentService.create(Mockito.any())).thenThrow(exception);
+
+    // when & then
+    mockMvc.perform(MockMvcRequestBuilders.post("/parents")
+        .contentType(MediaType.APPLICATION_JSON_UTF8)
+        .content("{\n"
+            + "  \"id\": 1,\n"
+            + "  \"userInfo\": {\n"
+            + "    \"name\": \"Alex\",\n"
+            + "    \"status\": \"ACTIVE\"\n"
+            + "  },\n"
+            + "  \"addressInfo\": {\n"
+            + "    \"locationInfo\": {\n"
+            + "      \"city\": \"Kletsk\",\n"
+            + "      \"street\": \"N/A\",\n"
+            + "      \"house\": \"N/A\",\n"
+            + "      \"apartment\": \"N/A\"\n"
+            + "    },\n"
+            + "    \"postalInfo\": {\n"
+            + "      \"zipCode\": \"N/A\"\n"
+            + "    },\n"
+            + "    \"communicationInfo\": {\n"
+            + "      \"phoneNumber\": \"N/A\",\n"
+            + "      \"email\": \"N/A\"\n"
+            + "    }\n"
+            + "  }\n"
+            + "}"))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
+        .andExpect(MockMvcResultMatchers.jsonPath("code").value("USER_NOT_VALID"))
+        .andExpect(MockMvcResultMatchers.jsonPath("message").value("My message"));
+  }
+
+  @Test
+  public void testUpdate_noSuchUser() throws Exception
+  {
+    // given
+    NoSuchUserException exception = new NoSuchUserException(13);
+    Mockito.when(parentService.update(Mockito.anyLong(), Mockito.any())).thenThrow(exception);
+
+    // when & then
+    mockMvc.perform(MockMvcRequestBuilders.put("/parents/13")
+        .contentType(MediaType.APPLICATION_JSON_UTF8)
+        .content("{\n"
+            + "  \"userInfo\": {\n"
+            + "    \"name\": \"Smith\",\n"
+            + "    \"status\": \"INACTIVE\"\n"
+            + "  },\n"
+            + "  \"addressInfo\": {\n"
+            + "    \"locationInfo\": {\n"
+            + "      \"city\": \"Minsk\",\n"
+            + "      \"street\": \"N/A\",\n"
+            + "      \"house\": \"N/A\",\n"
+            + "      \"apartment\": \"N/A\"\n"
+            + "    },\n"
+            + "    \"postalInfo\": {\n"
+            + "      \"zipCode\": \"435345\"\n"
+            + "    },\n"
+            + "    \"communicationInfo\": {\n"
+            + "      \"phoneNumber\": \"N/A\",\n"
+            + "      \"email\": \"N/A\"\n"
+            + "    }\n"
+            + "  }\n"
+            + "}"))
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
+        .andExpect(MockMvcResultMatchers.jsonPath("code").value("USER_NOT_FOUND"))
+        .andExpect(MockMvcResultMatchers.jsonPath("message").value("User with id 13 doesn't exist"));
   }
 
   @Test

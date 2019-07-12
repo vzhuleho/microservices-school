@@ -13,6 +13,7 @@ public class UserServiceError {
 
   public enum Code {
     USER_NOT_FOUND,
+    USER_NOT_VALID,
     UNKNOWN
   }
 }

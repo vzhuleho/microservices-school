@@ -2,6 +2,7 @@ package com.kyriba.school.userservice.user;
 
 import com.kyriba.school.userservice.UserServiceError;
 import com.kyriba.school.userservice.UserServiceError.Code;
+import javax.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -43,6 +44,13 @@ public abstract class UserController
   public UserServiceError handleUserNotFound(NoSuchUserException ex) {
     log.warn(ex.getMessage());
     return new UserServiceError(Code.USER_NOT_FOUND, ex.getMessage());
+  }
+
+  @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(ValidationException.class)
+  public UserServiceError handleUserNotValid(ValidationException ex) {
+    log.warn(ex.getMessage());
+    return new UserServiceError(Code.USER_NOT_VALID, ex.getMessage());
   }
 
   @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
