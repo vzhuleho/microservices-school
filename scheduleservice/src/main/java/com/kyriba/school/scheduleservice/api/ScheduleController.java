@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 
 @Api(value="School Schedules Management System")
 @RequestMapping("/api/v1/schedules")
@@ -38,7 +40,7 @@ public class ScheduleController {
     @ApiOperation(value = "Create a new schedule", response = ScheduleDetails.class)
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(produces = "application/hal+json")
-    public long create(@RequestBody ScheduleRequest scheduleToCreate) {
+    public long create(@Valid @RequestBody ScheduleRequest scheduleToCreate) {
         return scheduleService.create(scheduleToCreate).getId();
     }
 

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Data
@@ -17,6 +18,7 @@ public class ScheduleRequest {
 	private Long id;
 
 	@ApiModelProperty("A year for which this schedule was created")
+	@Min(1)
 	private int year;
 
 	@ApiModelProperty("A school class ID for which this schedule was created")

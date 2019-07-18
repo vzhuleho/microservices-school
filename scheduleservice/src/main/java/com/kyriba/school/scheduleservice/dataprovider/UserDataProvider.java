@@ -4,6 +4,6 @@ import com.kyriba.school.scheduleservice.domain.dto.TeacherDetails;
 
 public interface UserDataProvider {
 
-	TeacherDetails getTeacher(long id);
+    TeacherDetails getTeacher(long id);
 
 }

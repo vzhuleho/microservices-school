@@ -1,6 +1,9 @@
-package com.kyriba.school.scheduleservice;
+package com.kyriba.school.scheduleservice.api;
 
-import com.kyriba.school.scheduleservice.domain.dto.*;
+import com.kyriba.school.scheduleservice.domain.dto.AbsenceDetails;
+import com.kyriba.school.scheduleservice.domain.dto.LessonDetails;
+import com.kyriba.school.scheduleservice.domain.dto.LessonRequest;
+import com.kyriba.school.scheduleservice.domain.dto.MarkDetails;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
@@ -21,7 +24,7 @@ import java.time.LocalDate;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.with;
-import static javax.servlet.http.HttpServletResponse.*;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;

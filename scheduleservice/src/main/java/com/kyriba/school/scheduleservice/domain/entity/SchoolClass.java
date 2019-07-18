@@ -19,8 +19,6 @@ public class SchoolClass {
 	private static final int FIRST_GRADE = 1;
 
 	@Id
-	@GeneratedValue
-	@Column
 	private Long id;
 
 	@Column(nullable = false)

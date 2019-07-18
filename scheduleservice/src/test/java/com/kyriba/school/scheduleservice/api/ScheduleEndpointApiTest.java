@@ -1,4 +1,4 @@
-package com.kyriba.school.scheduleservice;
+package com.kyriba.school.scheduleservice.api;
 
 import com.kyriba.school.scheduleservice.dao.SchoolClassRepository;
 import com.kyriba.school.scheduleservice.domain.dto.ScheduleDetails;
@@ -30,7 +30,7 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-public class ScheduleControllerTest {
+public class ScheduleEndpointApiTest {
 
 	@Rule
 	public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();

@@ -3,6 +3,7 @@ package com.kyriba.school.scheduleservice.domain.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
@@ -36,7 +37,7 @@ public class Schedule {
 	@JsonBackReference
 	private List<Day> days = new ArrayList<>();
 
-	public Schedule(int year, SchoolClass schoolClass) {
+	public Schedule(int year, @NonNull SchoolClass schoolClass) {
 		this.year = year;
 		this.schoolClass = schoolClass;
 		initDays(year);

@@ -1,4 +1,4 @@
-package com.kyriba.school.scheduleservice;
+package com.kyriba.school.scheduleservice.api;
 
 import com.kyriba.school.scheduleservice.domain.dto.LessonDetails;
 import com.kyriba.school.scheduleservice.domain.dto.PupilDetails;

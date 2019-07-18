@@ -2,6 +2,7 @@ package com.kyriba.school.scheduleservice.domain.entity;
 
 import com.kyriba.school.scheduleservice.domain.dto.PupilDetails;
 import lombok.*;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Getter
 @Setter
+@Accessors(chain = true)
 public class Pupil {
 
     @Id
