@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.1.4.RELEASE'
 	id 'org.asciidoctor.convert' version '1.5.3'
 	id 'java'
+	id 'com.palantir.docker' version '0.22.1'
 }
 
 apply plugin: 'io.spring.dependency-management'
@@ -73,4 +74,15 @@ asciidoctor {
 	outputDir "build/asciidoc"
 	dependsOn test
 	sourceDir 'src/doc/asciidoc'
+}
+
+bootJar {
+	archiveName 'scheduleservice.jar'
+}
+
+docker {
+	dependsOn bootJar
+	name "msschooltraining/schedule-service"
+	tags version, 'latest'
+	files bootJar.archiveFile
 }
