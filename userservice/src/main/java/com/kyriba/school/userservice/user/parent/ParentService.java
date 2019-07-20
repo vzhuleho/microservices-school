@@ -11,33 +11,31 @@ public class ParentService implements UserService<ParentOutputModel, ParentInput
 
   private final ParentRepository parentRepository;
 
-  private final ParentFactory parentFactory;
+  private final ParentMapper parentMapper;
 
   private final AddressRepository addressRepository;
 
-  public ParentService(ParentRepository parentRepository, ParentFactory parentFactory,
-      AddressRepository addressRepository) {
+  public ParentService(ParentRepository parentRepository,
+      ParentMapper parentMapper, AddressRepository addressRepository) {
     this.parentRepository = parentRepository;
-    this.parentFactory = parentFactory;
+    this.parentMapper = parentMapper;
     this.addressRepository = addressRepository;
   }
 
   @Override
   public ParentOutputModel findById(long id) throws NoSuchUserException {
     return parentRepository.findById(id)
-        .map(parentFactory::create)
-        .map(Parent::toOutputModel)
+        .map(parentMapper::convert)
         .orElseThrow(() -> new NoSuchUserException(id));
   }
 
   @Override
   @Transactional
   public ParentOutputModel create(ParentInputModel parentModel) {
-    var parent = parentFactory.create(parentModel);
-    var entity = parent.toEntity();
-    addressRepository.save(entity.getAddress());
-    parentRepository.save(entity);
-    return parent.toOutputModel();
+    var parent = parentMapper.convert(parentModel);
+    addressRepository.save(parent.getAddress());
+    parentRepository.save(parent);
+    return parentMapper.convert(parent);
   }
 
   @Override
@@ -45,11 +43,9 @@ public class ParentService implements UserService<ParentOutputModel, ParentInput
   public ParentOutputModel update(long id, ParentInputModel parentModel)
       throws NoSuchUserException {
     var parent = parentRepository.findById(id)
-        .map(parentFactory::create)
         .orElseThrow(() -> new NoSuchUserException(id));
-    parent.update(parentModel);
-    parentRepository.save(parent.toEntity());
-    return parent.toOutputModel();
+    parentMapper.update(parent, parentModel);
+    return parentMapper.convert(parent);
   }
 
 }

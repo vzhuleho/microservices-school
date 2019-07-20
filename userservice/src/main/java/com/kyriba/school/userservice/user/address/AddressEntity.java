@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "address")
@@ -43,6 +44,7 @@ public class AddressEntity {
   }
 
   @Getter
+  @Setter
   @NoArgsConstructor
   @AllArgsConstructor
   public static class Location {
@@ -62,6 +64,7 @@ public class AddressEntity {
   }
 
   @Getter
+  @Setter
   @NoArgsConstructor
   @AllArgsConstructor
   public static class PostOffice {
@@ -72,6 +75,7 @@ public class AddressEntity {
   }
 
   @Getter
+  @Setter
   @NoArgsConstructor
   @AllArgsConstructor
   public static class ElectronicCommunication {

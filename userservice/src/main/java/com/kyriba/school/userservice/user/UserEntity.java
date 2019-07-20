@@ -30,6 +30,7 @@ public abstract class UserEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", updatable = false, nullable = false)
+  @Setter
   protected Long id;
 
   @Embedded
@@ -45,6 +46,7 @@ public abstract class UserEntity {
   }
 
   @Getter
+  @Setter
   @NoArgsConstructor
   @AllArgsConstructor
   public static class Info {

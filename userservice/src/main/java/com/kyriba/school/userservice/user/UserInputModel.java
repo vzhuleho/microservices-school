@@ -4,6 +4,7 @@ import com.kyriba.school.userservice.user.address.AddressInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
