@@ -1,0 +1,96 @@
+dependencies {
+    modules {
+        module("javassist:javassist") {
+            replacedBy("org.javassist:javassist")
+        }
+    }
+}
+
+ext {
+    versions = [
+            // Common Library
+            slf4j             : '1.7.26',        // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+            commonsLang3      : '3.9',           // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+            googleJsr305      : '3.0.2',         // https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305
+            guava             : '28.0-jre',      // https://mvnrepository.com/artifact/com.google.guava/guava
+            snakeyaml         : '1.24',          // https://mvnrepository.com/artifact/org.yaml/snakeyaml
+            lombok            : '1.18.8',        // https://mvnrepository.com/artifact/org.projectlombok/lombok
+            mockito           : '2.28.2',        // https://mvnrepository.com/artifact/org.mockito/mockito-core
+            // Spring
+            springBoot        : '2.1.6.RELEASE', // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
+            restAssured       : '4.0.0',         // https://mvnrepository.com/artifact/io.rest-assured/rest-assured
+            restdocs          : '2.0.3.RELEASE', // https://mvnrepository.com/artifact/org.springframework.restdocs/spring-restdocs-mockmvc
+            // Jackson
+            jackson           : '2.9.9',         // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
+            // Hibernate
+            hibernate         : '5.4.3.Final',   // https://mvnrepository.com/artifact/org.hibernate/hibernate-core
+            hibernateValidator: '6.0.17.Final',  // https://mvnrepository.com/artifact/org.hibernate/hibernate-validator
+            ehcache           : '2.6.11',        // https://mvnrepository.com/artifact/net.sf.ehcache/ehcache-core
+            // Database                  
+            postgre           : '42.2.6',        // https://mvnrepository.com/artifact/org.postgresql/postgresql
+            // Zuul
+            zuul              : '2.1.2.RELEASE', // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-netflix-zuul
+            // Keycloak
+            keycloak          : '6.0.1',         // https://mvnrepository.com/artifact/org.keycloak/keycloak-spring-boot-starter
+            // Swagger
+            swagger           : '2.9.2'          // https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui
+
+    ]
+    libs = [
+            commons   : [
+                    "org.slf4j:slf4j-api:${versions.slf4j}",
+                    "org.slf4j:jcl-over-slf4j:${versions.slf4j}",
+                    "org.apache.commons:commons-lang3:${versions.commonsLang3}",
+                    "com.google.code.findbugs:jsr305:${versions.googleJsr305}",
+                    "com.google.guava:guava:${versions.guava}",
+                    "org.yaml:snakeyaml:${versions.snakeyaml}",
+                    "org.projectlombok:lombok:${versions.lombok}",
+                    "org.mockito:mockito-core:${versions.mockito}"
+            ],
+            spring    : [
+                    "org.springframework.boot:spring-boot-starter-data-jpa:${versions.springBoot}",
+                    "org.springframework.boot:spring-boot-gradle-plugin:${versions.springBoot}",
+                    "org.springframework.boot:spring-boot-configuration-processor:${versions.springBoot}",
+                    "org.springframework.boot:spring-boot-starter-freemarker:${versions.springBoot}",
+                    "org.springframework.boot:spring-boot-starter-security:${versions.springBoot}",
+                    "org.springframework.boot:spring-boot-starter-web:${versions.springBoot}"
+            ],
+            jackson   : [
+                    "com.fasterxml.jackson.core:jackson-core:${versions.jackson}",
+                    "com.fasterxml.jackson.core:jackson-databind:${versions.jackson}",
+                    "com.fasterxml.jackson.core:jackson-annotations:${versions.jackson}",
+                    "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${versions.jackson}"
+            ],
+            hibernate : [
+                    "net.sf.ehcache:ehcache-core:${versions.ehcache}",
+                    "org.hibernate:hibernate-core:${versions.hibernate}",
+                    "org.hibernate:hibernate-entitymanager:${versions.hibernate}",
+                    "org.hibernate:hibernate-validator:${versions.hibernateValidator}",
+                    dependencies.create("org.hibernate:hibernate-ehcache:${versions.hibernate}") {
+                        exclude group: "net.sf.ehcache", module: "ehcache-core"
+                    }
+            ],
+            postgres  : [
+                    "org.postgresql:postgresql:${versions.postgre}"
+            ],
+            zuul      : [
+                    "org.springframework.cloud:spring-cloud-starter-netflix-zuul:${versions.zuul}"
+            ],
+            keycloak  : [
+                    "org.keycloak:keycloak-spring-boot-starter:${versions.keycloak}",
+                    "org.keycloak.bom:keycloak-adapter-bom:${versions.keycloak}"
+
+            ],
+            swagger   : [
+                    "io.springfox:springfox-swagger2:${versions.swagger}",
+                    "io.springfox:springfox-swagger-ui:${versions.swagger}"
+            ],
+            testSpring: [
+                    "io.rest-assured:rest-assured:${versions.restAssured}",
+                    "org.springframework.restdocs:spring-restdocs-mockmvc:${versions.restdocs}",
+                    dependencies.create("org.springframework.boot:spring-boot-starter-test:${versions.springBoot}") {
+                        exclude group: "junit", module: "junit"
+                    }
+            ]
+    ]
+}

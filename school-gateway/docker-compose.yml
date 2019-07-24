@@ -1,0 +1,68 @@
+version: '3'
+
+services:
+
+  app:
+    build:
+      context: .
+      args:
+        JAR_FILE: ./build/libs/school-gateway-5.0.jar
+    environment:
+      - APP_PORT=8180
+      - DB_VENDOR=POSTGRES
+      - DB_ADDR=gatewaydb
+      - DB_DATABASE=gateway
+      - DB_PORT=5432
+      - DB_USER=gateway
+      - DB_PASSWORD=zaq12wsx
+      - KC_ADDR=keycloak
+      - KC_PORT=8080
+    ports:
+      - 8180:8180
+    depends_on:
+      - gatewaydb
+      - keycloak
+
+  gatewaydb:
+    image: postgres:10
+    environment:
+      - POSTGRES_DB=gateway
+      - POSTGRES_USER=gateway
+      - POSTGRES_PASSWORD=zaq12wsx
+    ports:
+      - 5433:5432
+    volumes:
+      - gateway_data:/var/lib/postgresql/data
+
+  keycloak:
+    image: jboss/keycloak
+    environment:
+      - DB_VENDOR=POSTGRES
+      - DB_ADDR=keycloakdb
+      - DB_DATABASE=keycloak
+      - DB_PORT=5432
+      - DB_USER=keycloak
+      - DB_PASSWORD=zaq12wsx
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=zaq12wsx
+    command:
+      - -b 0.0.0.0 --server-config=standalone.xml
+    ports:
+      - 8080:8080
+    volumes:
+      - ./config:/config/
+    depends_on:
+      - keycloakdb
+
+  keycloakdb:
+    image: postgres:10
+    environment:
+      - POSTGRES_DB=keycloak
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=zaq12wsx
+    volumes:
+      - keycloak_data:/var/lib/postgresql/data
+
+volumes:
+  gateway_data: {}
+  keycloak_data: {}

@@ -1,0 +1,55 @@
+# Logging
+logging.level:
+  org.springframework: DEBUG
+  org.keycloak: DEBUG
+  org.freemarker: DEBUG
+
+# Server
+server:
+  port: 8180
+#  ssl:
+#    key-store-type: PKCS12
+#    key-store: classpath:keystore/school.p12
+#    key-store-password: zaq12wsx
+#    key-alias: school
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_ADDR:localhost}:${DB_PORT:5433}/${DB_DATABASE:gateway}
+    username: ${DB_USER:gateway}
+    password: ${DB_PASSWORD:zaq12wsx}
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    properties.hibernate:
+      temp.use_jdbc_metadata_defaults: false
+  freemarker:
+    template-loader-path: classpath:/webapp/templates/
+    suffix: .ftl
+    enabled: true
+
+# Keycloak
+keycloak:
+  realm: school
+  auth-server-url: http://${KC_ADDR:keycloak}:${KC_PORT:8080}/auth
+  resource: school-app
+  cors: true
+  use-resource-role-mappings: false
+  credentials:
+    jwt:
+      client-keystore-file: "classpath:keystore/keystore.jks"
+      client-keystore-type: "JKS"
+      client-keystore-password": "zaq12wsx"
+      client-key-password: "zaq12wsx"
+      client-key-alias: "school-app"
+      token-expiration": 10
+
+# Zuul
+zuul:
+  routes:
+    google:
+      path: /service/google/**
+      url: http://www.google.com
+      stripPrefix: true

@@ -1,0 +1,29 @@
+# Idea
+/.idea
+/.out
+/out
+/**/build/
+classes/
+*.iml
+*.log
+
+# Eclipse
+bin/
+build/
+.settings/
+.metadata/
+*.classpath
+*.project
+*.db
+
+# Gradle
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+
+# React
+/node_modules
+node_modules/
+package-lock.json
+*.log

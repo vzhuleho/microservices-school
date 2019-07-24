@@ -1,0 +1,36 @@
+/*!
+ * Custom styles
+ */
+
+/* Base */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    background-color: #ffffff;
+}
+
+html, body {
+    background: none repeat scroll 0 0 #ffffff;
+}
+
+body {
+    font-size: 11pt;
+}
+
+#wrap {
+    min-height: 100%;
+    height: 100%;
+    margin: 0 auto -32px;
+}
+
+#push {
+    height: 32px;
+}
+
+#error-body {
+    margin: 20px auto;
+}

@@ -1,0 +1,71 @@
+plugins {
+    id 'idea'
+    id 'org.springframework.boot' version '2.1.6.RELEASE'
+    id 'com.avast.gradle.docker-compose' version '0.7.1'
+}
+
+idea {
+    module {
+        excludeDirs += file('.out')
+        excludeDirs += file('.idea')
+        excludeDirs += file('.gradle')
+        excludeDirs += file('out')
+        excludeDirs += file('impl')
+        excludeDirs += file('gradle')
+    }
+}
+
+group 'com.kyriba.school'
+version '5.0'
+
+apply plugin: 'java'
+apply from: './common.gradle'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile libs.commons
+    compile libs.hibernate
+    compile libs.postgres
+    compile libs.spring
+    compile libs.zuul
+    compile libs.keycloak
+    compile libs.swagger
+
+    testCompile libs.testSpring
+
+    // https://mvnrepository.com/artifact/org.projectlombok/lombok
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.8'
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.8'
+    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.4.2'
+    testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.4.2'
+    // https://mvnrepository.com/artifact/org.mockito/mockito-core
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.28.2'
+    // https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '2.28.2'
+    // https://mvnrepository.com/artifact/org.assertj/assertj-core
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.12.2'
+    // https://mvnrepository.com/artifact/com.github.database-rider/rider-core
+    testImplementation group: 'com.github.database-rider', name: 'rider-core', version: '1.7.2'
+    // https://mvnrepository.com/artifact/com.github.database-rider/rider-junit5
+    testImplementation group: 'com.github.database-rider', name: 'rider-junit5', version: '1.7.2'
+    // https://mvnrepository.com/artifact/com.h2database/h2
+    testImplementation group: 'com.h2database', name: 'h2', version: '1.4.199'
+    // https://mvnrepository.com/artifact/org.testcontainers/testcontainers
+    testImplementation group: 'org.testcontainers', name: 'testcontainers', version: '1.11.4'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    }
+}
