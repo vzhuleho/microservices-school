@@ -11,7 +11,6 @@ spec:
   selector:
     app: userservice
     tier: backend
-  type: LoadBalancer
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -20,7 +19,7 @@ metadata:
   labels:
     app: userservice
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: userservice
@@ -34,18 +33,35 @@ spec:
         tier: backend
     spec:
       containers:
-        - image: kyriba/userservice:1.0.0
+        - image: msschooltraining/user-service:1.0.1
           imagePullPolicy: IfNotPresent
           name: userservice-app
+          resources:
+            limits:
+              memory: "1000Mi"
+            requests:
+              memory: "500Mi"
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: prod
             - name: USERSERVICE_DB_HOST
               value: userservice-db
+            - name: USERSERVICE_DB_PORT
+              value: "3306"
+            - name: USERSERVICE_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: userservice-mysql-secret
+                  key: user-name
+            - name: USERSERVICE_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: userservice-mysql-secret
+                  key: db-name
             - name: USERSERVICE_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mysql-pass
+                  name: userservice-mysql-secret
                   key: password
           ports:
             - containerPort: 8080

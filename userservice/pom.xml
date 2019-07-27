@@ -10,13 +10,13 @@
 	</parent>
 	<groupId>com.kyriba.school</groupId>
 	<artifactId>userservice</artifactId>
-	<version>1.0.0</version>
-	<name>userservice</name>
+	<version>1.0.1</version>
+	<name>user-service</name>
 	<description>User Service</description>
 
 	<properties>
 		<java.version>11.0.2</java.version>
-		<docker.image.prefix>kyriba</docker.image.prefix>
+		<docker.image.prefix>msschooltraining</docker.image.prefix>
 	</properties>
 
 	<dependencies>
@@ -102,7 +102,9 @@
 				<artifactId>dockerfile-maven-plugin</artifactId>
 				<version>1.4.9</version>
 				<configuration>
-					<repository>${docker.image.prefix}/${project.artifactId}</repository>
+					<username>${docker.image.prefix}</username>
+					<password>${env.DOCKER_PASSWORD}</password>
+					<repository>${docker.image.prefix}/${project.name}</repository>
 					<tag>${project.version}</tag>
 					<buildArgs>
 						<JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
@@ -111,7 +113,6 @@
 				<executions>
 					<execution>
 						<id>default</id>
-						<phase>install</phase>
 						<goals>
 							<goal>build</goal>
 							<goal>push</goal>

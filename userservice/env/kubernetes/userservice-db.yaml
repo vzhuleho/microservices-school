@@ -19,6 +19,7 @@ metadata:
   labels:
     app: userservice
 spec:
+  storageClassName: nfs
   accessModes:
     - ReadWriteOnce
   resources:
@@ -45,22 +46,33 @@ spec:
         tier: mysql
     spec:
       containers:
-        - image: mysql:latest
+        - image: mysql:8.0.17
           name: userservice-mysql
+          resources:
+            limits:
+              memory: "1000Mi"
+            requests:
+              memory: "500Mi"
           env:
             - name: MYSQL_USER
-              value: dbuser
+              valueFrom:
+                secretKeyRef:
+                  name: userservice-mysql-secret
+                  key: user-name
             - name: MYSQL_DATABASE
-              value: userservice-db
+              valueFrom:
+                secretKeyRef:
+                  name: userservice-mysql-secret
+                  key: db-name
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mysql-pass
+                  name: userservice-mysql-secret
                   key: password
             - name: MYSQL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mysql-pass
+                  name: userservice-mysql-secret
                   key: password
           ports:
             - containerPort: 3306
