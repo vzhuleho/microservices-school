@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+
+  keycloak:
+    image: jboss/keycloak
+    environment:
+      - DB_VENDOR=POSTGRES
+      - DB_ADDR=keycloakdb
+      - DB_DATABASE=keycloak
+      - DB_PORT=5432
+      - DB_USER=keycloak
+      - DB_PASSWORD=zaq12wsx
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=zaq12wsx
+    command:
+      - -b 0.0.0.0 --server-config=standalone.xml
+    ports:
+      - 8080:8080
+    volumes:
+      - ./config:/config/
+    depends_on:
+      - keycloakdb
+
+  keycloakdb:
+    image: postgres:10
+    environment:
+      - POSTGRES_DB=keycloak
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=zaq12wsx
+    volumes:
+      - keycloak_data:/var/lib/postgresql/data
+
+volumes:
+  keycloak_data: {}

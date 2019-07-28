@@ -16,7 +16,7 @@ idea {
 }
 
 group 'com.kyriba.school'
-version '5.0'
+version '1.1'
 
 apply plugin: 'java'
 apply from: './common.gradle'
@@ -29,8 +29,6 @@ repositories {
 
 dependencies {
     compile libs.commons
-    compile libs.hibernate
-    compile libs.postgres
     compile libs.spring
     compile libs.zuul
     compile libs.keycloak

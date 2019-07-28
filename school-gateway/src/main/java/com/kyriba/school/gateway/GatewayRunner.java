@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServic
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @EnableZuulProxy
 @RestController
-@EnableJpaRepositories
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class, UserDetailsServiceAutoConfiguration.class})
 public class GatewayRunner extends SpringBootServletInitializer {
 

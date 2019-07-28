@@ -43,5 +43,4 @@ public class GatewayPageController {
   public String getErrorPage500() {
     return "error/500";
   }
-
 }

@@ -18,8 +18,8 @@
         <div>
             <h3>School Gateway</h3>
         </div>
+        <div><a href="/actuator/info">INFO</a></div>
         <div><a href="/logout">LOGOUT</a></div>
-        <div><a href="/service/test">TEST</a></div>
     </div>
     <div id="push"></div>
 </div>

@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-app
+  labels:
+    app: gateway
+spec:
+  ports:
+    - port: 8180
+      targetPort: http
+  selector:
+    app: gateway
+    tier: frontend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-app
+  labels:
+    app: gateway
+spec:
+  replicas: 3
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: gateway
+        tier: frontend
+    spec:
+      containers:
+        - image: msschooltraining/school-gateway:1.1
+          name: gateway-app
+          env:
+            - name: APP_PORT
+              value: "8180"
+          ports:
+            - containerPort: 8180
+              name: http
+          resources: {}
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /status
+              port: 8080
+            initialDelaySeconds: 80
+            timeoutSeconds: 10
+            failureThreshold: 10
+      restartPolicy: Always

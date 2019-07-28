@@ -1,3 +1,9 @@
+# Application
+info.app:
+  name: School Garteway Application
+  description: School Garteway Application
+  version: 1.1
+
 # Logging
 logging.level:
   org.springframework: DEBUG
@@ -14,17 +20,6 @@ server:
 #    key-alias: school
 
 spring:
-  datasource:
-    url: jdbc:postgresql://${DB_ADDR:localhost}:${DB_PORT:5433}/${DB_DATABASE:gateway}
-    username: ${DB_USER:gateway}
-    password: ${DB_PASSWORD:zaq12wsx}
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    generate-ddl: true
-    hibernate:
-      ddl-auto: update
-    properties.hibernate:
-      temp.use_jdbc_metadata_defaults: false
   freemarker:
     template-loader-path: classpath:/webapp/templates/
     suffix: .ftl
@@ -50,6 +45,6 @@ keycloak:
 zuul:
   routes:
     google:
-      path: /service/google/**
-      url: http://www.google.com
+      path: /userservice/**
+      url: http://127.0.0.1:8280
       stripPrefix: true

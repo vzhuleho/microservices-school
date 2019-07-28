@@ -48,12 +48,12 @@ ext {
                     "org.mockito:mockito-core:${versions.mockito}"
             ],
             spring    : [
-                    "org.springframework.boot:spring-boot-starter-data-jpa:${versions.springBoot}",
                     "org.springframework.boot:spring-boot-gradle-plugin:${versions.springBoot}",
                     "org.springframework.boot:spring-boot-configuration-processor:${versions.springBoot}",
                     "org.springframework.boot:spring-boot-starter-freemarker:${versions.springBoot}",
                     "org.springframework.boot:spring-boot-starter-security:${versions.springBoot}",
-                    "org.springframework.boot:spring-boot-starter-web:${versions.springBoot}"
+                    "org.springframework.boot:spring-boot-starter-web:${versions.springBoot}",
+                    "org.springframework.boot:spring-boot-starter-actuator:${versions.springBoot}"
             ],
             jackson   : [
                     "com.fasterxml.jackson.core:jackson-core:${versions.jackson}",
@@ -61,16 +61,15 @@ ext {
                     "com.fasterxml.jackson.core:jackson-annotations:${versions.jackson}",
                     "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${versions.jackson}"
             ],
-            hibernate : [
+            database  : [
+                    "org.springframework.boot:spring-boot-starter-data-jpa:${versions.springBoot}",
                     "net.sf.ehcache:ehcache-core:${versions.ehcache}",
                     "org.hibernate:hibernate-core:${versions.hibernate}",
                     "org.hibernate:hibernate-entitymanager:${versions.hibernate}",
                     "org.hibernate:hibernate-validator:${versions.hibernateValidator}",
                     dependencies.create("org.hibernate:hibernate-ehcache:${versions.hibernate}") {
                         exclude group: "net.sf.ehcache", module: "ehcache-core"
-                    }
-            ],
-            postgres  : [
+                    },
                     "org.postgresql:postgresql:${versions.postgre}"
             ],
             zuul      : [

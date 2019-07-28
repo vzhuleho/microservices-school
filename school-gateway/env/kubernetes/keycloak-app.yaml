@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak-app
+  labels:
+    app: keycloak
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: keycloak
+    tier: frontend
+---
+apiVersion: api/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  labels:
+    app: keycloak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: keycloak
+        tier: frontend
+    spec:
+      containers:
+        - image: jboss/keycloak
+          name: keycloak
+          env:
+            - name: DB_ADDR
+              value: keycloakdb
+            - name: DB_DATABASE
+              value: keycloak
+            - name: DB_PASSWORD
+              value: zaq12wsx
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: keycloak
+            - name: DB_VENDOR
+              value: POSTGRES
+            - name: KEYCLOAK_PASSWORD
+              value: zaq12wsx
+            - name: KEYCLOAK_USER
+              value: admin
+          args:
+            - -b 0.0.0.0 --server-config=standalone.xml
+          ports:
+            - containerPort: 8080
+              name: http
+          resources: {}
+          volumeMounts:
+            - mountPath: /config/
+              name: keycloak-config
+      restartPolicy: Always
+      volumes:
+        - name: keycloak-config
+          persistentVolumeClaim:
+            claimName: keycloak-pv-claim
