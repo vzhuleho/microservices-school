@@ -51,13 +51,13 @@ spec:
           readinessProbe:
             httpGet:
               path: /actuator/health
-              port: 8080
+              port: 8180
             initialDelaySeconds: 60
             timeoutSeconds: 5
           livenessProbe:
             httpGet:
               path: /status
-              port: 8080
+              port: 8180
             initialDelaySeconds: 80
             timeoutSeconds: 10
             failureThreshold: 10
