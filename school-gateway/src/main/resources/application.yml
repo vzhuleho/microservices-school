@@ -46,5 +46,5 @@ zuul:
   routes:
     google:
       path: /userservice/**
-      url: http://127.0.0.1:8280
+      url: http://userservice-app:80
       stripPrefix: true

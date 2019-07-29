@@ -6,13 +6,13 @@ metadata:
     app: keycloak
 spec:
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: 80
+      targetPort: http
   selector:
     app: keycloak
     tier: frontend
 ---
-apiVersion: api/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: keycloak
@@ -34,21 +34,35 @@ spec:
       containers:
         - image: jboss/keycloak
           name: keycloak
+          resources:
+            limits:
+              memory: "1000Mi"
+            requests:
+              memory: "500Mi"
           env:
             - name: DB_ADDR
-              value: keycloakdb
+              value: keycloak-db
             - name: DB_DATABASE
               value: keycloak
             - name: DB_PASSWORD
-              value: zaq12wsx
+              valueFrom:
+                secretKeyRef:
+                  name: keyclock-db-secret
+                  key: password
             - name: DB_PORT
               value: "5432"
             - name: DB_USER
-              value: keycloak
+              valueFrom:
+                secretKeyRef:
+                  name: keyclock-db-secret
+                  key: user
             - name: DB_VENDOR
               value: POSTGRES
             - name: KEYCLOAK_PASSWORD
-              value: zaq12wsx
+              valueFrom:
+                secretKeyRef:
+                  name: keyclock-db-secret
+                  key: password
             - name: KEYCLOAK_USER
               value: admin
           args:
@@ -56,7 +70,6 @@ spec:
           ports:
             - containerPort: 8080
               name: http
-          resources: {}
           volumeMounts:
             - mountPath: /config/
               name: keycloak-config

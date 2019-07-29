@@ -10,6 +10,7 @@ spec:
   selector:
     app: keycloak
     tier: postgreSQL
+  clusterIP: None
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -25,13 +26,18 @@ spec:
     requests:
       storage: 100Mi
 ---
-apiVersion: api/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: keycloak-db
   labels:
     app: keycloak
 spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+      tier: postgreSQL
   strategy:
     type: Recreate
   template:
@@ -43,14 +49,19 @@ spec:
       containers:
         - image: postgres:10
           name: keycloakd-postgresql
-          resources: {}
           env:
             - name: POSTGRES_DB
               value: keycloak
             - name: POSTGRES_PASSWORD
-              value: zaq12wsx
+              valueFrom:
+                secretKeyRef:
+                  name: keyclock-db-secret
+                  key: password
             - name: POSTGRES_USER
-              value: keycloak
+              valueFrom:
+                secretKeyRef:
+                  name: keyclock-db-secret
+                  key: user
           ports:
             - containerPort: 5432
               name: postgresql

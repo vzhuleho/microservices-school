@@ -6,7 +6,7 @@ metadata:
     app: gateway
 spec:
   ports:
-    - port: 8180
+    - port: 80
       targetPort: http
   selector:
     app: gateway
@@ -19,8 +19,11 @@ metadata:
   labels:
     app: gateway
 spec:
-  replicas: 3
-  strategy: {}
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gateway
+      tier: frontend
   template:
     metadata:
       labels:
@@ -28,15 +31,23 @@ spec:
         tier: frontend
     spec:
       containers:
-        - image: msschooltraining/school-gateway:1.1
+        - image: msschooltraining/school-gateway:1.1.1
           name: gateway-app
+          resources:
+            limits:
+              memory: "1000Mi"
+            requests:
+              memory: "500Mi"
           env:
             - name: APP_PORT
               value: "8180"
+            - name: KC_ADDR
+              value: keycloak-app
+            - name: KC_PORT
+              value: 80
           ports:
             - containerPort: 8180
               name: http
-          resources: {}
           readinessProbe:
             httpGet:
               path: /actuator/health
