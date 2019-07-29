@@ -2,17 +2,15 @@
 info.app:
   name: School Garteway Application
   description: School Garteway Application
-  version: 1.1
+  version: 1.1.1
 
 # Logging
 logging.level:
-  org.springframework: DEBUG
-  org.keycloak: DEBUG
-  org.freemarker: DEBUG
+  org.springframework: INFO
 
 # Server
 server:
-  port: 8180
+  port: ${APP_PORT:8080}
 #  ssl:
 #    key-store-type: PKCS12
 #    key-store: classpath:keystore/school.p12
@@ -36,15 +34,15 @@ keycloak:
     jwt:
       client-keystore-file: "classpath:keystore/keystore.jks"
       client-keystore-type: "JKS"
-      client-keystore-password": "zaq12wsx"
-      client-key-password: "zaq12wsx"
-      client-key-alias: "school-app"
+      client-keystore-password": ${KC_KEYSTORE_PASSWORD}
+      client-key-password: ${KC_KEY_PASSWORD}
+      client-key-alias: ${KC_KEY_ALIAS:school-app}
       token-expiration": 10
 
 # Zuul
 zuul:
   routes:
-    google:
+    userservice:
       path: /userservice/**
-      url: http://userservice-app:80
+      url: http://${USERCERVICE_URL:userservice-app}:${USERCERVICE_PORT:80}
       stripPrefix: true

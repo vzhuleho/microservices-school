@@ -55,12 +55,12 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: keyclock-db-secret
+                  name: keycloak-db-secret
                   key: password
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: keyclock-db-secret
+                  name: keycloak-db-secret
                   key: user
           ports:
             - containerPort: 5432

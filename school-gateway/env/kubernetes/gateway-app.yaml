@@ -40,24 +40,43 @@ spec:
               memory: "500Mi"
           env:
             - name: APP_PORT
-              value: "8180"
+              value: "8080"
             - name: KC_ADDR
               value: keycloak-app
             - name: KC_PORT
               value: 80
+            - name: KC_KEYSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-db-secret
+                  key: keystore_password
+            - name: KC_KEY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-db-secret
+                  key: key_password
+            - name: KC_KEY_ALIAS
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-db-secret
+                  key: key_alias
+            - name: USERCERVICE_URL
+              value: usercervice
+            - name: USERCERVICE_PORT
+              value: 80
           ports:
-            - containerPort: 8180
+            - containerPort: 8080
               name: http
           readinessProbe:
             httpGet:
               path: /actuator/health
-              port: 8180
+              port: 8080
             initialDelaySeconds: 60
             timeoutSeconds: 5
           livenessProbe:
             httpGet:
               path: /status
-              port: 8180
+              port: 8080
             initialDelaySeconds: 80
             timeoutSeconds: 10
             failureThreshold: 10
