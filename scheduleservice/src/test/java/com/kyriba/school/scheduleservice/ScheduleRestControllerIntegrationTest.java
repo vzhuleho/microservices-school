@@ -37,23 +37,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 	@Test
 	public void get_schedule_by_year_grade_and_letter() throws Exception {
-		int expectedYear = 2019;
-		String expectedLetter = "A";
-		int expectedGrade = 1;
 		SchoolClassDetails expectedSchoolClassDetails = new SchoolClassDetails()
 				.setId(1L)
-				.setYear(expectedYear)
-				.setGrade(expectedGrade)
-				.setLetter(expectedLetter);
-		ScheduleDetails expectedScheduleDetails = new ScheduleDetails(1L, expectedYear, expectedSchoolClassDetails);
-		doReturn(expectedScheduleDetails)
-				.when(scheduleService).find(expectedYear, expectedGrade, expectedLetter);
+				.setYear(2019)
+				.setGrade(1)
+				.setLetter("A");
+		ScheduleDetails expectedScheduleDetails = new ScheduleDetails(1L, 2019, expectedSchoolClassDetails);
+		doReturn(expectedScheduleDetails).when(scheduleService).find(2019, 1, "A");
 
 
 		mockMvc.perform(get("/api/v1/schedules/2019/1/A").accept("application/hal+json"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType("application/hal+json;charset=UTF-8"))
-				.andExpect(jsonPath("year").value(expectedYear))
+				.andExpect(jsonPath("year").value(2019))
 				.andExpect(jsonPath("schoolClass").value(expectedSchoolClassDetails));
 	}
 

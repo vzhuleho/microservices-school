@@ -4,7 +4,8 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 
 public class ScheduleNotFoundException extends ResourceNotFoundException {
 
-    ScheduleNotFoundException() {
+    ScheduleNotFoundException(long id) {
+        super(String.format("Schedule with id [%s] was not found", id));
     }
 
     ScheduleNotFoundException(int grade, String letter, int year) {

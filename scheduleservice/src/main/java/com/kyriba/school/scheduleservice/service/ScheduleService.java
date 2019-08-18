@@ -29,7 +29,7 @@ public class ScheduleService {
 
     public ScheduleDetails findById(Long scheduleId) {
         return scheduleRepository.findById(scheduleId).map(schedule -> mapper.map(schedule, ScheduleDetails.class))
-            .orElseThrow(ScheduleNotFoundException::new);
+            .orElseThrow(() -> new ScheduleNotFoundException(scheduleId));
     }
 
     @Transactional
