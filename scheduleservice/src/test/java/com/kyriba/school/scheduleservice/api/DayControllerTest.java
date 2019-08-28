@@ -1,4 +1,4 @@
-package com.kyriba.school.scheduleservice;
+package com.kyriba.school.scheduleservice.api;
 
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;

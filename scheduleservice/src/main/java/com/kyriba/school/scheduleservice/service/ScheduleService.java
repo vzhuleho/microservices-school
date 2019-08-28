@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -30,7 +29,7 @@ public class ScheduleService {
 
     public ScheduleDetails findById(Long scheduleId) {
         return scheduleRepository.findById(scheduleId).map(schedule -> mapper.map(schedule, ScheduleDetails.class))
-            .orElseThrow(ResourceNotFoundException::new);
+            .orElseThrow(() -> new ScheduleNotFoundException(scheduleId));
     }
 
     @Transactional

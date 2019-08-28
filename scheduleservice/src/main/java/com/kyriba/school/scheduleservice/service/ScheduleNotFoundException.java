@@ -2,7 +2,11 @@ package com.kyriba.school.scheduleservice.service;
 
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 
-class ScheduleNotFoundException extends ResourceNotFoundException {
+public class ScheduleNotFoundException extends ResourceNotFoundException {
+
+    ScheduleNotFoundException(long id) {
+        super(String.format("Schedule with id [%s] was not found", id));
+    }
 
     ScheduleNotFoundException(int grade, String letter, int year) {
         super(createMessage(grade, letter, year));
