@@ -7,8 +7,9 @@
  ********************************************************************************/
 package com.kyriba.schoolclassservice.api;
 
-import com.kyriba.schoolclassservice.domain.PupilEntity;
-import com.kyriba.schoolclassservice.domain.SchoolClassEntity;
+import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.SeedStrategy;
+import com.github.database.rider.spring.api.DBRider;
 import com.kyriba.schoolclassservice.repository.PupilRepository;
 import com.kyriba.schoolclassservice.repository.SchoolClassRepository;
 import com.kyriba.schoolclassservice.service.dto.PupilDto;
@@ -30,7 +31,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -44,10 +44,12 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
  * @author M-VBE
  * @since 19.2
  */
-@ActiveProfiles("test")
+@ActiveProfiles("testcontainer")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringRunner.class)
 @AutoConfigureRestDocs
+@DBRider
+@DataSet(value = "datasets/classes-and-pupils.yml", cleanAfter = true, executorId = "pupils")
 public class ClassPupilsApiTest
 {
   @LocalServerPort
@@ -56,20 +58,11 @@ public class ClassPupilsApiTest
   @Value("${api.version.path}")
   private String apiPrefix;
 
-  @Autowired
-  private SchoolClassRepository schoolClassRepository;
-
-  @Autowired
-  private PupilRepository pupilRepository;
 
   @Rule
   public final JUnitRestDocumentation restDocumentationRule = new JUnitRestDocumentation();
 
   private RequestSpecification requestSpecification;
-  private PupilEntity pupilWithoutClass;
-  private PupilEntity pupil1;
-  private PupilEntity pupil2;
-  private SchoolClassEntity newClass;
 
 
   @Before
@@ -79,37 +72,6 @@ public class ClassPupilsApiTest
     requestSpecification = new RequestSpecBuilder()
         .setBasePath(apiPrefix)
         .addFilter(documentationConfiguration(restDocumentationRule)).build();
-
-    initData();
-  }
-
-
-  @Transactional
-  public void initData()
-  {
-    newClass = schoolClassRepository.save(SchoolClassEntity.builder()
-        .grade(1)
-        .letter("A")
-        .year(2010)
-        .build());
-
-    pupil1 = pupilRepository.save(PupilEntity.builder()
-        .id(1L)
-        .fullname("Иванов")
-        .schoolClass(newClass)
-        .build());
-
-    pupil2 = pupilRepository.save(PupilEntity.builder()
-        .id(2L)
-        .fullname("Петров")
-        .schoolClass(newClass)
-        .build());
-
-    pupilWithoutClass = pupilRepository.save(PupilEntity.builder()
-        .id(3L)
-        .fullname("Сидоров")
-        .build());
-
   }
 
 
@@ -123,11 +85,12 @@ public class ClassPupilsApiTest
             "    \"id\": \"123\"\n" +
             "  }\n")
         .when()
-        .put("/classes/" + newClass.getId() + "/pupils")
+        .put("/classes/1/pupils")
         .then()
         .statusCode(HttpStatus.BAD_REQUEST.value())
         .contentType(APPLICATION_JSON_UTF8_VALUE);
   }
+
 
   @Test
   public void pupilsCanBeRetrieved()
@@ -136,7 +99,7 @@ public class ClassPupilsApiTest
         .contentType(APPLICATION_JSON_UTF8_VALUE)
         .filter(document("school-class-pupils-get"))
         .when()
-        .get("/classes/" + newClass.getId() + "/pupils")
+        .get("/classes/1/pupils")
         .then()
         .statusCode(HttpStatus.OK.value())
         .contentType(APPLICATION_JSON_UTF8_VALUE)
@@ -162,7 +125,7 @@ public class ClassPupilsApiTest
             "    \"name\": \"Иван Петрович\"\n" +
             "  }\n")
         .when()
-        .put("/classes/" + newClass.getId() + "/pupils")
+        .put("/classes/1/pupils")
         .then()
         .statusCode(HttpStatus.OK.value())
         .contentType(APPLICATION_JSON_UTF8_VALUE)
@@ -175,7 +138,7 @@ public class ClassPupilsApiTest
     final List<PupilDto> pupilDtos = given(requestSpecification)
         .contentType(APPLICATION_JSON_UTF8_VALUE)
         .when()
-        .get("/classes/" + newClass.getId() + "/pupils")
+        .get("/classes/1/pupils")
         .then()
         .statusCode(HttpStatus.OK.value())
         .contentType(APPLICATION_JSON_UTF8_VALUE)
@@ -202,7 +165,7 @@ public class ClassPupilsApiTest
             "    \"name\": \"Сидоров\"\n" +
             "  }\n")
         .when()
-        .put("/classes/" + newClass.getId() + "/pupils")
+        .put("/classes/1/pupils")
         .then()
         .statusCode(HttpStatus.OK.value())
         .contentType(APPLICATION_JSON_UTF8_VALUE)
@@ -215,7 +178,7 @@ public class ClassPupilsApiTest
     final List<PupilDto> pupilDtos = given(requestSpecification)
         .contentType(APPLICATION_JSON_UTF8_VALUE)
         .when()
-        .get("/classes/" + newClass.getId() + "/pupils")
+        .get("/classes/1/pupils")
         .then()
         .statusCode(HttpStatus.OK.value())
         .contentType(APPLICATION_JSON_UTF8_VALUE)
@@ -238,7 +201,7 @@ public class ClassPupilsApiTest
         .contentType(APPLICATION_JSON_UTF8_VALUE)
         .filter(document("school-class-pupils-delete"))
         .when()
-        .delete("/classes/" + newClass.getId() + "/pupils/" + pupil1.getId())
+        .delete("/classes/1/pupils/1")
         .then()
         .statusCode(HttpStatus.OK.value());
   }

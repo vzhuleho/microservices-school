@@ -1,0 +1,19 @@
+school_class:
+  - SCHOOL_CLASS_ID: 1
+    GRADE: 1
+    LETTER: 'A'
+    YEAR: 2010
+  - SCHOOL_CLASS_ID: 2
+    GRADE: 2
+    LETTER: 'Б'
+    YEAR: 2009
+pupil:
+  - PUPIL_ID: 1
+    FULL_NAME: 'Иванов'
+    CLASS_ID: 1   
+  - PUPIL_ID: 2
+    FULL_NAME: 'Петров'
+    CLASS_ID: 1
+  - PUPIL_ID: 3
+    FULL_NAME: 'Сидоров'
+    CLASS_ID: null

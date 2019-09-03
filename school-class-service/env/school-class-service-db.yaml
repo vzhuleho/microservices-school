@@ -6,10 +6,10 @@ metadata:
     app: school-class-service
 spec:
   ports:
-    - port: 1521
+    - port: 5432
   selector:
     app: school-class-service
-    tier: h2
+    tier: postgres
   clusterIP: None
 ---
 apiVersion: v1
@@ -36,30 +36,30 @@ spec:
   selector:
     matchLabels:
       app: school-class-service
-      tier: h2
+      tier: postgres
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
         app: school-class-service
-        tier: h2
+        tier: postgres
     spec:
       containers:
-        - image: oscarfonts/h2:latest
-          name: school-class-service-h2
+        - image: postgres:12
+          name: school-class-service-postgres
           resources:
             limits:
               memory: "1000Mi"
             requests:
               memory: "500Mi"
           ports:
-            - containerPort: 1521
-              name: h2
+            - containerPort: 5432
+              name: postgres
           volumeMounts:
-            - mountPath: /opt/h2-data
-              name: h2-persistent-storage
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-persistent-storage
       volumes:
-        - name: h2-persistent-storage
+        - name: postgres-persistent-storage
           persistentVolumeClaim:
             claimName: school-class-service-db-pv-claim

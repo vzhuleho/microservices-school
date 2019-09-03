@@ -1,0 +1,15 @@
+query GetSchoolClassesByIds($ids: [ID] = []){
+    schoolClasses(ids: $ids) {
+        id
+        grade
+        letter
+        headTeacher {
+            id
+            name
+        }
+        pupils {
+            id
+            name
+        }
+    }
+}

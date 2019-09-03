@@ -7,6 +7,7 @@
  ********************************************************************************/
 package com.kyriba.schoolclassservice.configuration;
 
+import com.kyriba.schoolclassservice.service.externalservices.UserServiceRealClient;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Configuration;
@@ -18,8 +19,8 @@ import org.springframework.context.annotation.Profile;
  * @since 19.2
  */
 @Configuration
-@EnableDiscoveryClient
-@EnableFeignClients
 @Profile("container")
-public class ProductionConfiguration {
+@EnableFeignClients(clients = UserServiceRealClient.UserServiceFeignClient.class)
+public class EnableFeignClientsConfiguration
+{
 }

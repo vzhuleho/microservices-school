@@ -43,7 +43,7 @@ spec:
             requests:
               memory: "500Mi"
           env:
-            - name: H2_DB_ADDRESS
+            - name: DB_ADDRESS
               value: school-class-service-db
             - name: USERSERVICE_HOST
               value: userservice-app

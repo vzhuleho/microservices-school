@@ -1,0 +1,25 @@
+schema {
+    query: EntryPoint
+}
+
+type SchoolClass {
+    id: ID!
+    grade: Int!
+    letter: String!
+    headTeacher: HeadTeacher
+    pupils: [Pupil]
+}
+
+type HeadTeacher {
+    id: ID!
+    name: String!
+}
+
+type Pupil {
+    id: ID!
+    name: String!
+}
+
+type EntryPoint {
+    schoolClasses(ids:[ID]):[SchoolClass]
+}

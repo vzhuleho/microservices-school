@@ -1,21 +1,22 @@
 version: '2'
 services:
   database:
+    image: postgres:12
     volumes:
-      - ./target/database:/opt/h2-data
+      - postgres:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_PASSWORD=postgres
     ports:
-      - "81:81"
-    image: oscarfonts/h2
-    #exposes port internally in docker network for all other containers - no need (at least for now)
-    #to expose it outside of the network
-    expose:
-      - "1521"
+      - "5432:5432"
   school-class:
     build: .
     ports:
       - "8082:10000"
     environment:
       - DB_ADDRESS=database
-      - DB_PORT=1521
+      - DB_PORT=5432
+      - POSTGRES_PASSWORD=postgres
     depends_on:
       - database
+volumes:
+  postgres:
