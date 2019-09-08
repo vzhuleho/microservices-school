@@ -21,7 +21,6 @@ import com.kyriba.curriculum.service.exception.CurriculumForGradeNotImplementedE
 import com.kyriba.curriculum.service.exception.CurriculumNotFoundException;
 import com.kyriba.curriculum.service.exception.SubjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -37,7 +36,6 @@ import java.util.stream.StreamSupport;
 @Service
 @Transactional
 @Validated
-@Qualifier("main")
 class CurriculumServiceImpl implements CurriculumService
 {
   private final CurriculumRepository curriculumRepository;
@@ -84,7 +82,7 @@ class CurriculumServiceImpl implements CurriculumService
   @Override
   public BriefCurriculumDTO createCurriculum(CurriculumToCreateDTO curriculumToCreate)
   {
-    CurriculumEntity curriculumEntity = new CurriculumEntity();
+    var curriculumEntity = new CurriculumEntity();
     curriculumEntity.setGrade(curriculumToCreate.getGrade());
     return curriculumRepository.save(curriculumEntity).toBriefCurriculumDTO();
   }
@@ -100,12 +98,12 @@ class CurriculumServiceImpl implements CurriculumService
   @Override
   public CourseDTO addCourse(long curriculumId, CourseToAddDTO courseToAdd)
   {
-    CurriculumEntity curriculumEntity = curriculumRepository.findById(curriculumId)
+    var curriculumEntity = curriculumRepository.findById(curriculumId)
         .orElseThrow(() -> new CurriculumNotFoundException(curriculumId));
-    SubjectEntity subjectEntity = subjectRepository.findById(courseToAdd.getSubjectId())
+    var subjectEntity = subjectRepository.findById(courseToAdd.getSubjectId())
         .orElseThrow(() -> new SubjectNotFoundException(courseToAdd.getSubjectId()));
 
-    CourseEntity courseEntity = new CourseEntity();
+    var courseEntity = new CourseEntity();
     courseEntity.setSubject(subjectEntity);
     courseEntity.setLessonCount(courseToAdd.getLessonCount());
 
@@ -122,9 +120,9 @@ class CurriculumServiceImpl implements CurriculumService
   @Override
   public void removeCourse(long curriculumId, long courseId)
   {
-    CurriculumEntity curriculum = curriculumRepository.findById(curriculumId)
+    var curriculum = curriculumRepository.findById(curriculumId)
         .orElseThrow(() -> new CurriculumNotFoundException(curriculumId));
-    CourseEntity course = curriculum.getCourses().stream()
+    var course = curriculum.getCourses().stream()
         .filter(it -> it.getId() == courseId)
         .findFirst()
         .orElseThrow(() -> new CourseNotFoundException(curriculumId, courseId));
@@ -136,9 +134,9 @@ class CurriculumServiceImpl implements CurriculumService
   @Override
   public void updateCourse(long curriculumId, long courseId, CourseToUpdateDTO courseToUpdate)
   {
-    CurriculumEntity curriculum = curriculumRepository.findById(curriculumId)
+    var curriculum = curriculumRepository.findById(curriculumId)
         .orElseThrow(() -> new CurriculumNotFoundException(curriculumId));
-    CourseEntity course = curriculum.getCourses().stream()
+    var course = curriculum.getCourses().stream()
         .filter(it -> it.getId() == courseId)
         .findFirst()
         .orElseThrow(() -> new CourseNotFoundException(curriculumId, courseId));

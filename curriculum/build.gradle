@@ -85,6 +85,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework:spring-aspects'
+
     implementation 'io.springfox:springfox-swagger2:2.9.2'
     implementation 'io.springfox:springfox-swagger-ui:2.9.2'
     implementation 'io.springfox:springfox-bean-validators:2.9.2'
@@ -95,7 +98,6 @@ dependencies {
     //implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:2.1.1.RELEASE'
     
     compileOnly 'org.projectlombok:lombok'
-    //runtimeOnly 'com.h2database:h2'
     runtimeOnly 'org.postgresql:postgresql:42.2.5'
 
     liquibaseRuntime 'org.liquibase:liquibase-core:3.6.3'
@@ -120,6 +122,8 @@ dependencies {
     testImplementation  "io.rest-assured:spring-mock-mvc:3.3.0"
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc:2.0.3.RELEASE'
 
+    testImplementation 'org.testcontainers:postgresql:1.11.4'
+    testImplementation "org.testcontainers:junit-jupiter:1.11.4"
     
     testImplementation ('org.springframework.restdocs:spring-restdocs-restassured') {
         exclude group: 'junit'

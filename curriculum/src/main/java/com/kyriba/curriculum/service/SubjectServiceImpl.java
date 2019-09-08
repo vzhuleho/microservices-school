@@ -12,7 +12,6 @@ import com.kyriba.curriculum.domain.entity.SubjectEntity;
 import com.kyriba.curriculum.domain.entity.SubjectRepository;
 import com.kyriba.curriculum.service.exception.SubjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -28,7 +27,6 @@ import java.util.stream.StreamSupport;
 @Service
 @Transactional
 @Validated
-@Qualifier("main")
 public class SubjectServiceImpl implements SubjectService
 {
   private final SubjectRepository repository;
@@ -51,7 +49,7 @@ public class SubjectServiceImpl implements SubjectService
   @Override
   public void updateSubject(long subjectId, SubjectToUpdateDTO subjectToUpdate)
   {
-    SubjectEntity entity = repository.findById(subjectId)
+    var entity = repository.findById(subjectId)
         .orElseThrow(() -> new SubjectNotFoundException(subjectId));
     entity.setName(subjectToUpdate.getName());
     repository.save(entity);

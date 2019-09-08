@@ -5,9 +5,7 @@
  */
 package com.kyriba.curriculum.api;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,16 +23,8 @@ class ValidationExceptionHandler
 {
   @ResponseBody
   @ExceptionHandler({ ValidationException.class, ConstraintViolationException.class })
-  ResponseEntity<String> exceptionHandler(ValidationException e)
+  ResponseEntity<ErrorMessage> exceptionHandler(ValidationException e)
   {
-    return new ResponseEntity<>(e.getMessage(), textPlain(), HttpStatus.BAD_REQUEST);
-  }
-
-
-  private static HttpHeaders textPlain()
-  {
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.setContentType(MediaType.TEXT_PLAIN);
-    return httpHeaders;
+    return new ResponseEntity<>(new ErrorMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
   }
 }

@@ -7,6 +7,7 @@ package com.kyriba.curriculum;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 //import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 
@@ -15,6 +16,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 //@EnableEurekaClient
 @SpringBootApplication
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class Application
 {
   public static void main(String[] args)

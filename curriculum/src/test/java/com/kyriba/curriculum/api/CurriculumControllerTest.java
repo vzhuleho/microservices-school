@@ -234,7 +234,9 @@ class CurriculumControllerTest
 
       BriefCurriculumDTO result = given()
           .config(config)
-          .body(curriculumToCreate)
+          .body("{\n" +
+              "  \"grade\" : 5 \n" +
+              "}")
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
           .post("/api/v1/curricula")
@@ -339,7 +341,10 @@ class CurriculumControllerTest
 
       ErrorMessage message = given()
           .config(config)
-          .body(courseToAdd)
+          .body("{\n" +
+              "  \"subjectId\" : 2,\n" +
+              "  \"lessonCount\" : 100\n" +
+              "}")
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
           .post("/api/v1/curricula/{id}/courses", curriculumId)

@@ -116,7 +116,9 @@ class SubjectControllerTest
 
       given()
           .config(config)
-          .body(subjectToCreate)
+          .body("{\n" +
+              "  \"name\" : \"chemistry\"\n" +
+              "}")
           .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
           .when()
           .post("/api/v1/subjects")
@@ -142,6 +144,55 @@ class SubjectControllerTest
           .then()
           .apply(document("create-subject-fail-validation"))
           .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+
+    @Test
+    void should_return_BAD_REQUEST_status_when_no_body()
+    {
+      given()
+          .config(config)
+          .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+          .when()
+          .post("/api/v1/subjects")
+          .then()
+          .apply(document("create-subject-fail-no-body"))
+          .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+
+    @Test
+    void should_return_UNSUPPORTED_MEDIA_TYPE_status_when_content_type_is_not_json()
+    {
+      given()
+          .config(config)
+          .contentType(MediaType.APPLICATION_XML_VALUE)
+          .body("{\n" +
+              "  \"name\" : \"chemistry\"\n" +
+              "}")
+          .when()
+          .post("/api/v1/subjects")
+          .then()
+          .apply(document("create-subject-fail-content-type"))
+          .statusCode(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value());
+    }
+
+
+    @Test
+    void should_return_NOT_ACCEPTABLE_status_when_content_type_is_not_json()
+    {
+      given()
+          .config(config)
+          .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+          .accept(MediaType.APPLICATION_XML_VALUE)
+          .body("{\n" +
+              "  \"name\" : \"chemistry\"\n" +
+              "}")
+          .when()
+          .post("/api/v1/subjects")
+          .then()
+          .apply(document("create-subject-fail-content-type"))
+          .statusCode(HttpStatus.NOT_ACCEPTABLE.value());
     }
   }
 
