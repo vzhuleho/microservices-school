@@ -15,11 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
 
 /**
  * @author M-DBE
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(MockitoExtension.class)
 @SpringJUnitConfig({ CurriculumServiceImpl.class, CurriculumServiceExceptionHandlingAspect.class })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
+@ActiveProfiles("test")
 class CurriculumServiceTest
 {
   @MockBean
@@ -39,7 +41,7 @@ class CurriculumServiceTest
 
 
   @Test
-  void should_throw_exception()
+  void should_throw_not_found_exception_given_no_curriculum_for_id()
   {
     //given
     long curriculumId = 1;

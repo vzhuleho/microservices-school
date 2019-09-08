@@ -1,0 +1,1 @@
+insert into curriculum(grade) values (11)

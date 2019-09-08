@@ -5,7 +5,7 @@ volumes:
 
 services:
   curriculum:
-    image: dbelykyriba/curriculum-service:0.0.1-SNAPSHOT
+    image: msschooltraining/curriculum-service:0.0.1-SNAPSHOT
     depends_on:
       - postgres-curricula
     environment:
