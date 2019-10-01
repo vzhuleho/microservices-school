@@ -11,8 +11,7 @@ pipeline {
       agent any
       steps {
         sh 'cd scheduleservice'
-        sh '''ls -a
-#./gradlew clean build'''
+        sh 'ls -a'
       }
     }
   }
