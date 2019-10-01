@@ -4,13 +4,16 @@ pipeline {
     stage('Check out') {
       agent any
       steps {
-        git(url: 'https://github.com/vzhuleho/microservices-school/scheduleservice', changelog: true, poll: true)
+        git(url: 'https://github.com/vzhuleho/microservices-school', changelog: true, poll: true, branch: 'testJenkins')
       }
     }
     stage('Build') {
       agent any
       steps {
-        sh 'ls -a'
+        dir(path: 'scheduleservice') {
+          sh 'ls -a'
+        }
+
       }
     }
   }
