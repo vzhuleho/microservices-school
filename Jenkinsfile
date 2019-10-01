@@ -10,8 +10,10 @@ pipeline {
     stage('Build') {
       agent any
       steps {
-        dir(path: 'scheduleservice')
-        sh './gradlew clean build'
+        dir(path: 'scheduleservice') {
+          sh './gradlew clean build'
+        }
+
       }
     }
   }
