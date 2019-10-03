@@ -1,14 +1,12 @@
 pipeline {
   agent any
   stages {
-    stage('Check out') {
-      agent any
+    stage('Check out') {     
       steps {
         git(url: 'https://github.com/vzhuleho/microservices-school', changelog: true, poll: true)
       }
     }
     stage('Build') {
-      agent any
       steps {
         dir(path: 'scheduleservice') {
           sh './gradlew clean build -xTest'
@@ -17,18 +15,17 @@ pipeline {
       }
     }
     stage('Test') {
-      agent any
       steps {
         dir(path: 'scheduleservice') {
           sh './gradlew check'
         }
 
       }
-    }
-    stage('Post') {
-      steps {
-        junit 'build/reports/**/*.xml'
-      }
+    }    
+  }
+  post {
+    always {
+      junit 'build/reports/**/*.xml'
     }
   }
 }
