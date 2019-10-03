@@ -11,9 +11,20 @@ pipeline {
       agent any
       steps {
         dir(path: 'scheduleservice') {
-          sh './gradlew clean build'
+          sh './gradlew clean build -xTest'
         }
 
+      }
+    }
+    stage('Test') {
+      agent any
+      steps {
+        sh './gradlew check'
+      }
+    }
+    stage('Post') {
+      steps {
+        junit 'build/reports/**/*.xml'
       }
     }
   }
