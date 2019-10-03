@@ -19,7 +19,10 @@ pipeline {
     stage('Test') {
       agent any
       steps {
-        sh './gradlew check'
+        dir(path: 'scheduleservice') {
+          sh './gradlew check'
+        }
+
       }
     }
     stage('Post') {
