@@ -13,11 +13,14 @@ pipeline {
         }
       }
     }
-    stage('Test') {
+    stage('Test') {      
       steps {
-        dir(path: 'scheduleservice') {
-          sh './gradlew check'
+        catchError {
+          dir(path: 'scheduleservice') {
+            sh './gradlew check'
+          }
         }
+        echo currentBuild.result
       }
     }    
   }
