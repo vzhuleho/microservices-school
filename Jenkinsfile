@@ -11,7 +11,6 @@ pipeline {
         dir(path: 'scheduleservice') {
           sh './gradlew clean build -xTest'
         }
-
       }
     }
     stage('Test') {
@@ -19,13 +18,13 @@ pipeline {
         dir(path: 'scheduleservice') {
           sh './gradlew check'
         }
-
       }
     }    
   }
   post {
     always {
-      publishHTML([reportDir: 'build/reports/tests/test', reportFiles: 'index.html', reportName: 'HTML Report'])
+      archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
+      junit 'build/reports/**/*.xml'
     }
   }
 }
