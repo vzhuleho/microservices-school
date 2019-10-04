@@ -28,6 +28,7 @@ pipeline {
     always {
       archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
       junit 'build/reports/**/*.xml'
+      publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'reports/tests/test', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: ''])
     }
   }
 }
