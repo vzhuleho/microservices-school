@@ -57,6 +57,14 @@ public class SchoolClassService
   }
 
 
+  public List<SchoolClassDto> getByIds(List<Long> ids)
+  {
+    return classRepository.findByIdIn(ids).stream()
+        .map(SchoolClassEntity::toDto)
+        .collect(Collectors.toList());
+  }
+
+
   @Transactional
   public SchoolClassDto create(@Valid SchoolClassDto schoolClass)
   {
@@ -93,6 +101,7 @@ public class SchoolClassService
   }
 
 
+  @Transactional
   public Set<PupilDto> getPupilsForClass(Long classId)
   {
     Set<PupilEntity> pupilEntities = classRepository.findById(classId)
@@ -101,6 +110,4 @@ public class SchoolClassService
 
     return pupilEntities.stream().map(PupilEntity::toDto).collect(Collectors.toSet());
   }
-
-
 }

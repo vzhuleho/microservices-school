@@ -16,22 +16,21 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+
 @Component
-@Profile({"default", "test"})
+@Profile({ "default", "test", "testcontainer"})
 public class UserServiceMockClient implements UserServiceClient
 {
+  @Override
+  public Optional<PupilDto> findById(PupilDto pupul)
+  {
+    return Optional.ofNullable(pupul);
+  }
 
-    @Override
-    public Optional<PupilDto> findById(PupilDto pupul)
-    {
-        return Optional.ofNullable(pupul);
-    }
 
-
-    @Override
-    public Optional<HeadTeacherDto> findById(HeadTeacherDto teacher)
-    {
-        return Optional.ofNullable(teacher);
-    }
-
+  @Override
+  public Optional<HeadTeacherDto> findById(HeadTeacherDto teacher)
+  {
+    return Optional.ofNullable(teacher);
+  }
 }
