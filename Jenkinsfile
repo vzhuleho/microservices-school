@@ -34,6 +34,7 @@ pipeline {
           environment {
             datasource_username = 'test'
             datasource_password = 'test'
+            datasource_url = 'jdbc:postgresql://localhost:5432/postgres'
           }
           steps {
             dir(path: 'curriculum') {
