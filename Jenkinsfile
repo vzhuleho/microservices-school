@@ -28,15 +28,21 @@ pipeline {
             sh './gradlew check'
           }
         }
+        catchError {
+          dir(path: 'scheduleservice') {
+            junit '**/test-results/**/*.xml'
+            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'build/reports/tests/test', reportFiles: 'index.html', reportName: 'Scheduleservice tests report', reportTitles: ''])
+          }
+        }
         echo currentBuild.result
       }
     }    
   }
-  post {
-    always {
-      archiveArtifacts artifacts: '**/*.jar', fingerprint: true
-      junit '**/test-results/**/*.xml'
-      publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'reports/tests/test', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: ''])
-    }
-  }
+  //post {
+    //always {
+      //archiveArtifacts artifacts: '**/*.jar', fingerprint: true
+      //junit '**/test-results/**/*.xml'
+      //publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'reports', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: ''])
+    //}
+  //}
 }
