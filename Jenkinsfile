@@ -35,7 +35,7 @@ pipeline {
   post {
     always {
       archiveArtifacts artifacts: '**/*.jar', fingerprint: true
-      junit 'build/test-results/**/*.xml'
+      junit '**/test-results/**/*.xml'
       publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'reports/tests/test', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: ''])
     }
   }
