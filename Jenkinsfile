@@ -2,47 +2,56 @@ pipeline {
   agent {
     label 'centos7 || centos7onDemand'
   }
-  options {
-    timestamps()
-  }
-  tools {
-    jdk 'OpenJDK11.0.2'
-  }
   stages {
-    stage('Check out') {     
+    stage('Check out') {
       steps {
         git(url: 'https://github.com/vzhuleho/microservices-school', changelog: true, poll: true)
       }
     }
     stage('Build') {
-      steps {
-        dir(path: 'scheduleservice') {
-          sh './gradlew clean build -xTest'
+      parallel {
+        stage('Build') {
+          steps {
+            dir(path: 'scheduleservice') {
+              sh './gradlew clean build -xTest'
+            }
+
+          }
+        }
+        stage('') {
+          steps {
+            dir(path: 'curriculum') {
+              sh './gradlew clean build -xTest'
+            }
+
+          }
         }
       }
     }
-    stage('Test') {      
+    stage('Test') {
       steps {
-        catchError {
+        catchError() {
           dir(path: 'scheduleservice') {
             sh './gradlew check'
           }
+
         }
-        catchError {
+
+        catchError() {
           dir(path: 'scheduleservice') {
-            junit '**/test-results/**/*.xml'
-            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'build/reports/tests/test', reportFiles: 'index.html', reportName: 'Scheduleservice tests report', reportTitles: ''])
+            junit(testResults: '**/test-results/**/*.xml', allowEmptyResults: true)
           }
+
         }
+
         echo currentBuild.result
       }
-    }    
+    }
   }
-  //post {
-    //always {
-      //archiveArtifacts artifacts: '**/*.jar', fingerprint: true
-      //junit '**/test-results/**/*.xml'
-      //publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'reports', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: ''])
-    //}
-  //}
+  tools {
+    jdk 'OpenJDK11.0.2'
+  }
+  options {
+    timestamps()
+  }
 }
