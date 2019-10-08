@@ -2,6 +2,12 @@ pipeline {
   agent {
     label 'centos7 || centos7onDemand'
   }
+  options {
+    timestamps()
+  }
+  tools {
+    jdk 'OpenJDK11.0.2'
+  }
   stages {
     stage('Check out') {     
       steps {
