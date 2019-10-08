@@ -10,15 +10,31 @@ pipeline {
     }
     stage('Build') {
       parallel {
-        stage('Build') {
+        stage('Check schedule-service') {
           steps {
             dir(path: 'scheduleservice') {
               sh './gradlew clean build -xTest'
             }
 
+            catchError() {
+              dir(path: 'scheduleservice') {
+                sh './gradlew check'
+              }
+
+            }
+
+            dir(path: 'scheduleservice') {
+              junit(testResults: '**/test-results/**/*.xml', allowEmptyResults: true)
+            }
+
+            createSummary '${currentBuild.result}'
           }
         }
-        stage('') {
+        stage('Check curriculum-service') {
+          environment {
+            datasource_username = 'test'
+            datasource_password = 'test'
+          }
           steps {
             dir(path: 'curriculum') {
               sh './gradlew clean build -xTest'
@@ -26,25 +42,6 @@ pipeline {
 
           }
         }
-      }
-    }
-    stage('Test') {
-      steps {
-        catchError() {
-          dir(path: 'scheduleservice') {
-            sh './gradlew check'
-          }
-
-        }
-
-        catchError() {
-          dir(path: 'scheduleservice') {
-            junit(testResults: '**/test-results/**/*.xml', allowEmptyResults: true)
-          }
-
-        }
-
-        echo currentBuild.result
       }
     }
   }
