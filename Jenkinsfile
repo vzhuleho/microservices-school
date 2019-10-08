@@ -1,5 +1,7 @@
 pipeline {
-  agent any
+  agent {
+    label 'centos7 || centos7onDemand'
+  }
   stages {
     stage('Check out') {     
       steps {
