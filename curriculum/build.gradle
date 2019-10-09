@@ -33,8 +33,10 @@ test {
 }
 
 asciidoctor {
+    attributes 'snippets': snippets
     inputs.dir snippets
     dependsOn test
+    sourceDir 'src/doc/asciidoc'
 }
 
 bootJar {
