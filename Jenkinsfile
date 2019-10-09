@@ -14,33 +14,47 @@ pipeline {
           steps {
             dir(path: 'scheduleservice') {
               sh './gradlew clean build -xTest'
-            }
-
-            catchError() {
-              dir(path: 'scheduleservice') {
+              catchError() {
                 sh './gradlew check'
               }
-
-            }
-
-            dir(path: 'scheduleservice') {
               junit(testResults: '**/test-results/**/*.xml', allowEmptyResults: true)
+              createSummary '${currentBuild.result}'
             }
-
-            createSummary '${currentBuild.result}'
           }
         }
         stage('Check curriculum-service') {
-          environment {
-            datasource_username = 'test'
-            datasource_password = 'test'
-            datasource_url = 'jdbc:postgresql://localhost:5432/postgres'
-          }
           steps {
             dir(path: 'curriculum') {
+              sh './gradlew clean build -xTest -Pdatasource_url="jdbc:postgresql://localhost:5432/postgres" -Pdocker_username="msschooltraining" -Pdocker_password="Ms.school\$" -Pdocker_email="ms.school.training@gmail.com" -Pdatasource_username="test" -Pdatasource_password="test" -Pdatasource_driver="org.postgresql.Driver"'
+            }
+            catchError() {
+              sh './gradlew check'
+            }
+            junit(testResults: '**/test-results/**/*.xml', allowEmptyResults: true)
+            createSummary '${currentBuild.result}'
+          }
+        }
+        stage('Check user-service') {
+          steps {
+            dir(path: 'userservice') {
+              catchError() {
+                sh './mvnw install'
+              }
+              junit(testResults: '**/test-results/**/*.xml', allowEmptyResults: true)
+              createSummary '${currentBuild.result}'
+            }
+          }
+        }
+        stage('Check school-class-service') {
+          steps {
+            dir(path: 'school-class-service') {
               sh './gradlew clean build -xTest'
             }
-
+            catchError() {
+              sh './gradlew check'
+            }
+            junit(testResults: '**/test-results/**/*.xml', allowEmptyResults: true)
+            createSummary '${currentBuild.result}'
           }
         }
       }
