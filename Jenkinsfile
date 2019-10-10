@@ -26,21 +26,22 @@ pipeline {
           steps {
             dir(path: 'curriculum') {
               sh './gradlew clean build -xTest -Pdatasource_url="jdbc:postgresql://localhost:5432/postgres" -Pdocker_username="msschooltraining" -Pdocker_password="Ms.school\$" -Pdocker_email="ms.school.training@gmail.com" -Pdatasource_username="test" -Pdatasource_password="test" -Pdatasource_driver="org.postgresql.Driver"'
+              catchError() {
+                sh './gradlew check'
+              }
+              junit(testResults: '**/test-results/**/*.xml', allowEmptyResults: true)
+              createSummary '${currentBuild.result}'
             }
-            catchError() {
-              sh './gradlew check'
-            }
-            junit(testResults: '**/test-results/**/*.xml', allowEmptyResults: true)
-            createSummary '${currentBuild.result}'
           }
         }
         stage('Check user-service') {
           steps {
             dir(path: 'userservice') {
+              sh './mvnw clean compile'
               catchError() {
-                sh './mvnw install'
+                sh './mvnw test'
               }
-              junit(testResults: '**/test-results/**/*.xml', allowEmptyResults: true)
+              junit(testResults: '**/surefire-reports/*.xml', allowEmptyResults: true)
               createSummary '${currentBuild.result}'
             }
           }
@@ -48,13 +49,13 @@ pipeline {
         stage('Check school-class-service') {
           steps {
             dir(path: 'school-class-service') {
-              sh './gradlew clean build -xTest'
-            }
-            catchError() {
-              sh './gradlew check'
-            }
-            junit(testResults: '**/test-results/**/*.xml', allowEmptyResults: true)
+              sh './mvnw clean compile'
+              catchError() {
+                sh './mvnw test'
+              }
+              junit(testResults: '**/surefire-reports/*.xml', allowEmptyResults: true)
             createSummary '${currentBuild.result}'
+            }
           }
         }
       }
