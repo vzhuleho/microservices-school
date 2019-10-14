@@ -29,7 +29,7 @@ ext {
             // Database                  
             postgre           : '42.2.6',        // https://mvnrepository.com/artifact/org.postgresql/postgresql
             // Zuul
-            zuul              : '2.1.2.RELEASE', // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-netflix-zuul
+            zuul              : '2.1.3.RELEASE', // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-netflix-zuul
             // Keycloak
             keycloak          : '6.0.1',         // https://mvnrepository.com/artifact/org.keycloak/keycloak-spring-boot-starter
             // Swagger

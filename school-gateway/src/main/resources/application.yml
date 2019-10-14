@@ -46,3 +46,15 @@ zuul:
       path: /userservice/**
       url: http://${USERCERVICE_URL:userservice-app}:${USERCERVICE_PORT:80}
       stripPrefix: true
+    scheduleservice:
+      path: /scheduleservice/**
+      url: http://${SCHEDULESERVICE_URL:scheduleservice-app}:${SCHEDULESERVICE_PORT:80}
+      stripPrefix: true
+    schoolclassservice:
+      path: /schoolclassservice/**
+      url: http://${SCHOOLCLASSSERVICE_URL:schoolclassservice-app}:${SCHOOLCLASSSERVICE_PORT:80}
+      stripPrefix: true
+    curriculum:
+      path: /curriculum/**
+      url: http://${CURRICULUM_URL:curriculum-app}:${CURRICULUM_PORT:80}
+      stripPrefix: true
