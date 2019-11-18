@@ -52,7 +52,7 @@ pipeline {
 
           }
         }
-        stage('Check school-class-service') {
+        /*stage('Check school-class-service') {
           steps {
             dir(path: 'school-class-service') {
               sh './mvnw clean compile'
@@ -66,7 +66,7 @@ pipeline {
 
           }
         }
-      }
+      }*/
     }
     stage('Analyze code') {
       steps {
