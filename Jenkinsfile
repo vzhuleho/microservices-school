@@ -29,7 +29,7 @@ pipeline {
             dir(path: 'curriculum') {
               sh './gradlew clean build -xTest -xasciidoctor -Pdatasource_url="jdbc:postgresql://localhost:5432/postgres" -Pdocker_username="msschooltraining" -Pdocker_password="Ms.school$" -Pdocker_email="ms.school.training@gmail.com" -Pdatasource_username="test" -Pdatasource_password="test" -Pdatasource_driver="org.postgresql.Driver"'
               catchError() {
-                sh './gradlew check'
+                sh './gradlew check -Pdatasource_url="jdbc:postgresql://localhost:5432/postgres" -Pdocker_username="msschooltraining" -Pdocker_password="Ms.school$" -Pdocker_email="ms.school.training@gmail.com" -Pdatasource_username="test" -Pdatasource_password="test" -Pdatasource_driver="org.postgresql.Driver"'
               }
 
               junit(testResults: '**/test-results/**/*.xml', allowEmptyResults: true)
