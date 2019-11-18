@@ -65,8 +65,8 @@ pipeline {
             }
 
           }
-        }
-      }*/
+        }*/
+      }
     }
     stage('Analyze code') {
       steps {
