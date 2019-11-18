@@ -52,15 +52,26 @@ pipeline {
 
           }
         }
-        
       }
     }
     stage('Analyze code') {
-      steps {
-        dir(path: 'scheduleservice') {
-          sh './gradlew sonarqube -Dsonar.projectKey=vzhuleho_microservices-school -Dsonar.organization=vzhuleho -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=c7f49e7e1366972e96ef0a2c39cc76f35db3d497'
-        }
+      parallel {
+        stage('Analyze code') {
+          steps {
+            dir(path: 'scheduleservice') {
+              sh './gradlew sonarqube -Dsonar.projectKey=vzhuleho_microservices-school -Dsonar.organization=vzhuleho -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=c7f49e7e1366972e96ef0a2c39cc76f35db3d497'
+            }
 
+          }
+        }
+        stage('Analyze curriculum-service code') {
+          steps {
+            dir(path: 'curriculum') {
+              sh './gradlew sonarqube -Dsonar.projectKey=vzhuleho_microservices-school -Dsonar.organization=vzhuleho -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=c7f49e7e1366972e96ef0a2c39cc76f35db3d497'
+            }
+
+          }
+        }
       }
     }
   }
