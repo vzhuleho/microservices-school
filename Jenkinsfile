@@ -52,20 +52,7 @@ pipeline {
 
           }
         }
-        /*stage('Check school-class-service') {
-          steps {
-            dir(path: 'school-class-service') {
-              sh './mvnw clean compile'
-              catchError() {
-                sh './mvnw test'
-              }
-
-              junit(testResults: '**/surefire-reports/*.xml', allowEmptyResults: true)
-              createSummary '${currentBuild.result}'
-            }
-
-          }
-        }*/
+        
       }
     }
     stage('Analyze code') {
