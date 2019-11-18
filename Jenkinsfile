@@ -13,25 +13,29 @@ pipeline {
         stage('Check schedule-service') {
           steps {
             dir(path: 'scheduleservice') {
-              sh './gradlew clean build -xTest'
+              sh './gradlew clean build -xTest -xasciidoctor'
               catchError() {
                 sh './gradlew check'
               }
+
               junit(testResults: '**/test-results/**/*.xml', allowEmptyResults: true)
               createSummary '${currentBuild.result}'
             }
+
           }
         }
         stage('Check curriculum-service') {
           steps {
             dir(path: 'curriculum') {
-              sh './gradlew clean build -xTest -Pdatasource_url="jdbc:postgresql://localhost:5432/postgres" -Pdocker_username="msschooltraining" -Pdocker_password="Ms.school\$" -Pdocker_email="ms.school.training@gmail.com" -Pdatasource_username="test" -Pdatasource_password="test" -Pdatasource_driver="org.postgresql.Driver"'
+              sh './gradlew clean build -xTest -Pdatasource_url="jdbc:postgresql://localhost:5432/postgres" -Pdocker_username="msschooltraining" -Pdocker_password="Ms.school$" -Pdocker_email="ms.school.training@gmail.com" -Pdatasource_username="test" -Pdatasource_password="test" -Pdatasource_driver="org.postgresql.Driver"'
               catchError() {
                 sh './gradlew check'
               }
+
               junit(testResults: '**/test-results/**/*.xml', allowEmptyResults: true)
               createSummary '${currentBuild.result}'
             }
+
           }
         }
         stage('Check user-service') {
@@ -41,9 +45,11 @@ pipeline {
               catchError() {
                 sh './mvnw test'
               }
+
               junit(testResults: '**/surefire-reports/*.xml', allowEmptyResults: true)
               createSummary '${currentBuild.result}'
             }
+
           }
         }
         stage('Check school-class-service') {
@@ -53,9 +59,11 @@ pipeline {
               catchError() {
                 sh './mvnw test'
               }
+
               junit(testResults: '**/surefire-reports/*.xml', allowEmptyResults: true)
-            createSummary '${currentBuild.result}'
+              createSummary '${currentBuild.result}'
             }
+
           }
         }
       }
