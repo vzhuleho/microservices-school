@@ -65,6 +65,7 @@ pipeline {
 
               junit(testResults: '**/surefire-reports/*.xml', allowEmptyResults: true)
               createSummary '${currentBuild.result}'
+              sh './mvnw org.sonarsource.scanner.maven:sonar-maven-plugin:3.6.1.1688:sonar -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=vzhuleho -Dsonar.login=c7f49e7e1366972e96ef0a2c39cc76f35db3d497'
             }
 
           }
