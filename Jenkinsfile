@@ -57,26 +57,6 @@ pipeline {
         }
       }
     }
-    stage('Analyze code') {
-      parallel {
-        stage('Analyze code') {
-          steps {
-            dir(path: 'scheduleservice') {
-              sh './gradlew sonarqube -Dsonar.projectKey=vzhuleho_microservices-school -Dsonar.organization=vzhuleho -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=c7f49e7e1366972e96ef0a2c39cc76f35db3d497'
-            }
-
-          }
-        }
-        stage('Analyze curriculum-service code') {
-          steps {
-            dir(path: 'curriculum') {
-              sh './gradlew sonarqube -Dsonar.projectKey=vzhuleho_microservices-school -Dsonar.organization=vzhuleho -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=c7f49e7e1366972e96ef0a2c39cc76f35db3d497 -Pdatasource_url="jdbc:postgresql://localhost:5432/postgres" -Pdocker_username="msschooltraining" -Pdocker_password="Ms.school$" -Pdocker_email="ms.school.training@gmail.com" -Pdatasource_username="test" -Pdatasource_password="test" -Pdatasource_driver="org.postgresql.Driver"'
-            }
-
-          }
-        }
-      }
-    }
   }
   tools {
     jdk 'OpenJDK11.0.2'
