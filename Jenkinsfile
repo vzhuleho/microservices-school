@@ -20,6 +20,7 @@ pipeline {
 
               junit(testResults: '**/test-results/**/*.xml', allowEmptyResults: true)
               createSummary '${currentBuild.result}'
+              sh './gradlew sonarqube -Dsonar.projectKey=vzhuleho_microservices-school -Dsonar.organization=vzhuleho -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=c7f49e7e1366972e96ef0a2c39cc76f35db3d497'
             }
 
           }
@@ -34,6 +35,7 @@ pipeline {
 
               junit(testResults: '**/test-results/**/*.xml', allowEmptyResults: true)
               createSummary '${currentBuild.result}'
+              sh './gradlew sonarqube -Dsonar.projectKey=vzhuleho_microservices-school -Dsonar.organization=vzhuleho -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=c7f49e7e1366972e96ef0a2c39cc76f35db3d497 -Pdatasource_url="jdbc:postgresql://localhost:5432/postgres" -Pdocker_username="msschooltraining" -Pdocker_password="Ms.school$" -Pdocker_email="ms.school.training@gmail.com" -Pdatasource_username="test" -Pdatasource_password="test" -Pdatasource_driver="org.postgresql.Driver"'
             }
 
           }
