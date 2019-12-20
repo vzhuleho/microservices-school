@@ -45,7 +45,8 @@ public class AbsenceService {
     public Long addAbsenceToLesson(AbsenceRequest absenceRequest) {
         Lesson lesson = lessonRepository.findById(absenceRequest.getLessonId())
             .orElseThrow(ResourceNotFoundException::new);
-        Pupil pupil = pupilRepository.findById(absenceRequest.getPupilId()).orElseThrow(ResourceNotFoundException::new);
+        Pupil pupil = pupilRepository.findById(absenceRequest.getPupilId())
+                .orElseThrow(() -> new PupilNotFoundException(absenceRequest.getPupilId()));
         return absenceRepository.save(new Absence(absenceRequest.getReason(), pupil, lesson)).getId();
     }
 

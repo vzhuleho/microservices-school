@@ -1,0 +1,5 @@
+<dataset>
+    <school_class id="1" grade="1" letter="A" year="2019"/>
+    <school_class id="2" grade="2" letter="B" year="2018"/>
+    <school_class id="3" grade="1" letter="C" year="2019" />
+</dataset>

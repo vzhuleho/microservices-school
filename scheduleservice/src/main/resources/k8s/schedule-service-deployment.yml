@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: schedule-service
+  labels:
+    app: schedule-service
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: schedule-service
+      labels:
+        app: schedule-service
+    spec:
+      containers:
+        - name: schedule-service
+          image: msschooltraining/schedule-service
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: fake-param-key
+              valueFrom:
+                configMapKeyRef:
+                  name: schedule-service
+                  key: fake-param-key
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: schedule-service

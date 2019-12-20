@@ -3,11 +3,14 @@ package com.kyriba.school.scheduleservice.api;
 import com.kyriba.school.scheduleservice.domain.dto.AbsenceDetails;
 import com.kyriba.school.scheduleservice.domain.dto.AbsenceRequest;
 import com.kyriba.school.scheduleservice.service.AbsenceService;
+import com.kyriba.school.scheduleservice.service.PupilNotFoundException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Api(value = "School Schedules Management System")
@@ -44,5 +47,10 @@ public class AbsenceController {
     @DeleteMapping("/{id}")
     public void deleteAbsence(@ApiParam(value = "Absence unique identifier", example = "1", required = true) @PathVariable Long id ) {
         absenceService.removeAbsenceById(id);
+    }
+
+    @ExceptionHandler(PupilNotFoundException.class)
+    public ResponseEntity<Object> handlePupilNotFoundException(PupilNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 }
