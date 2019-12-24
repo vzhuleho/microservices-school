@@ -22,6 +22,8 @@ spec:
                 configMapKeyRef:
                   name: schedule-service
                   key: fake-param-key
+            - name: JAVA_OPTIONS
+              value: "-Dspring.profiles.active=container"
       restartPolicy: Always
   selector:
     matchLabels:
