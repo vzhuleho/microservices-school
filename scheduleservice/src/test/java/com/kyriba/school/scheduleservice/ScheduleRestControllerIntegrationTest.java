@@ -27,7 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(ScheduleController.class)
-@ActiveProfiles("test")public class ScheduleRestControllerIntegrationTest {
+@ActiveProfiles("test")
+public class ScheduleRestControllerIntegrationTest {
 
 	@Autowired
 	private MockMvc mockMvc;

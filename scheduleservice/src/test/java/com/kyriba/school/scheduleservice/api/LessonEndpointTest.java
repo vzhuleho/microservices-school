@@ -35,7 +35,7 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureRestDocs
-public class LessonControllerTest {
+public class LessonEndpointTest {
 
 	@Rule
 	public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();

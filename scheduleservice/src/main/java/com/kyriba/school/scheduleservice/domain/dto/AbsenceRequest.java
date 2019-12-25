@@ -21,6 +21,7 @@ public class AbsenceRequest {
 	private Long pupilId;
 
 	@ApiModelProperty("A lesson's id")
+	@NotNull
 	private Long lessonId;
 
 	@ApiModelProperty("A reason of a pupil's absence")

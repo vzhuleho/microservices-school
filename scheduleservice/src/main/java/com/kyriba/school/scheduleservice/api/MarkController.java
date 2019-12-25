@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Api(value = "School Schedules Management System")
 @RequestMapping(value = "/api/v1/marks",
         consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
@@ -31,14 +33,14 @@ public class MarkController {
     @ApiOperation(value = "Add information about pupil's mark to a lesson", response = long.class)
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public long addMarkToLesson(@RequestBody MarkRequest markRequest) {
+    public long addMarkToLesson(@Valid @RequestBody MarkRequest markRequest) {
         return markService.addMarkToLesson(markRequest);
     }
 
     @ApiOperation(value = "Update mark information by id", response = MarkDetails.class)
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/{id}")
-    public MarkDetails updateMark(@RequestBody MarkRequest markRequest) {
+    public MarkDetails updateMark(@Valid @RequestBody MarkRequest markRequest) {
         return markService.updateMark(markRequest);
     }
 

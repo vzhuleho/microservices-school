@@ -23,6 +23,7 @@ metadata:
     io.kompose.service: postgres-curricula
   name: postgres-curricula
 spec:
+  storageClassName: nfs
   accessModes:
     - ReadWriteOnce
   resources:
