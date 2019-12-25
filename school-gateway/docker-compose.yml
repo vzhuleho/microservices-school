@@ -6,7 +6,7 @@ services:
     build:
       context: .
       args:
-        JAR_FILE: ./build/libs/school-gateway-1.1.jar
+        JAR_FILE: ./build/libs/school-gateway-1.2.jar
     environment:
       - APP_PORT=8180
     ports:

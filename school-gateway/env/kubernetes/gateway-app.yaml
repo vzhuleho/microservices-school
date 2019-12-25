@@ -31,7 +31,7 @@ spec:
         tier: frontend
     spec:
       containers:
-        - image: msschooltraining/school-gateway:1.1.3
+        - image: msschooltraining/school-gateway:1.1.4
           name: gateway-app
           resources:
             limits:
@@ -44,7 +44,7 @@ spec:
             - name: KC_ADDR
               value: keycloak-app
             - name: KC_PORT
-              value: 80
+              value: "80"
             - name: KC_KEYSTORE_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -63,19 +63,19 @@ spec:
             - name: USERCERVICE_URL
               value: usercervice
             - name: USERCERVICE_PORT
-              value: 80
+              value: "80"
             - name: SCHEDULESERVICE_URL
               value: schedule-service
             - name: SCHEDULESERVICE_PORT
-              value: 80
+              value: "80"
             - name: SCHOOLCLASSSERVICE_URL
               value: chool-class-service-app
             - name: SCHOOLCLASSSERVICE_PORT
-              value: 80
+              value: "80"
             - name: CURRICULUM_URL
               value: curriculum
             - name: CURRICULUM_PORT
-              value: 80
+              value: "80"
           ports:
             - containerPort: 8080
               name: http
