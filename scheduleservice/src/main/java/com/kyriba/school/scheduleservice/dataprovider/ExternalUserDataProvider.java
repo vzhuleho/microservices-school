@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @RequiredArgsConstructor
-@EnableFeignClients
+@EnableFeignClients(clients = {ExternalUserDataProvider.UserServiceClient.class})
 @Profile("container")
 @Repository
 class ExternalUserDataProvider implements UserDataProvider {
@@ -24,7 +24,7 @@ class ExternalUserDataProvider implements UserDataProvider {
     }
 
     @FeignClient(name = "user-service", url = "${kyriba.userservice.url:}")
-    private interface UserServiceClient extends UserDataProvider {
+    interface UserServiceClient extends UserDataProvider {
 
         @Override
         @RequestMapping(method = RequestMethod.GET, value = "/teachers/{id}")

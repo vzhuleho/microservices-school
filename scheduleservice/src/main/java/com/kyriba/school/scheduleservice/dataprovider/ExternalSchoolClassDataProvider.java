@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
 @RequiredArgsConstructor
-@EnableFeignClients
+@EnableFeignClients(clients = {ExternalSchoolClassDataProvider.SchoolServiceClient.class})
 @Profile("container")
 @Repository
 class ExternalSchoolClassDataProvider implements SchoolClassDataProvider {
@@ -38,7 +38,7 @@ class ExternalSchoolClassDataProvider implements SchoolClassDataProvider {
     }
 
     @FeignClient(name = "school-class-service", url = "${kyriba.schoolclassservice.url:}")
-    private interface SchoolServiceClient {
+    interface SchoolServiceClient {
 
         @GetMapping("/classes")
         List<SchoolClassDetails> getSchoolClasses();

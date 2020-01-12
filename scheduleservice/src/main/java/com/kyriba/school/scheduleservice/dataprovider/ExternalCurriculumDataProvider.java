@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.List;
 
 @RequiredArgsConstructor
-@EnableFeignClients
+@EnableFeignClients(clients = {ExternalCurriculumDataProvider.CurriculumServiceClient.class})
 @Profile("container")
 @Repository
 class ExternalCurriculumDataProvider implements CurriculumDataProvider {
@@ -32,7 +32,7 @@ class ExternalCurriculumDataProvider implements CurriculumDataProvider {
     }
 
     @FeignClient(name = "curriculum-service", url = "${kyriba.curriculumservice.url:}")
-    private interface CurriculumServiceClient {
+    interface CurriculumServiceClient {
 
         @RequestMapping(method = RequestMethod.GET, value = "/subjects")
         List<SubjectDetails> getSubjects();
